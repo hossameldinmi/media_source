@@ -1,6 +1,8 @@
 name: media_source
 description: A new Dart package project.
-version: 0.1.0
+version: 0.1.0-alpha.1
+
+repository: https://github.com/hossameldinmi/media_source
 
 environment:
   sdk: ">=2.17.0 <4.0.0"

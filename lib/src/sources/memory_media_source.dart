@@ -4,12 +4,13 @@ import 'package:cross_file/cross_file.dart';
 import 'package:media_source/src/media_type.dart';
 import 'package:media_source/src/sources/file_media_source.dart';
 import 'package:media_source/src/sources/media_source.dart';
-import 'package:media_source/src/utils/file_util.dart';
 import 'package:media_source/src/utils/platform_utils.dart';
 import 'package:sized_file/sized_file.dart';
 import 'package:path/path.dart' as p;
+import 'package:file_type_plus/file_type_plus.dart';
+import 'package:media_source/src/utils/file_util.dart' as file_util;
 
-abstract class MemoryMediaSource<M extends MediaType> extends MediaSource<M> implements ToFileConvertableMedia<M> {
+abstract class MemoryMediaSource<M extends FileType> extends MediaSource<M> implements ToFileConvertableMedia<M> {
   final Uint8List bytes;
 
   MemoryMediaSource._(
@@ -27,25 +28,29 @@ abstract class MemoryMediaSource<M extends MediaType> extends MediaSource<M> imp
   @override
   bool? get stringify => false;
 
-  static Future<MemoryMediaSource<MediaType>> fromBytes(
+  Future<FileMediaSource<M>> saveToFolder(String folderPath) {
+    final path = p.join(folderPath, name);
+    return saveToFile(path);
+  }
+
+  static Future<MemoryMediaSource<FileType>> fromBytes(
     Uint8List bytes, {
     String? name,
-    int? size,
     String? mimeType,
     Duration? duration,
     MediaSource? thumbnail,
-    MediaType? mediaType,
+    FileType? mediaType,
   }) async {
-    mediaType ??= MediaType.fromBytes(bytes, mimeType);
+    mediaType ??= FileType.fromBytes(bytes, mimeType);
     if ([
-      if (mediaType.isAny([MediaType.audio, MediaType.video])) duration,
+      if (mediaType.isAny([FileType.audio, FileType.video])) duration,
       mimeType
     ].contains(null)) {
-      final metadata = await FileUtil.getFileMetadataFromBytes(bytes, mediaType, mimeType, name);
+      final metadata = await file_util.FileUtil.getFileMetadataFromBytes(bytes, name);
       mimeType ??= metadata?.mimeType;
       duration ??= metadata?.duration;
     }
-    if (mediaType.isAny([MediaType.audio])) {
+    if (mediaType.isAny([FileType.audio])) {
       return AudioMemoryMedia(
         bytes,
         name: name,
@@ -53,7 +58,7 @@ abstract class MemoryMediaSource<M extends MediaType> extends MediaSource<M> imp
         mimeType: mimeType,
       );
     }
-    if (mediaType.isAny([MediaType.video])) {
+    if (mediaType.isAny([FileType.video])) {
       return VideoMemoryMedia(
         bytes,
         name: name,
@@ -62,14 +67,14 @@ abstract class MemoryMediaSource<M extends MediaType> extends MediaSource<M> imp
         mimeType: mimeType,
       );
     }
-    if (mediaType.isAny([MediaType.image])) {
+    if (mediaType.isAny([FileType.image])) {
       return ImageMemoryMedia(
         bytes,
         name: name,
         mimeType: mimeType,
       );
     }
-    if (mediaType.isAny([MediaType.document])) {
+    if (mediaType.isAny([FileType.document])) {
       return DocumentMemoryMedia(
         bytes,
         name: name,
@@ -107,7 +112,7 @@ class VideoMemoryMedia extends MemoryMediaSource<VideoType> implements Thumbnail
       path: path,
       length: size?.inBytes,
     );
-    await PlatformUtils.instance.ensureDirectoryExists(path);
+    await PlatformUtils.instance.createDirectoryIfNotExists(path);
     await file.saveTo(path);
     return VideoFileMedia.fromFile(
       file,
@@ -137,7 +142,7 @@ class AudioMemoryMedia extends MemoryMediaSource<AudioType> {
       path: path,
       length: size?.inBytes,
     );
-    await PlatformUtils.instance.ensureDirectoryExists(path);
+    await PlatformUtils.instance.createDirectoryIfNotExists(path);
     await file.saveTo(path);
     return AudioFileMedia.fromFile(
       file,
@@ -165,7 +170,7 @@ class ImageMemoryMedia extends MemoryMediaSource<ImageType> {
       path: path,
       length: size?.inBytes,
     );
-    await PlatformUtils.instance.ensureDirectoryExists(path);
+    await PlatformUtils.instance.createDirectoryIfNotExists(path);
     await file.saveTo(path);
     return ImageFileMedia.fromFile(
       file,
@@ -192,7 +197,7 @@ class DocumentMemoryMedia extends MemoryMediaSource<DocumentType> {
       mimeType: mimeType,
       path: path,
     );
-    await PlatformUtils.instance.ensureDirectoryExists(path);
+    await PlatformUtils.instance.createDirectoryIfNotExists(path);
     await file.saveTo(path);
     return DocumentFileMedia.fromFile(
       file,
@@ -220,7 +225,7 @@ class OtherTypeMemoryMedia extends MemoryMediaSource<OtherType> {
       path: path,
       length: size?.inBytes,
     );
-    await PlatformUtils.instance.ensureDirectoryExists(path);
+    await PlatformUtils.instance.createDirectoryIfNotExists(path);
     await file.saveTo(path);
     return OtherTypeFileMedia.fromFile(
       file,
@@ -228,12 +233,5 @@ class OtherTypeMemoryMedia extends MemoryMediaSource<OtherType> {
       name: name,
       size: size,
     );
-  }
-}
-
-extension MemoryMediaExtension<M extends MediaType> on MemoryMediaSource<M> {
-  Future<FileMediaSource<M>> saveToFolder(String folderPath) async {
-    final path = p.join(folderPath, name);
-    return saveToFile(path);
   }
 }

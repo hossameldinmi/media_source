@@ -1,8 +1,11 @@
 // ignore_for_file: avoid_web_libraries_in_flutter
 
+import 'dart:typed_data';
+
 import 'package:cross_file/cross_file.dart';
 import 'package:media_source/src/utils/platform_utils.dart';
 import 'package:web/web.dart' as web;
+import 'package:flutter_media_metadata/flutter_media_metadata.dart' as metadata;
 
 class PlatformUtilsFacadeImpl implements PlatformUtilsFacade {
   @override
@@ -20,8 +23,18 @@ class PlatformUtilsFacadeImpl implements PlatformUtilsFacade {
   }
 
   @override
-  Future<void> ensureDirectoryExists(String directoryPath) {
+  Future<void> createDirectoryIfNotExists(String directoryPath) {
     return Future.value();
+  }
+
+  @override
+  Future<bool> directoryExists(String directoryPath) {
+    return Future.value(true);
+  }
+
+  @override
+  Future<bool> deleteDirectory(String directoryPath) {
+    throw UnimplementedError();
   }
 
   @override
@@ -39,5 +52,18 @@ class PlatformUtilsFacadeImpl implements PlatformUtilsFacade {
     } catch (e) {
       return false;
     }
+  }
+
+  @override
+  Future<MediaMetadata?> getMediaMetadata(XFile xFile) async {
+    final bytes = await xFile.readAsBytes();
+    final result = await metadata.MetadataRetriever.fromBytes(bytes);
+    return MediaMetadata(mimeType: result.mimeType, durationInMs: result.trackDuration);
+  }
+
+  @override
+  Future<MediaMetadata?> getMediaMetadataFromBytes(Uint8List bytes, [String? fileName]) async {
+    final result = await metadata.MetadataRetriever.fromBytes(bytes);
+    return MediaMetadata(mimeType: result.mimeType, durationInMs: result.trackDuration);
   }
 }

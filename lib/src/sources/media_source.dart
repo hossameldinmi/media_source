@@ -1,18 +1,18 @@
 import 'package:equatable/equatable.dart';
-import 'package:media_source/src/media_type.dart';
+import 'package:file_type_plus/file_type_plus.dart';
 import 'package:media_source/src/sources/file_media_source.dart';
 import 'package:media_source/src/sources/memory_media_source.dart';
 import 'package:media_source/src/sources/network_media_source.dart';
 import 'package:media_source/src/utils/object_extensions.dart';
 import 'package:sized_file/sized_file.dart';
 
-abstract class MediaSource<M extends MediaType> extends Equatable {
+abstract class MediaSource<M extends FileType> extends Equatable {
   final String? mimeType;
   final String name;
   final SizedFile? size;
   final M metadata;
 
-  String get ext => name.split('.').last;
+  String get extension => name.split('.').last;
 
   const MediaSource({
     required this.metadata,
@@ -29,7 +29,7 @@ abstract class MediaSource<M extends MediaType> extends Equatable {
   bool get hasThumbnail => this is ThumbnailMedia && ThumbnailMedia.hasThumbnailImp(this as ThumbnailMedia);
   MediaSource? thumbnailOrNull() => asA<ThumbnailMedia>()?.thumbnail;
 
-  T when<T>(
+  T fold<T>(
       {T Function(FileMediaSource<M> fileMedia)? file,
       T Function(MemoryMediaSource<M> memoryMedia)? memory,
       T Function(NetworkMediaSource<M> networkMedia)? network,
@@ -52,10 +52,10 @@ abstract class ThumbnailMedia {
   ThumbnailMedia({required this.thumbnail});
 }
 
-abstract class ToMemoryConvertableMedia<M extends MediaType> {
+abstract class ToMemoryConvertableMedia<M extends FileType> {
   Future<MemoryMediaSource<M>> convertToMemory();
 }
 
-abstract class ToFileConvertableMedia<M extends MediaType> {
+abstract class ToFileConvertableMedia<M extends FileType> {
   Future<FileMediaSource<M>> saveToFile(String path);
 }

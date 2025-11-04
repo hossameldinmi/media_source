@@ -1,9 +1,10 @@
 import 'package:media_source/src/media_type.dart';
 import 'package:media_source/src/sources/media_source.dart';
-import 'package:media_source/src/utils/file_util.dart';
 import 'package:sized_file/sized_file.dart';
+import 'package:file_type_plus/file_type_plus.dart';
+import 'package:media_source/src/utils/file_util.dart' as file_util;
 
-abstract class NetworkMediaSource<M extends MediaType> extends MediaSource<M> {
+abstract class NetworkMediaSource<M extends FileType> extends MediaSource<M> {
   final Uri uri;
   NetworkMediaSource._({
     required this.uri,
@@ -13,7 +14,7 @@ abstract class NetworkMediaSource<M extends MediaType> extends MediaSource<M> {
     required super.metadata,
   }) : super(
           mimeType: mimeType ?? FileUtil.getMimeTypeFromPath(uri.path),
-          name: name ?? FileUtil.getFileNameFromPath(uri.path),
+          name: name ?? file_util.FileUtil.getFileNameFromPath(uri.path),
         );
 
   static NetworkMediaSource fromUrl(
@@ -23,11 +24,11 @@ abstract class NetworkMediaSource<M extends MediaType> extends MediaSource<M> {
     String? mimeType,
     Duration? duration,
     MediaSource? thumbnail,
-    MediaType? mediaType,
+    FileType? mediaType,
   }) {
-    mediaType ??= MediaType.fromPath(url, mimeType);
+    mediaType ??= FileType.fromPath(url, mimeType);
     final uri = Uri.parse(url);
-    if (mediaType.isAny([MediaType.audio])) {
+    if (mediaType.isAny([FileType.audio])) {
       return AudioNetworkMedia(
         uri,
         name: name,
@@ -36,7 +37,7 @@ abstract class NetworkMediaSource<M extends MediaType> extends MediaSource<M> {
         duration: duration,
       );
     }
-    if (mediaType.isAny([MediaType.video])) {
+    if (mediaType.isAny([FileType.video])) {
       return VideoNetworkMedia(
         uri,
         name: name,
@@ -46,7 +47,7 @@ abstract class NetworkMediaSource<M extends MediaType> extends MediaSource<M> {
         thumbnail: thumbnail,
       );
     }
-    if (mediaType.isAny([MediaType.image])) {
+    if (mediaType.isAny([FileType.image])) {
       return ImageNetworkMedia(
         uri,
         name: name,
@@ -55,7 +56,7 @@ abstract class NetworkMediaSource<M extends MediaType> extends MediaSource<M> {
         thumbnail: thumbnail,
       );
     }
-    if (mediaType.isAny([MediaType.document])) {
+    if (mediaType.isAny([FileType.document])) {
       return DocumentNetworkMedia(
         uri,
         name: name,

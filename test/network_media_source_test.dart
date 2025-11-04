@@ -1,106 +1,116 @@
-import 'package:media_source/src/media_type.dart';
+import 'package:file_type_plus/file_type_plus.dart';
 import 'package:media_source/src/sources/network_media_source.dart';
 import 'package:sized_file/sized_file.dart';
-import 'package:test/test.dart';
+import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   group('NetworkMediaSource', () {
     group('fromUrl', () {
       test('should create VideoNetworkMedia for video URL', () {
+        final size = 1024000.b;
         final source = NetworkMediaSource.fromUrl(
           'https://example.com/video.mp4',
           name: 'video.mp4',
-          size: 1024000.b,
+          size: size,
           mimeType: 'video/mp4',
           duration: const Duration(seconds: 120),
-          mediaType: MediaType.video,
+          mediaType: FileType.video,
         );
 
         expect(source, isA<VideoNetworkMedia>());
-        expect(source.name, equals('video.mp4'));
-        expect(source.uri.toString(), equals('https://example.com/video.mp4'));
-        expect(source.size, equals(1024000));
-        expect(source.mimeType, equals('video/mp4'));
+        expect(source.name, 'video.mp4');
+        expect(source.uri.toString(), 'https://example.com/video.mp4');
+        expect(source.size, size);
+        expect(source.mimeType, 'video/mp4');
       });
 
       test('should create AudioNetworkMedia for audio URL', () {
+        final size = 512000.b;
         final source = NetworkMediaSource.fromUrl(
           'https://example.com/audio.mp3',
           name: 'audio.mp3',
-          size: 512000.b,
+          size: size,
           mimeType: 'audio/mp3',
           duration: const Duration(minutes: 3),
-          mediaType: MediaType.audio,
+          mediaType: FileType.audio,
         );
 
         expect(source, isA<AudioNetworkMedia>());
-        expect(source.name, equals('audio.mp3'));
-        expect(source.uri.toString(), equals('https://example.com/audio.mp3'));
+        expect(source.name, 'audio.mp3');
+        expect(source.uri.toString(), 'https://example.com/audio.mp3');
       });
 
       test('should create ImageNetworkMedia for image URL', () {
+        final size = 204800.b;
         final source = NetworkMediaSource.fromUrl(
           'https://example.com/image.png',
           name: 'image.png',
-          size: 204800.b,
+          size: size,
           mimeType: 'image/png',
-          mediaType: MediaType.image,
+          mediaType: FileType.image,
         );
 
         expect(source, isA<ImageNetworkMedia>());
-        expect(source.name, equals('image.png'));
-        expect(source.uri.toString(), equals('https://example.com/image.png'));
+        expect(source.name, 'image.png');
+        expect(source.uri.toString(), 'https://example.com/image.png');
       });
 
       test('should create DocumentNetworkMedia for document URL', () {
+        final size = 1048576.b;
         final source = NetworkMediaSource.fromUrl(
           'https://example.com/document.pdf',
           name: 'document.pdf',
-          size: 1048576.b,
+          size: size,
           mimeType: 'application/pdf',
-          mediaType: MediaType.document,
+          mediaType: FileType.document,
         );
 
         expect(source, isA<DocumentNetworkMedia>());
-        expect(source.name, equals('document.pdf'));
-        expect(source.uri.toString(), equals('https://example.com/document.pdf'));
+        expect(source.name, 'document.pdf');
+        expect(source.uri.toString(), 'https://example.com/document.pdf');
       });
 
       test('should create UnSupportedNetworkMedia for unknown URL', () {
         final source = NetworkMediaSource.fromUrl(
           'https://example.com/file.unknown',
           name: 'file.unknown',
-          mediaType: MediaType.other,
+          mediaType: FileType.other,
         );
 
         expect(source, isA<UnSupportedNetworkMedia>());
-        expect(source.name, equals('file.unknown'));
+        expect(source.name, 'file.unknown');
       });
 
       test('should auto-detect media type from URL when not provided', () {
-        final source = NetworkMediaSource.fromUrl(
-          'https://example.com/video.mp4',
-        );
+        final source1 = NetworkMediaSource.fromUrl('https://example.com/video.mp4');
+        final source2 = NetworkMediaSource.fromUrl('https://example.com/audio.mp3');
+        final source3 = NetworkMediaSource.fromUrl('https://example.com/image.jpg');
+        final source4 = NetworkMediaSource.fromUrl('https://example.com/doc.pdf');
+        final source5 = NetworkMediaSource.fromUrl('https://example.com');
 
-        expect(source, isA<VideoNetworkMedia>());
-      });
+        expect(source1, isA<VideoNetworkMedia>());
+        expect(source1.name, 'video.mp4');
 
-      test('should extract filename from URL when name not provided', () {
-        final source = NetworkMediaSource.fromUrl(
-          'https://example.com/path/to/video.mp4',
-        );
+        expect(source2, isA<AudioNetworkMedia>());
+        expect(source2.name, 'audio.mp3');
 
-        expect(source.name, equals('video.mp4'));
+        expect(source3, isA<ImageNetworkMedia>());
+        expect(source3.name, 'image.jpg');
+
+        expect(source4, isA<DocumentNetworkMedia>());
+        expect(source4.name, 'doc.pdf');
+
+        expect(source5, isA<UnSupportedNetworkMedia>());
       });
 
       test('should use provided mimeType', () {
         final source = NetworkMediaSource.fromUrl(
           'https://example.com/video',
           mimeType: 'video/mp4',
-          mediaType: MediaType.video,
+          mediaType: FileType.video,
         );
 
-        expect(source.mimeType, equals('video/mp4'));
+        expect(source.mimeType, 'video/mp4');
       });
     });
 
@@ -132,20 +142,21 @@ void main() {
 
     group('VideoNetworkMedia', () {
       test('should create with all properties', () {
+        final size = 2048000.b;
         final duration = const Duration(seconds: 180);
         final video = VideoNetworkMedia(
           Uri.parse('https://example.com/video.mp4'),
           name: 'video.mp4',
-          size: 2048000.b,
+          size: size,
           mimeType: 'video/mp4',
           duration: duration,
         );
 
-        expect(video.uri.toString(), equals('https://example.com/video.mp4'));
-        expect(video.name, equals('video.mp4'));
-        expect(video.size, equals(2048000));
-        expect(video.metadata.duration, equals(duration));
-        expect(video.mimeType, equals('video/mp4'));
+        expect(video.uri.toString(), 'https://example.com/video.mp4');
+        expect(video.name, 'video.mp4');
+        expect(video.size, size);
+        expect(video.metadata.duration, duration);
+        expect(video.mimeType, 'video/mp4');
         expect(video.thumbnail, isNull);
         expect(video.hasThumbnail, isFalse);
       });
@@ -162,7 +173,7 @@ void main() {
           thumbnail: thumbnail,
         );
 
-        expect(video.thumbnail, equals(thumbnail));
+        expect(video.thumbnail, thumbnail);
         expect(video.hasThumbnail, isTrue);
       });
 
@@ -174,27 +185,28 @@ void main() {
         final video2 = VideoNetworkMedia(uri, name: 'video.mp4', duration: duration, size: 1.kb);
         final video3 = VideoNetworkMedia(uri, name: 'other.mp4', duration: duration, size: 1.kb);
 
-        expect(video1, equals(video2));
-        expect(video1, isNot(equals(video3)));
+        expect(video1, video2);
+        expect(video1, isNot(video3));
       });
     });
 
     group('AudioNetworkMedia', () {
       test('should create with all properties', () {
+        final size = 4096000.mb;
         final duration = const Duration(minutes: 4);
         final audio = AudioNetworkMedia(
           Uri.parse('https://example.com/audio.mp3'),
           name: 'audio.mp3',
-          size: 4096000.mb,
+          size: size,
           mimeType: 'audio/mp3',
           duration: duration,
         );
 
-        expect(audio.uri.toString(), equals('https://example.com/audio.mp3'));
-        expect(audio.name, equals('audio.mp3'));
-        expect(audio.size, equals(4096000));
-        expect(audio.metadata.duration, equals(duration));
-        expect(audio.mimeType, equals('audio/mp3'));
+        expect(audio.uri.toString(), 'https://example.com/audio.mp3');
+        expect(audio.name, 'audio.mp3');
+        expect(audio.size, size);
+        expect(audio.metadata.duration, duration);
+        expect(audio.mimeType, 'audio/mp3');
       });
 
       test('should be equatable', () {
@@ -205,24 +217,25 @@ void main() {
         final audio2 = AudioNetworkMedia(uri, name: 'audio.mp3', duration: duration, size: 1.kb);
         final audio3 = AudioNetworkMedia(uri, name: 'other.mp3', duration: duration, size: 1.kb);
 
-        expect(audio1, equals(audio2));
-        expect(audio1, isNot(equals(audio3)));
+        expect(audio1, audio2);
+        expect(audio1, isNot(audio3));
       });
     });
 
     group('ImageNetworkMedia', () {
       test('should create with all properties', () {
+        final size = 512000.b;
         final image = ImageNetworkMedia(
           Uri.parse('https://example.com/image.png'),
           name: 'image.png',
-          size: 512000.b,
+          size: size,
           mimeType: 'image/png',
         );
 
-        expect(image.uri.toString(), equals('https://example.com/image.png'));
-        expect(image.name, equals('image.png'));
-        expect(image.size, equals(512000));
-        expect(image.mimeType, equals('image/png'));
+        expect(image.uri.toString(), 'https://example.com/image.png');
+        expect(image.name, 'image.png');
+        expect(image.size, size);
+        expect(image.mimeType, 'image/png');
       });
 
       test('should support thumbnail', () {
@@ -237,7 +250,7 @@ void main() {
           thumbnail: thumbnail,
         );
 
-        expect(image.thumbnail, equals(thumbnail));
+        expect(image.thumbnail, thumbnail);
       });
 
       test('should be equatable', () {
@@ -247,24 +260,25 @@ void main() {
         final image2 = ImageNetworkMedia(uri, name: 'image.png', size: 1.kb);
         final image3 = ImageNetworkMedia(uri, name: 'other.png', size: 1.kb);
 
-        expect(image1, equals(image2));
-        expect(image1, isNot(equals(image3)));
+        expect(image1, image2);
+        expect(image1, isNot(image3));
       });
     });
 
     group('DocumentNetworkMedia', () {
       test('should create with all properties', () {
+        final size = 2048000.b;
         final doc = DocumentNetworkMedia(
           Uri.parse('https://example.com/document.pdf'),
           name: 'document.pdf',
-          size: 2048000.b,
+          size: size,
           mimeType: 'application/pdf',
         );
 
-        expect(doc.uri.toString(), equals('https://example.com/document.pdf'));
-        expect(doc.name, equals('document.pdf'));
-        expect(doc.size, equals(2048000));
-        expect(doc.mimeType, equals('application/pdf'));
+        expect(doc.uri.toString(), 'https://example.com/document.pdf');
+        expect(doc.name, 'document.pdf');
+        expect(doc.size, size);
+        expect(doc.mimeType, 'application/pdf');
       });
 
       test('should be equatable', () {
@@ -274,24 +288,25 @@ void main() {
         final doc2 = DocumentNetworkMedia(uri, name: 'doc.pdf', size: 1.kb);
         final doc3 = DocumentNetworkMedia(uri, name: 'other.pdf', size: 1.kb);
 
-        expect(doc1, equals(doc2));
-        expect(doc1, isNot(equals(doc3)));
+        expect(doc1, doc2);
+        expect(doc1, isNot(doc3));
       });
     });
 
     group('UnSupportedNetworkMedia', () {
       test('should create with all properties', () {
+        final size = 1024.b;
         final unsupported = UnSupportedNetworkMedia(
           Uri.parse('https://example.com/file.unknown'),
           name: 'file.unknown',
-          size: 1024.b,
+          size: size,
           mimeType: 'application/octet-stream',
         );
 
-        expect(unsupported.uri.toString(), equals('https://example.com/file.unknown'));
-        expect(unsupported.name, equals('file.unknown'));
-        expect(unsupported.size, equals(1024));
-        expect(unsupported.mimeType, equals('application/octet-stream'));
+        expect(unsupported.uri.toString(), 'https://example.com/file.unknown');
+        expect(unsupported.name, 'file.unknown');
+        expect(unsupported.size, size);
+        expect(unsupported.mimeType, 'application/octet-stream');
       });
 
       test('should be equatable', () {
@@ -301,8 +316,8 @@ void main() {
         final unsupported2 = UnSupportedNetworkMedia(uri, name: 'file.unknown', size: 1024.b);
         final unsupported3 = UnSupportedNetworkMedia(uri, name: 'other.unknown', size: 1024.b);
 
-        expect(unsupported1, equals(unsupported2));
-        expect(unsupported1, isNot(equals(unsupported3)));
+        expect(unsupported1, unsupported2);
+        expect(unsupported1, isNot(unsupported3));
       });
     });
 
@@ -312,9 +327,9 @@ void main() {
           'https://example.com:8080/path/to/video.mp4?param=value',
         );
 
-        expect(source.uri.scheme, equals('https'));
-        expect(source.uri.host, equals('example.com'));
-        expect(source.uri.port, equals(8080));
+        expect(source.uri.scheme, 'https');
+        expect(source.uri.host, 'example.com');
+        expect(source.uri.port, 8080);
         expect(source.uri.path, contains('video.mp4'));
       });
 
@@ -323,7 +338,7 @@ void main() {
           'https://example.com/video.mp4',
         );
 
-        expect(source.ext, equals('mp4'));
+        expect(source.extension, 'mp4');
       });
     });
   });

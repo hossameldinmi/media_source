@@ -52,6 +52,8 @@ flutter_*.png
 .flutter-plugins
 .flutter-plugins-dependencies
 .fvm/
+*.log
+pubspec.lock
 
 # IntelliJ related
 *.iml

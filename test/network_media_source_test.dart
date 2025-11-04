@@ -157,24 +157,6 @@ void main() {
         expect(video.size, size);
         expect(video.metadata.duration, duration);
         expect(video.mimeType, 'video/mp4');
-        expect(video.thumbnail, isNull);
-        expect(video.hasThumbnail, isFalse);
-      });
-
-      test('should support thumbnail', () {
-        final thumbnail = ImageNetworkMedia(
-          Uri.parse('https://example.com/thumb.jpg'),
-          name: 'thumb.jpg',
-        );
-
-        final video = VideoNetworkMedia(
-          Uri.parse('https://example.com/video.mp4'),
-          name: 'video.mp4',
-          thumbnail: thumbnail,
-        );
-
-        expect(video.thumbnail, thumbnail);
-        expect(video.hasThumbnail, isTrue);
       });
 
       test('should be equatable', () {
@@ -236,21 +218,6 @@ void main() {
         expect(image.name, 'image.png');
         expect(image.size, size);
         expect(image.mimeType, 'image/png');
-      });
-
-      test('should support thumbnail', () {
-        final thumbnail = ImageNetworkMedia(
-          Uri.parse('https://example.com/thumb.jpg'),
-          name: 'thumb.jpg',
-        );
-
-        final image = ImageNetworkMedia(
-          Uri.parse('https://example.com/image.png'),
-          name: 'image.png',
-          thumbnail: thumbnail,
-        );
-
-        expect(image.thumbnail, thumbnail);
       });
 
       test('should be equatable', () {

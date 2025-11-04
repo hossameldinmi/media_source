@@ -3,7 +3,6 @@ import 'package:file_type_plus/file_type_plus.dart';
 import 'package:media_source/src/sources/file_media_source.dart';
 import 'package:media_source/src/sources/memory_media_source.dart';
 import 'package:media_source/src/sources/network_media_source.dart';
-import 'package:media_source/src/utils/object_extensions.dart';
 import 'package:sized_file/sized_file.dart';
 
 abstract class MediaSource<M extends FileType> extends Equatable {
@@ -26,9 +25,6 @@ abstract class MediaSource<M extends FileType> extends Equatable {
 
   bool isAnyType(List<Type> list) => list.contains(runtimeType);
 
-  bool get hasThumbnail => this is ThumbnailMedia && ThumbnailMedia.hasThumbnailImp(this as ThumbnailMedia);
-  MediaSource? thumbnailOrNull() => asA<ThumbnailMedia>()?.thumbnail;
-
   T fold<T>(
       {T Function(FileMediaSource<M> fileMedia)? file,
       T Function(MemoryMediaSource<M> memoryMedia)? memory,
@@ -43,13 +39,6 @@ abstract class MediaSource<M extends FileType> extends Equatable {
     }
     return orElse();
   }
-}
-
-abstract class ThumbnailMedia {
-  final MediaSource? thumbnail;
-  bool get hasThumbnail;
-  static bool hasThumbnailImp(ThumbnailMedia thumbnailMedia) => thumbnailMedia.thumbnail != null;
-  ThumbnailMedia({required this.thumbnail});
 }
 
 abstract class ToMemoryConvertableMedia<M extends FileType> {

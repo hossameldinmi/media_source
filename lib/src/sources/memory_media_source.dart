@@ -38,7 +38,6 @@ abstract class MemoryMediaSource<M extends FileType> extends MediaSource<M> impl
     String? name,
     String? mimeType,
     Duration? duration,
-    MediaSource? thumbnail,
     FileType? mediaType,
   }) async {
     mediaType ??= FileType.fromBytes(bytes, mimeType);
@@ -63,7 +62,6 @@ abstract class MemoryMediaSource<M extends FileType> extends MediaSource<M> impl
         bytes,
         name: name,
         duration: duration,
-        thumbnail: thumbnail,
         mimeType: mimeType,
       );
     }
@@ -89,16 +87,10 @@ abstract class MemoryMediaSource<M extends FileType> extends MediaSource<M> impl
   }
 }
 
-class VideoMemoryMedia extends MemoryMediaSource<VideoType> implements ThumbnailMedia {
-  @override
-  final MediaSource? thumbnail;
-  @override
-  bool get hasThumbnail => ThumbnailMedia.hasThumbnailImp(this);
-
+class VideoMemoryMedia extends MemoryMediaSource<VideoType> {
   VideoMemoryMedia(
     super.bytes, {
     required super.name,
-    this.thumbnail,
     Duration? duration,
     super.mimeType,
   }) : super._(metadata: VideoType(duration));
@@ -119,7 +111,6 @@ class VideoMemoryMedia extends MemoryMediaSource<VideoType> implements Thumbnail
       duration: metadata.duration,
       mimeType: mimeType,
       name: name,
-      thumbnail: thumbnail,
       size: size,
     );
   }

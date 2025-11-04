@@ -23,7 +23,6 @@ abstract class NetworkMediaSource<M extends FileType> extends MediaSource<M> {
     SizedFile? size,
     String? mimeType,
     Duration? duration,
-    MediaSource? thumbnail,
     FileType? mediaType,
   }) {
     mediaType ??= FileType.fromPath(url, mimeType);
@@ -44,7 +43,6 @@ abstract class NetworkMediaSource<M extends FileType> extends MediaSource<M> {
         size: size,
         mimeType: mimeType,
         duration: duration,
-        thumbnail: thumbnail,
       );
     }
     if (mediaType.isAny([FileType.image])) {
@@ -53,7 +51,6 @@ abstract class NetworkMediaSource<M extends FileType> extends MediaSource<M> {
         name: name,
         size: size,
         mimeType: mimeType,
-        thumbnail: thumbnail,
       );
     }
     if (mediaType.isAny([FileType.document])) {
@@ -87,15 +84,10 @@ abstract class NetworkMediaSource<M extends FileType> extends MediaSource<M> {
   List<Object?> get props => [uri, ...super.props];
 }
 
-class VideoNetworkMedia extends NetworkMediaSource<VideoType> implements ThumbnailMedia {
-  @override
-  final MediaSource? thumbnail;
-  @override
-  bool get hasThumbnail => ThumbnailMedia.hasThumbnailImp(this);
+class VideoNetworkMedia extends NetworkMediaSource<VideoType> {
   VideoNetworkMedia(
     Uri uri, {
     Duration? duration,
-    this.thumbnail,
     super.mimeType,
     super.name,
     super.size,
@@ -107,7 +99,6 @@ class VideoNetworkMedia extends NetworkMediaSource<VideoType> implements Thumbna
   VideoNetworkMedia.url(
     String url, {
     Duration? duration,
-    this.thumbnail,
     super.mimeType,
     super.name,
     super.size,
@@ -143,15 +134,9 @@ class AudioNetworkMedia extends NetworkMediaSource<AudioType> {
         );
 }
 
-class ImageNetworkMedia extends NetworkMediaSource<ImageType> implements ThumbnailMedia {
-  @override
-  final MediaSource? thumbnail;
-  @override
-  bool get hasThumbnail => ThumbnailMedia.hasThumbnailImp(this);
-
+class ImageNetworkMedia extends NetworkMediaSource<ImageType> {
   ImageNetworkMedia(
     Uri uri, {
-    this.thumbnail,
     super.mimeType,
     super.name,
     super.size,
@@ -162,7 +147,6 @@ class ImageNetworkMedia extends NetworkMediaSource<ImageType> implements Thumbna
 
   ImageNetworkMedia.url(
     String url, {
-    this.thumbnail,
     super.mimeType,
     super.name,
     super.size,

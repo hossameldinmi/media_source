@@ -176,35 +176,6 @@ void main() {
         expect(video.metadata.duration, duration);
         expect(video.mimeType, asset.mimeType);
         expect(video.size, bytes.lengthInBytes.b);
-        expect(video.thumbnail, isNull);
-        expect(video.hasThumbnail, isFalse);
-      });
-
-      test('should support thumbnail', () async {
-        final asset = Fixture.sample_video;
-        final thumbnail = Fixture.sample_image;
-        final bytes = await asset.file.readAsBytes();
-        final duration = asset.duration!;
-        final thumbnailSrc = ImageMemoryMedia(
-          await thumbnail.file.readAsBytes(),
-          name: thumbnail.file.name,
-          mimeType: thumbnail.mimeType,
-        );
-        final video = VideoMemoryMedia(
-          bytes,
-          name: asset.file.name,
-          duration: duration,
-          mimeType: asset.mimeType,
-          thumbnail: thumbnailSrc,
-        );
-
-        expect(video.bytes, bytes);
-        expect(video.name, asset.file.name);
-        expect(video.metadata.duration, duration);
-        expect(video.mimeType, asset.mimeType);
-        expect(video.size, bytes.lengthInBytes.b);
-        expect(video.thumbnail, thumbnailSrc);
-        expect(video.hasThumbnail, isTrue);
       });
 
       test('should be equatable', () async {
@@ -524,36 +495,6 @@ void main() {
         expect(await savedFile.file.exists(), isTrue);
         expect(await PlatformUtils.instance.directoryExists('$tempDir/nested/folder'), isTrue);
       });
-
-      test('should preserve video thumbnail when saving', () async {
-        final asset = Fixture.sample_video;
-        final thumbnailAsset = Fixture.sample_image;
-        final bytes = await asset.file.readAsBytes();
-        final thumbnailBytes = await thumbnailAsset.file.readAsBytes();
-        final duration = asset.duration!;
-
-        final thumbnail = ImageMemoryMedia(
-          thumbnailBytes,
-          name: thumbnailAsset.file.name,
-          mimeType: thumbnailAsset.mimeType,
-        );
-
-        final video = VideoMemoryMedia(
-          bytes,
-          name: asset.file.name,
-          duration: duration,
-          mimeType: asset.mimeType,
-          thumbnail: thumbnail,
-        );
-
-        final filePath = '$tempDir/video_with_thumb.mp4';
-
-        final savedFile = await video.saveToFile(filePath);
-
-        expect(savedFile, isA<VideoFileMedia>());
-        expect(savedFile.thumbnail, thumbnail);
-        expect(savedFile.hasThumbnail, isTrue);
-      });
     });
 
     group('saveToFolder', () {
@@ -665,34 +606,6 @@ void main() {
         expect(savedFile.size, other.size);
         expect(await savedFile.file.exists(), isTrue);
         expect(await savedFile.file.readAsBytes(), bytes);
-      });
-
-      test('should preserve video thumbnail when saving to folder', () async {
-        final asset = Fixture.sample_video;
-        final thumbnailAsset = Fixture.sample_image;
-        final bytes = await asset.file.readAsBytes();
-        final thumbnailBytes = await thumbnailAsset.file.readAsBytes();
-        final duration = asset.duration!;
-
-        final thumbnail = ImageMemoryMedia(
-          thumbnailBytes,
-          name: thumbnailAsset.file.name,
-          mimeType: thumbnailAsset.mimeType,
-        );
-
-        final video = VideoMemoryMedia(
-          bytes,
-          name: asset.file.name,
-          duration: duration,
-          mimeType: asset.mimeType,
-          thumbnail: thumbnail,
-        );
-
-        final savedFile = await video.saveToFolder(tempDir);
-
-        expect(savedFile, isA<VideoFileMedia>());
-        expect(savedFile.thumbnailOrNull(), thumbnail);
-        expect(savedFile.hasThumbnail, isTrue);
       });
 
       test('should overwrite existing file with same name in folder', () async {

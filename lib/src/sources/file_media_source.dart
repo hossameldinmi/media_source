@@ -48,7 +48,6 @@ abstract class FileMediaSource<M extends FileType> extends MediaSource<M> implem
     SizedFile? size,
     String? mimeType,
     Duration? duration,
-    MediaSource? thumbnail,
     FileType? mediaType,
   }) =>
       fromFile(
@@ -60,7 +59,6 @@ abstract class FileMediaSource<M extends FileType> extends MediaSource<M> implem
         name: name,
         mimeType: mimeType,
         duration: duration,
-        thumbnail: thumbnail,
         mediaType: mediaType,
         size: size,
       );
@@ -70,7 +68,6 @@ abstract class FileMediaSource<M extends FileType> extends MediaSource<M> implem
     String? name,
     String? mimeType,
     Duration? duration,
-    MediaSource? thumbnail,
     FileType? mediaType,
     SizedFile? size,
   }) async {
@@ -90,7 +87,6 @@ abstract class FileMediaSource<M extends FileType> extends MediaSource<M> implem
         file,
         name: name,
         duration: duration,
-        thumbnail: thumbnail,
         mimeType: mimeType,
         size: size,
       );
@@ -123,25 +119,18 @@ abstract class FileMediaSource<M extends FileType> extends MediaSource<M> implem
   List<Object?> get props => [file, ...super.props];
 }
 
-class VideoFileMedia extends FileMediaSource<VideoType> implements ThumbnailMedia {
-  @override
-  final MediaSource? thumbnail;
-  @override
-  bool get hasThumbnail => ThumbnailMedia.hasThumbnailImp(this);
-
+class VideoFileMedia extends FileMediaSource<VideoType> {
   VideoFileMedia._({
     required super.file,
     required super.name,
     required Duration? duration,
     required super.size,
     required super.mimeType,
-    required this.thumbnail,
   }) : super._(metadata: VideoType(duration));
   static Future<VideoFileMedia> fromPath(
     String path, {
     String? name,
     Duration? duration,
-    MediaSource? thumbnail,
     String? mimeType,
     SizedFile? size,
   }) async {
@@ -155,7 +144,6 @@ class VideoFileMedia extends FileMediaSource<VideoType> implements ThumbnailMedi
       file,
       name: name,
       duration: duration,
-      thumbnail: thumbnail,
       mimeType: mimeType,
       size: size,
     );
@@ -165,7 +153,6 @@ class VideoFileMedia extends FileMediaSource<VideoType> implements ThumbnailMedi
     XFile file, {
     String? name,
     Duration? duration,
-    MediaSource? thumbnail,
     String? mimeType,
     SizedFile? size,
   }) async {
@@ -181,7 +168,6 @@ class VideoFileMedia extends FileMediaSource<VideoType> implements ThumbnailMedi
       size: size,
       name: name,
       duration: duration,
-      thumbnail: thumbnail,
       mimeType: mimeType,
     );
   }
@@ -195,7 +181,6 @@ class VideoFileMedia extends FileMediaSource<VideoType> implements ThumbnailMedi
       size: size ?? await file.size(),
       name: name,
       duration: metadata.duration,
-      thumbnail: thumbnail,
       mimeType: mimeType,
     );
   }
@@ -206,7 +191,6 @@ class VideoFileMedia extends FileMediaSource<VideoType> implements ThumbnailMedi
       await file.readAsBytes(),
       name: name,
       duration: metadata.duration,
-      thumbnail: thumbnail,
       mimeType: mimeType,
     );
   }

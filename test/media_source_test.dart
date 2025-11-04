@@ -66,66 +66,6 @@ void main() {
       });
     });
 
-    group('hasThumbnail', () {
-      test('should return true for media with thumbnail', () {
-        final bytes = Uint8List.fromList([0, 1, 2, 3]);
-        final thumbBytes = Uint8List.fromList([4, 5, 6, 7]);
-        final thumbnail = ImageMemoryMedia(thumbBytes, name: 'thumb.jpg');
-
-        final source = VideoMemoryMedia(
-          bytes,
-          name: 'video.mp4',
-          thumbnail: thumbnail,
-        );
-
-        expect(source.hasThumbnail, isTrue);
-      });
-
-      test('should return false for media without thumbnail', () {
-        final bytes = Uint8List.fromList([0, 1, 2, 3]);
-        final source = VideoMemoryMedia(bytes, name: 'video.mp4');
-
-        expect(source.hasThumbnail, isFalse);
-      });
-
-      test('should return false for non-thumbnail media', () {
-        final bytes = Uint8List.fromList([0, 1, 2, 3]);
-        final source = ImageMemoryMedia(bytes, name: 'image.png');
-
-        expect(source.hasThumbnail, isFalse);
-      });
-    });
-
-    group('thumbnailOrNull', () {
-      test('should return thumbnail when available', () {
-        final bytes = Uint8List.fromList([0, 1, 2, 3]);
-        final thumbBytes = Uint8List.fromList([4, 5, 6, 7]);
-        final thumbnail = ImageMemoryMedia(thumbBytes, name: 'thumb.jpg');
-
-        final source = VideoMemoryMedia(
-          bytes,
-          name: 'video.mp4',
-          thumbnail: thumbnail,
-        );
-
-        expect(source.thumbnailOrNull(), thumbnail);
-      });
-
-      test('should return null when thumbnail not available', () {
-        final bytes = Uint8List.fromList([0, 1, 2, 3]);
-        final source = VideoMemoryMedia(bytes, name: 'video.mp4');
-
-        expect(source.thumbnailOrNull(), isNull);
-      });
-
-      test('should return null for non-thumbnail media', () {
-        final bytes = Uint8List.fromList([0, 1, 2, 3]);
-        final source = AudioMemoryMedia(bytes, name: 'audio.mp3');
-
-        expect(source.thumbnailOrNull(), isNull);
-      });
-    });
-
     group('when pattern', () {
       test('should call file callback for FileMediaSource', () async {
         // Note: Creating FileMediaSource requires actual file operations
@@ -258,36 +198,6 @@ void main() {
         final source2 = VideoMemoryMedia(bytes, name: 'video.mp4', duration: const Duration(seconds: 120));
 
         expect(source1, isNot(source2));
-      });
-    });
-
-    group('ThumbnailMedia', () {
-      test('should implement ThumbnailMedia interface', () {
-        final bytes = Uint8List.fromList([0, 1, 2, 3]);
-        final source = VideoMemoryMedia(bytes, name: 'video.mp4');
-
-        expect(source, isA<ThumbnailMedia>());
-      });
-
-      test('hasThumbnailImp should return true when thumbnail exists', () {
-        final bytes = Uint8List.fromList([0, 1, 2, 3]);
-        final thumbBytes = Uint8List.fromList([4, 5, 6, 7]);
-        final thumbnail = ImageMemoryMedia(thumbBytes, name: 'thumb.jpg');
-
-        final source = VideoMemoryMedia(
-          bytes,
-          name: 'video.mp4',
-          thumbnail: thumbnail,
-        );
-
-        expect(ThumbnailMedia.hasThumbnailImp(source), isTrue);
-      });
-
-      test('hasThumbnailImp should return false when thumbnail is null', () {
-        final bytes = Uint8List.fromList([0, 1, 2, 3]);
-        final source = VideoMemoryMedia(bytes, name: 'video.mp4');
-
-        expect(ThumbnailMedia.hasThumbnailImp(source), isFalse);
       });
     });
   });

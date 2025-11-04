@@ -25,9 +25,6 @@
 
 A Flutter package for handling different media sources with automatic type detection and metadata extraction.
 
-[![pub package](https://img.shields.io/pub/v/media_source.svg)](https://pub.dev/packages/media_source)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-
 ## Features
 
 - 🎯 **Type-safe media source abstraction** - Handle files, memory, and network sources uniformly
@@ -45,7 +42,7 @@ Add `media_source` to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  media_source: ^0.1.0
+  media_source: ^0.2.0-alpha.2
 ```
 
 Then run:

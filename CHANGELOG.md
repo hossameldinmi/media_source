@@ -5,6 +5,36 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.0-alpha.2]
+
+### Added
+- Comprehensive test coverage achieving 99.7% coverage
+- Tests for `UrlMedia` class with both `Uri` and `.url()` constructors
+- Tests for `.url()` constructors in all network media types
+- Test for `FileMediaSource` fold method callback
+- Test for `DocumentType` fold method callback
+- Test for `UrlType` fold method callback
+- Test for `stringify` property in `MemoryMediaSource`
+- Test for `props` property in `FileMediaSource`
+- Test for `moveTo()` when target file already exists
+- Extended documentation in main library file with usage examples
+
+### Changed
+- Refactored `DurationMedia` from abstract class with constructor to interface-only (getter pattern)
+- Simplified `VideoFileMedia.fromFile()` to use inline null-coalescing instead of try-catch
+- Improved `FileMediaSource.fromPath()` to explicitly handle size parameter conversion
+- Removed unused `dart:developer` import from `file_media_source.dart`
+
+### Fixed
+- All test assertions now use direct comparison instead of deprecated `equals()` matcher
+- Error handling in file operations now more consistent across media types
+
+### Testing
+- Added 13 new test cases across multiple test files
+- Total test count: 157 tests (155 passing, 2 skipped)
+- Test coverage improved from ~91% to 99.7%
+- Comprehensive coverage of all media source types and operations
+
 ## [0.1.0-alpha.1] - 2025-11-03
 
 ### Added

@@ -2,7 +2,6 @@ import 'dart:typed_data';
 
 import 'package:file_type_plus/file_type_plus.dart';
 import 'package:media_source/src/media_type.dart';
-import 'package:media_source/src/sources/media_source.dart';
 import 'package:media_source/src/sources/memory_media_source.dart';
 import 'package:media_source/src/sources/network_media_source.dart';
 import 'package:sized_file/sized_file.dart';

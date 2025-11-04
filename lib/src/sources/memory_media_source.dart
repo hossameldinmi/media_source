@@ -1,5 +1,4 @@
 import 'dart:typed_data';
-
 import 'package:cross_file/cross_file.dart';
 import 'package:media_source/src/media_type.dart';
 import 'package:media_source/src/sources/file_media_source.dart';
@@ -8,7 +7,6 @@ import 'package:media_source/src/utils/platform_utils.dart';
 import 'package:sized_file/sized_file.dart';
 import 'package:path/path.dart' as p;
 import 'package:file_type_plus/file_type_plus.dart';
-import 'package:media_source/src/utils/file_util.dart' as file_util;
 
 abstract class MemoryMediaSource<M extends FileType> extends MediaSource<M> implements ToFileConvertableMedia<M> {
   final Uint8List bytes;
@@ -31,59 +29,6 @@ abstract class MemoryMediaSource<M extends FileType> extends MediaSource<M> impl
   Future<FileMediaSource<M>> saveToFolder(String folderPath) {
     final path = p.join(folderPath, name);
     return saveToFile(path);
-  }
-
-  static Future<MemoryMediaSource<FileType>> fromBytes(
-    Uint8List bytes, {
-    String? name,
-    String? mimeType,
-    Duration? duration,
-    FileType? mediaType,
-  }) async {
-    mediaType ??= FileType.fromBytes(bytes, mimeType);
-    if ([
-      if (mediaType.isAny([FileType.audio, FileType.video])) duration,
-      mimeType
-    ].contains(null)) {
-      final metadata = await file_util.FileUtil.getFileMetadataFromBytes(bytes, name);
-      mimeType ??= metadata?.mimeType;
-      duration ??= metadata?.duration;
-    }
-    if (mediaType.isAny([FileType.audio])) {
-      return AudioMemoryMedia(
-        bytes,
-        name: name,
-        duration: duration,
-        mimeType: mimeType,
-      );
-    }
-    if (mediaType.isAny([FileType.video])) {
-      return VideoMemoryMedia(
-        bytes,
-        name: name,
-        duration: duration,
-        mimeType: mimeType,
-      );
-    }
-    if (mediaType.isAny([FileType.image])) {
-      return ImageMemoryMedia(
-        bytes,
-        name: name,
-        mimeType: mimeType,
-      );
-    }
-    if (mediaType.isAny([FileType.document])) {
-      return DocumentMemoryMedia(
-        bytes,
-        name: name,
-        mimeType: mimeType,
-      );
-    }
-    return OtherTypeMemoryMedia(
-      bytes,
-      name: name,
-      mimeType: mimeType,
-    );
   }
 }
 

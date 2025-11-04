@@ -1,7 +1,6 @@
 import 'package:cross_file/cross_file.dart';
 import 'package:file_type_plus/file_type_plus.dart';
 import 'package:flutter/foundation.dart';
-import 'package:media_source/src/utils/platform_utils.dart';
 import 'package:uuid/uuid.dart';
 
 class FileUtil {
@@ -9,9 +8,7 @@ class FileUtil {
 
   static String getFileNameFromPath(String path) => path.split('/').last;
 
-  static Future<MediaMetadata?> getFileMetadata(XFile file, FileType mediaType) =>
-      PlatformUtils.instance.getMediaMetadata(file);
-
-  static Future<MediaMetadata?> getFileMetadataFromBytes(Uint8List bytes, String? fileName) =>
-      PlatformUtils.instance.getMediaMetadataFromBytes(bytes, fileName);
+  static Future<FileType> fileTypeFromFile(XFile file, String? mimeType) async {
+    return kIsWeb ? FileType.fromBytes(await file.readAsBytes(), mimeType) : FileType.fromPath(file.path, mimeType);
+  }
 }

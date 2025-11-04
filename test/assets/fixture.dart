@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names
+
 import 'package:cross_file/cross_file.dart';
 import 'package:sized_file/sized_file.dart';
 

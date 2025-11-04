@@ -1,6 +1,5 @@
 import 'dart:developer';
 import 'package:cross_file/cross_file.dart';
-import 'package:flutter/foundation.dart';
 import 'package:media_source/src/media_type.dart';
 import 'package:media_source/src/sources/media_source.dart';
 import 'package:media_source/src/sources/memory_media_source.dart';
@@ -71,8 +70,7 @@ abstract class FileMediaSource<M extends FileType> extends MediaSource<M> implem
     FileType? mediaType,
     SizedFile? size,
   }) async {
-    mediaType ??=
-        kIsWeb ? FileType.fromBytes(await file.readAsBytes(), mimeType) : FileType.fromPath(file.path, mimeType);
+    mediaType ??= await file_util.FileUtil.fileTypeFromFile(file, mimeType);
     if (mediaType.isAny([FileType.audio])) {
       return AudioFileMedia.fromFile(
         file,
@@ -156,12 +154,10 @@ class VideoFileMedia extends FileMediaSource<VideoType> {
     String? mimeType,
     SizedFile? size,
   }) async {
-    duration ??= (await file_util.FileUtil.getFileMetadata(file, FileType.video))?.duration;
-
     try {
       size ??= await file.size();
     } catch (e) {
-      log('Failed to get file length: $e', level: 900);
+      log('Failed to get file length: $e');
     }
     return VideoFileMedia._(
       file: file,
@@ -234,8 +230,6 @@ class AudioFileMedia extends FileMediaSource<AudioType> {
     String? mimeType,
     SizedFile? size,
   }) async {
-    duration ??= (await file_util.FileUtil.getFileMetadata(file, FileType.audio))?.duration;
-
     return AudioFileMedia._(
       file: file,
       size: size ?? await file.size(),

@@ -1,14 +1,12 @@
-import 'dart:developer';
 import 'package:cross_file/cross_file.dart';
 import 'package:media_source/src/media_type.dart';
 import 'package:media_source/src/sources/media_source.dart';
 import 'package:media_source/src/sources/memory_media_source.dart';
-import 'package:media_source/src/utils/file_extensions.dart';
+import 'package:media_source/src/extensions/file_extensions.dart';
 import 'package:media_source/src/utils/platform_utils.dart';
 import 'package:path/path.dart' as p;
 import 'package:sized_file/sized_file.dart';
 import 'package:file_type_plus/file_type_plus.dart';
-import 'package:media_source/src/utils/file_util.dart' as file_util;
 
 abstract class FileMediaSource<M extends FileType> extends MediaSource<M> implements ToMemoryConvertableMedia<M> {
   final XFile file;
@@ -70,7 +68,7 @@ abstract class FileMediaSource<M extends FileType> extends MediaSource<M> implem
     FileType? mediaType,
     SizedFile? size,
   }) async {
-    mediaType ??= await file_util.FileUtil.fileTypeFromFile(file, mimeType);
+    mediaType ??= await file.getMediaType(mimeType);
     if (mediaType.isAny([FileType.audio])) {
       return AudioFileMedia.fromFile(
         file,
@@ -154,14 +152,9 @@ class VideoFileMedia extends FileMediaSource<VideoType> {
     String? mimeType,
     SizedFile? size,
   }) async {
-    try {
-      size ??= await file.size();
-    } catch (e) {
-      log('Failed to get file length: $e');
-    }
     return VideoFileMedia._(
       file: file,
-      size: size,
+      size: size ?? await file.size(),
       name: name,
       duration: duration,
       mimeType: mimeType,

@@ -103,6 +103,15 @@ void main() {
         expect(result, 'video');
       });
 
+      test('should call document callback for DocumentType', () {
+        final documentType = DocumentType();
+        final result = documentType.fold(
+          document: (_) => 'document',
+          orElse: () => 'other',
+        );
+        expect(result, 'document');
+      });
+
       test('should call orElse when no callback matches', () {
         final imageType = ImageType();
         final result = imageType.fold(
@@ -110,6 +119,15 @@ void main() {
           orElse: () => 'other',
         );
         expect(result, 'other');
+      });
+
+      test('should call url callback for UrlType', () {
+        final urlType = UrlType();
+        final result = urlType.fold(
+          url: (_) => 'url',
+          orElse: () => 'other',
+        );
+        expect(result, 'url');
       });
     });
   });

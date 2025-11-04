@@ -1,4 +1,5 @@
 import 'package:file_type_plus/file_type_plus.dart';
+import 'package:media_source/src/media_type.dart';
 import 'package:media_source/src/sources/network_media_source.dart';
 import 'package:sized_file/sized_file.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -170,6 +171,24 @@ void main() {
         expect(video1, video2);
         expect(video1, isNot(video3));
       });
+
+      test('should create from url string using .url constructor', () {
+        final duration = const Duration(seconds: 120);
+        final size = 2048000.b;
+        final video = VideoNetworkMedia.url(
+          'https://example.com/video.mp4',
+          name: 'video.mp4',
+          duration: duration,
+          size: size,
+          mimeType: 'video/mp4',
+        );
+
+        expect(video.uri.toString(), 'https://example.com/video.mp4');
+        expect(video.name, 'video.mp4');
+        expect(video.metadata.duration, duration);
+        expect(video.size, size);
+        expect(video.mimeType, 'video/mp4');
+      });
     });
 
     group('AudioNetworkMedia', () {
@@ -202,6 +221,24 @@ void main() {
         expect(audio1, audio2);
         expect(audio1, isNot(audio3));
       });
+
+      test('should create from url string using .url constructor', () {
+        final duration = const Duration(minutes: 3);
+        final size = 4096000.b;
+        final audio = AudioNetworkMedia.url(
+          'https://example.com/audio.mp3',
+          name: 'audio.mp3',
+          duration: duration,
+          size: size,
+          mimeType: 'audio/mp3',
+        );
+
+        expect(audio.uri.toString(), 'https://example.com/audio.mp3');
+        expect(audio.name, 'audio.mp3');
+        expect(audio.metadata.duration, duration);
+        expect(audio.size, size);
+        expect(audio.mimeType, 'audio/mp3');
+      });
     });
 
     group('ImageNetworkMedia', () {
@@ -229,6 +266,21 @@ void main() {
 
         expect(image1, image2);
         expect(image1, isNot(image3));
+      });
+
+      test('should create from url string using .url constructor', () {
+        final size = 512000.b;
+        final image = ImageNetworkMedia.url(
+          'https://example.com/image.png',
+          name: 'image.png',
+          size: size,
+          mimeType: 'image/png',
+        );
+
+        expect(image.uri.toString(), 'https://example.com/image.png');
+        expect(image.name, 'image.png');
+        expect(image.size, size);
+        expect(image.mimeType, 'image/png');
       });
     });
 
@@ -258,6 +310,21 @@ void main() {
         expect(doc1, doc2);
         expect(doc1, isNot(doc3));
       });
+
+      test('should create from url string using .url constructor', () {
+        final size = 2048000.b;
+        final doc = DocumentNetworkMedia.url(
+          'https://example.com/document.pdf',
+          name: 'document.pdf',
+          size: size,
+          mimeType: 'application/pdf',
+        );
+
+        expect(doc.uri.toString(), 'https://example.com/document.pdf');
+        expect(doc.name, 'document.pdf');
+        expect(doc.size, size);
+        expect(doc.mimeType, 'application/pdf');
+      });
     });
 
     group('UnSupportedNetworkMedia', () {
@@ -285,6 +352,47 @@ void main() {
 
         expect(unsupported1, unsupported2);
         expect(unsupported1, isNot(unsupported3));
+      });
+    });
+
+    group('UrlMedia', () {
+      test('should create with Uri constructor', () {
+        final urlMedia = UrlMedia(
+          Uri.parse('https://example.com/file.dat'),
+        );
+
+        expect(urlMedia.uri.toString(), 'https://example.com/file.dat');
+        expect(urlMedia.size, 0.b);
+        expect(urlMedia.mimeType, 'url');
+        expect(urlMedia.metadata, isA<UrlType>());
+      });
+
+      test('should create from url string using .url constructor', () {
+        final urlMedia = UrlMedia.url(
+          'https://example.com/data.bin',
+        );
+
+        expect(urlMedia.uri.toString(), 'https://example.com/data.bin');
+        expect(urlMedia.size, 0.b);
+        expect(urlMedia.mimeType, 'url');
+        expect(urlMedia.metadata, isA<UrlType>());
+      });
+
+      test('should be equatable', () {
+        final uri = Uri.parse('https://example.com/file.dat');
+
+        final url1 = UrlMedia(uri);
+        final url2 = UrlMedia(uri);
+        final url3 = UrlMedia(Uri.parse('https://example.com/other.dat'));
+
+        expect(url1, url2);
+        expect(url1, isNot(url3));
+      });
+
+      test('should override props to use uri and metadata', () {
+        final urlMedia = UrlMedia(Uri.parse('https://example.com/test.dat'));
+
+        expect(urlMedia.props, [urlMedia.uri, urlMedia.metadata]);
       });
     });
 

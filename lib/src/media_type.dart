@@ -70,6 +70,5 @@ class OtherType extends FileType {
 }
 
 abstract class DurationMedia {
-  final Duration? duration;
-  DurationMedia({required this.duration});
+  Duration? get duration;
 }

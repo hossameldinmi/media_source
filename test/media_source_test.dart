@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:file_type_plus/file_type_plus.dart';
 import 'package:media_source/src/media_type.dart';
+import 'package:media_source/src/sources/file_media_source.dart';
 import 'package:media_source/src/sources/memory_media_source.dart';
 import 'package:media_source/src/sources/network_media_source.dart';
 import 'package:sized_file/sized_file.dart';
@@ -80,6 +81,18 @@ void main() {
         );
 
         expect(result, 'network');
+      });
+
+      test('should call file callback for FileMediaSource', () async {
+        final asset = Fixture.sample_video;
+        final source = await VideoFileMedia.fromPath(asset.file.path);
+
+        final result = source.fold(
+          file: (file) => 'file',
+          orElse: () => 'other',
+        );
+
+        expect(result, 'file');
       });
 
       test('should call memory callback for MemoryMediaSource', () {

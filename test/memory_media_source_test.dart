@@ -1,7 +1,7 @@
 import 'package:flutter/services.dart';
 import 'package:media_source/src/sources/file_media_source.dart';
 import 'package:media_source/src/sources/memory_media_source.dart';
-import 'package:media_source/src/utils/file_extensions.dart';
+import 'package:media_source/src/extensions/file_extensions.dart';
 import 'package:media_source/src/utils/platform_utils.dart';
 import 'package:sized_file/sized_file.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -44,6 +44,15 @@ void main() {
 
       expect(video1, video2);
       expect(video1, isNot(video3));
+    });
+
+    test('should have stringify set to false', () async {
+      final asset = Fixture.sample_video;
+      final bytes = await asset.file.readAsBytes();
+
+      final video = VideoMemoryMedia(bytes, name: 'video.mp4');
+
+      expect(video.stringify, false);
     });
   });
 

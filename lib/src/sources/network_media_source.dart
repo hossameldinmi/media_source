@@ -1,8 +1,8 @@
+import 'package:media_source/src/extensions/uri_extensions.dart';
 import 'package:media_source/src/media_type.dart';
 import 'package:media_source/src/sources/media_source.dart';
 import 'package:sized_file/sized_file.dart';
 import 'package:file_type_plus/file_type_plus.dart';
-import 'package:media_source/src/utils/file_util.dart' as file_util;
 
 abstract class NetworkMediaSource<M extends FileType> extends MediaSource<M> {
   final Uri uri;
@@ -14,7 +14,7 @@ abstract class NetworkMediaSource<M extends FileType> extends MediaSource<M> {
     required super.metadata,
   }) : super(
           mimeType: mimeType ?? FileUtil.getMimeTypeFromPath(uri.path),
-          name: name ?? file_util.FileUtil.getFileNameFromPath(uri.path),
+          name: name ?? uri.fileName,
         );
 
   static NetworkMediaSource fromUrl(

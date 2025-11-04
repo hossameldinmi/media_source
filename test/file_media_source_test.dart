@@ -1,7 +1,7 @@
 import 'package:flutter/services.dart';
 import 'package:media_source/src/sources/file_media_source.dart';
 import 'package:media_source/src/sources/memory_media_source.dart';
-import 'package:media_source/src/utils/file_extensions.dart';
+import 'package:media_source/src/extensions/file_extensions.dart';
 import 'package:media_source/src/utils/platform_utils.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'assets/fixture.dart';
@@ -75,6 +75,13 @@ void main() {
       expect(video1.name, video2.name);
       expect(video1.metadata, video2.metadata);
       expect(video1.name, isNot(video3.name));
+    });
+
+    test('should include file in props', () async {
+      final asset = Fixture.sample_video;
+      final video = await VideoFileMedia.fromPath(asset.file.path);
+
+      expect(video.props.first, video.file);
     });
   });
 
@@ -286,10 +293,12 @@ void main() {
   group('FileMediaSource.fromPath', () {
     test('should create VideoFileMedia for video files', () async {
       final asset = Fixture.sample_video;
-      final media = await FileMediaSource.fromPath(asset.file.path);
+      final media1 = await FileMediaSource.fromPath(asset.file.path);
+      final media2 = await FileMediaSource.fromPath(asset.file.path, size: asset.size);
 
-      expect(media, isA<VideoFileMedia>());
-      expect(media.name, asset.file.name);
+      expect(media1, isA<VideoFileMedia>());
+      expect(media1.name, asset.file.name);
+      expect(media1.size, media2.size);
     });
 
     test('should create AudioFileMedia for audio files', () async {
@@ -576,6 +585,25 @@ void main() {
 
       expect(movedFile, tempVideo);
       expect(await movedFile.file.exists(), isTrue);
+    });
+
+    test('should delete existing file at target before moving', () async {
+      final asset = Fixture.sample_video;
+      final video = await VideoFileMedia.fromPath(asset.file.path);
+
+      // Create two temp files
+      final tempPath1 = '$tempDir/move_video1.mp4';
+      final tempPath2 = '$tempDir/move_video2.mp4';
+
+      final tempVideo1 = await video.saveTo(tempPath1);
+      await video.saveTo(tempPath2); // Create existing file at target
+
+      // Move tempVideo1 to tempPath2 (should delete existing file first)
+      final movedFile = await tempVideo1.moveTo(tempPath2);
+
+      expect(movedFile.file.path, tempPath2);
+      expect(await movedFile.file.exists(), isTrue);
+      expect(await tempVideo1.file.exists(), isFalse);
     });
   });
 

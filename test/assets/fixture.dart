@@ -9,7 +9,7 @@ class Fixture {
   /// size: 13928213 bytes
   static final sample_image = AssetData.path(
     pathes.sample_image,
-    13928213.b,
+    481391.b,
     'image/jpeg',
   );
 

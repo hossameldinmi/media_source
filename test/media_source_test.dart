@@ -5,7 +5,6 @@ import 'package:media_source/src/media_type.dart';
 import 'package:media_source/src/sources/file_media_source.dart';
 import 'package:media_source/src/sources/memory_media_source.dart';
 import 'package:media_source/src/sources/network_media_source.dart';
-import 'package:sized_file/sized_file.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'assets/fixture.dart';
@@ -14,8 +13,8 @@ void main() {
   group('MediaSource', () {
     group('properties', () {
       test('should have correct basic properties', () async {
-        final file = Fixture.sample_image;
-        final bytes = await file.file.readAsBytes();
+        final asset = Fixture.sample_image;
+        final bytes = await asset.file.readAsBytes();
         final source = ImageMemoryMedia(
           bytes,
           name: 'test.png',
@@ -24,7 +23,7 @@ void main() {
 
         expect(source.name, 'test.png');
         expect(source.mimeType, 'image/png');
-        expect(source.size, 13928213.b);
+        expect(source.size, asset.size);
         expect(source.metadata, isA<ImageType>());
       });
 

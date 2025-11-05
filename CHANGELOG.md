@@ -43,7 +43,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `FileMediaSource` implementation for local file system access
   - Support for file operations (delete, exists, size)
   - Automatic MIME type detection
-  - Media metadata extraction
 - `MemoryMediaSource` implementation for in-memory media data
   - Support for `Uint8List` byte arrays
   - MIME type detection from byte headers
@@ -93,7 +92,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - 🎯 Type-safe media source abstraction
 - 📁 Support for file, memory, and network media sources
 - 🔍 Automatic media type detection from paths, MIME types, and bytes
-- ⏱️ Duration metadata extraction for audio/video files
 - 🌐 Cross-platform support (Flutter mobile, web, desktop)
 - 📊 Comprehensive MIME type to media type mapping
 - 🧩 Extension-based media type lookup utilities

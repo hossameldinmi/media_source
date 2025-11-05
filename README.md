@@ -23,18 +23,31 @@
 
 ---
 
-A Flutter package for handling different media sources with automatic type detection and metadata extraction.
+A Flutter package for handling different media sources with automatic type detection.
+
+## Motivation
+
+When building media-rich applications, you often need to handle media from multiple sources: files stored locally, data in memory (like camera captures or downloaded content), and URLs from remote servers. Managing these different states becomes complex when you need to:
+
+- Load a file from disk, process it in memory, then upload it
+- Download media from a URL, cache it locally, and convert it between formats
+- Handle user-selected files, camera captures, and network resources uniformly
+- Switch between sources without rewriting your business logic
+
+This package provides a unified, type-safe API to handle all these scenarios. Whether your media starts as a file, exists in memory, or comes from a network URL, you can work with it consistently and convert between states seamlessly.
 
 ## Features
 
 - 🎯 **Type-safe media source abstraction** - Handle files, memory, and network sources uniformly
 - 📁 **Multiple source types** - `FileMediaSource`, `MemoryMediaSource`, `NetworkMediaSource`
 - 🔍 **Automatic media type detection** - From file paths, MIME types, and byte data
-- ⏱️ **Duration metadata extraction** - Get duration for audio/video files
 - 🌐 **Cross-platform support** - Works on Flutter mobile, web, and desktop
 - 📊 **MIME type utilities** - Comprehensive mapping of extensions to media types
 - 🧩 **Extension-based lookups** - Quick checks with pre-built extension sets
-- 🔗 **Built on `cross_file`** - Seamless cross-platform file handling
+- 🔄 **Flexible conversions** - Convert between different source types (e.g., file to memory)
+- 💾 **File operations** - Move, copy, save, and delete operations for file-based media
+- � **Built on `cross_file`** - Seamless cross-platform file handling
+- ✅ **100% test coverage** - Thoroughly tested and reliable
 
 ## Getting started
 
@@ -72,19 +85,31 @@ print(videoType); // VideoType
 
 ```dart
 import 'package:media_source/media_source.dart';
-import 'package:cross_file/cross_file.dart';
 
-// Create a file media source
-final file = XFile('/path/to/video.mp4');
-final mediaSource = FileMediaSource(file);
+// Create from file path
+final video = await VideoFileMedia.fromPath(
+  '/path/to/video.mp4',
+  duration: Duration(seconds: 120),
+);
 
-// Access media type and metadata
-print(mediaSource.mediaType); // VideoType with duration
-print(await file.size()); // File size in bytes
-print(await file.exists()); // Check if file exists
+// Access properties
+print(video.name); // video.mp4
+print(video.size); // File size
+print(video.metadata.duration); // Duration(seconds: 120)
 
-// Delete file
-await file.delete();
+// File operations
+await video.saveTo('/backup/video.mp4');
+await video.moveTo('/new/location/video.mp4');
+final memoryMedia = await video.convertToMemory();
+await video.delete();
+
+// Create from XFile
+final file = XFile('/path/to/audio.mp3');
+final audio = await AudioFileMedia.fromFile(
+  file,
+  name: 'song.mp3',
+  duration: Duration(minutes: 3),
+);
 ```
 
 ### Working with Memory Media Source
@@ -95,54 +120,109 @@ import 'dart:typed_data';
 
 // Create from byte data
 final bytes = Uint8List.fromList([/* your data */]);
-final memorySource = MemoryMediaSource(
+final image = ImageMemoryMedia(
   bytes,
-  mimeType: 'audio/mpeg',
-  name: 'song.mp3',
+  name: 'photo.jpg',
+  mimeType: 'image/jpeg',
 );
 
-print(memorySource.mediaType); // AudioType
+// Access properties
+print(image.bytes); // Uint8List
+print(image.size); // Size in bytes
+print(image.name); // photo.jpg
+
+// Save to file system
+final fileMedia = await image.saveToFolder('/images');
+print(fileMedia.file.path); // /images/photo.jpg
+
+// Convert to different types
+final videoMemory = VideoMemoryMedia(
+  videoBytes,
+  name: 'clip.mp4',
+  duration: Duration(seconds: 10),
+);
 ```
 
 ### Working with Network Media Source
 
 ```dart
 import 'package:media_source/media_source.dart';
+import 'package:sized_file/sized_file.dart';
 
-// Create from URL
-final networkSource = NetworkMediaSource(
+// Create from URL with automatic type detection
+final media = NetworkMediaSource.fromUrl(
   'https://example.com/video.mp4',
+  mediaType: FileType.video,
+  size: 5.mb,
+  name: 'video.mp4',
 );
 
-print(networkSource.mediaType); // VideoType
-print(networkSource.url); // https://example.com/video.mp4
+// Create type-specific network media
+final video = VideoNetworkMedia.url(
+  'https://example.com/movie.mp4',
+  name: 'movie.mp4',
+  size: 150.mb,
+  duration: Duration(minutes: 90),
+);
+
+final audio = AudioNetworkMedia(
+  Uri.parse('https://example.com/song.mp3'),
+  name: 'song.mp3',
+  size: 5.mb,
+  duration: Duration(minutes: 3, seconds: 45),
+);
+
+final image = ImageNetworkMedia.url(
+  'https://example.com/photo.jpg',
+  name: 'photo.jpg',
+  size: 2.mb,
+);
+
+// Access properties
+print(video.uri); // Uri object
+print(video.name); // movie.mp4
+print(video.size); // 150 MB
+print(video.metadata.duration); // Duration
 ```
 
-### Using MIME Groups Utility
+### Complete Example
 
 ```dart
-import 'package:media_source/src/utils/mime_groups.dart';
+import 'package:media_source/media_source.dart';
+import 'package:sized_file/sized_file.dart';
 
-// Check if an extension is of a specific type
-if (isExtensionOfType('mp4', MediaType.video)) {
-  print('MP4 is a video file');
+Future<void> processMedia() async {
+  // Create a video file media
+  final video = await VideoFileMedia.fromPath(
+    '/path/to/video.mp4',
+    duration: Duration(minutes: 2),
+  );
+
+  // Check media type and handle accordingly
+  final result = video.fold<String>(
+    file: (fileMedia) async {
+      // Save a backup
+      await fileMedia.saveTo('/backup/video.mp4');
+      
+      // Convert to memory for processing
+      final memoryMedia = await fileMedia.convertToMemory();
+      
+      // Process the bytes
+      print('Processing ${memoryMedia.bytes.length} bytes');
+      
+      return 'File processed: ${fileMedia.name}';
+    },
+    memory: (memoryMedia) {
+      return 'Memory media: ${memoryMedia.size}';
+    },
+    network: (networkMedia) {
+      return 'Network media: ${networkMedia.uri}';
+    },
+    orElse: () => 'Unknown media type',
+  );
+
+  print(result);
 }
-
-// Get media type from extension
-final type = mediaTypeForExtension('.jpg');
-print(type); // MediaType.image
-
-// Use pre-built extension sets
-print(imageExtensions.contains('png')); // true
-print(audioExtensions.contains('mp3')); // true
-print(videoExtensions.contains('mkv')); // true
-
-// All available sets:
-// - imageExtensions
-// - audioExtensions
-// - videoExtensions
-// - documentExtensions
-// - otherExtensions
 ```
 
 ### Type-Specific Operations with Pattern Matching
@@ -150,9 +230,10 @@ print(videoExtensions.contains('mkv')); // true
 ```dart
 import 'package:media_source/media_source.dart';
 
+// Pattern matching on MediaType
 final mediaType = MediaType.fromPath('song.mp3', 'audio/mpeg');
 
-final result = mediaType.when(
+final description = mediaType.fold(
   audio: (audio) => 'Audio file with duration: ${audio.duration}',
   video: (video) => 'Video file with duration: ${video.duration}',
   image: (image) => 'Image file',
@@ -161,29 +242,19 @@ final result = mediaType.when(
   orElse: () => 'Other file type',
 );
 
-print(result);
-```
+print(description);
 
-### Extracting Media Metadata
+// Pattern matching on MediaSource
+final media = await VideoFileMedia.fromPath('/path/to/video.mp4');
 
-```dart
-import 'package:media_source/src/utils/file_util.dart';
-
-// From file path
-final metadata = await FileUtil.getFileMetadata(
-  '/path/to/video.mp4',
-  MediaType.video,
+final info = media.fold(
+  file: (f) => 'File: ${f.file.path}',
+  memory: (m) => 'Memory: ${m.size}',
+  network: (n) => 'URL: ${n.uri}',
+  orElse: () => 'Unknown source',
 );
-print(metadata?.duration); // Duration(...)
-print(metadata?.mimeType); // video/mp4
 
-// From bytes
-final metadataFromBytes = await FileUtil.getFileMetadataFromBytes(
-  bytes,
-  MediaType.audio,
-  'audio/mpeg',
-  'song.mp3',
-);
+print(info); // File: /path/to/video.mp4
 ```
 
 ### Extension Methods on XFile
@@ -276,15 +347,6 @@ NetworkMediaSource(String url)
 - `MediaType mediaTypeForExtension(String extension)` - Get MediaType for an extension
 - `bool isExtensionOfType(String extension, MediaType type)` - Check if extension matches type
 
-### FileUtil
-
-Static utility methods:
-
-- `String? getMimeTypeFromPath(String path)` - Get MIME type from file path
-- `String? getMimeTypeFromBytes(List<int> bytes)` - Get MIME type from byte header
-- `Future<MediaMetadata?> getFileMetadata(String path, MediaType mediaType)` - Extract metadata from file
-- `Future<MediaMetadata?> getFileMetadataFromBytes(Uint8List bytes, MediaType mediaType, String? mimeType, String? fileName)` - Extract metadata from bytes
-
 ## Supported Media Types
 
 The package automatically detects and categorizes hundreds of file extensions including:
@@ -328,6 +390,6 @@ Hossam Eldin - [GitHub](https://github.com/hossameldinmi)
 
 ### Acknowledgments
 
-- Built with [mime](https://pub.dev/packages/mime) package for MIME type detection
 - Uses [cross_file](https://pub.dev/packages/cross_file) for cross-platform file handling
-- Media metadata extraction powered by [flutter_media_metadata](https://pub.dev/packages/flutter_media_metadata)
+- Built with [file_type_plus](https://pub.dev/packages/file_type_plus) for file type detection
+- Size handling powered by [sized_file](https://pub.dev/packages/sized_file)

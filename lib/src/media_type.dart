@@ -1,6 +1,25 @@
 import 'package:file_type_plus/file_type_plus.dart';
 
+/// Extension on [FileType] providing pattern matching functionality.
+///
+/// This extension enables type-safe pattern matching over different media types
+/// using a fold-like pattern, allowing you to handle each media type specifically.
 extension MediaTypeExtension on FileType {
+  /// Performs pattern matching on media types using a fold-like pattern.
+  ///
+  /// This method allows you to handle different media types with type-specific
+  /// callbacks. Each media type has an optional callback that will be executed
+  /// if the current instance is of that type.
+  ///
+  /// Parameters:
+  /// - [image]: Called if this is an [ImageType]
+  /// - [audio]: Called if this is an [AudioType]
+  /// - [video]: Called if this is an [VideoType]
+  /// - [document]: Called if this is a [DocumentType]
+  /// - [url]: Called if this is a [UrlType]
+  /// - [orElse]: Called if no matching callback is provided
+  ///
+  /// Returns: The result of the matching callback or [orElse]
   T fold<T>({
     required T Function() orElse,
     T Function(ImageType image)? image,
@@ -24,10 +43,16 @@ extension MediaTypeExtension on FileType {
   }
 }
 
+/// Media type for video files.
+///
+/// Extends [FileType] to provide video-specific classification.
+/// Optionally stores duration information if available.
 class VideoType extends FileType implements DurationMedia {
+  /// The duration of the video, if available.
   @override
   final Duration? duration;
 
+  /// Creates a [VideoType] with an optional duration.
   @override
   VideoType([this.duration]) : super.copy(FileType.video);
 
@@ -35,40 +60,69 @@ class VideoType extends FileType implements DurationMedia {
   List<Object?> get props => [duration];
 }
 
+/// Media type for audio files.
+///
+/// Extends [FileType] to provide audio-specific classification.
+/// Optionally stores duration information if available.
 class AudioType extends FileType implements DurationMedia {
+  /// The duration of the audio, if available.
   @override
   final Duration? duration;
   @override
   List<Object?> get props => [duration];
+
+  /// Creates an [AudioType] with an optional duration.
   AudioType([this.duration]) : super.copy(FileType.audio);
 }
 
+/// Media type for image files.
+///
+/// Extends [FileType] to provide image-specific classification.
 class ImageType extends FileType {
+  /// Creates an [ImageType].
   ImageType() : super.copy(FileType.image);
 
   @override
   List<Object?> get props => [];
 }
 
+/// Media type for document files (primarily PDF).
+///
+/// Extends [FileType] to provide document-specific classification.
 class DocumentType extends FileType {
+  /// Creates a [DocumentType].
   DocumentType() : super.copy(FileType.document);
   @override
   List<Object?> get props => [];
 }
 
+/// Media type for URL references.
+///
+/// Extends [FileType] to provide URL reference classification.
 class UrlType extends FileType {
+  /// Creates a [UrlType].
   UrlType() : super.copy(FileType.html);
   @override
   List<Object?> get props => [];
 }
 
+/// Media type for other/unclassified file types.
+///
+/// Extends [FileType] to provide a fallback classification for files
+/// that don't match any other specific media type.
 class OtherType extends FileType {
+  /// Creates an [OtherType].
   OtherType() : super.copy(FileType.other);
 
   @override
   List<Object?> get props => [];
 }
 
+/// Interface for media types that have duration information.
+///
+/// This interface is implemented by media types that can have duration metadata,
+/// such as audio and video files.
 abstract class DurationMedia {
+  /// The duration of the media, if available.
   Duration? get duration;
 }

@@ -3,7 +3,16 @@ import 'package:cross_file/cross_file.dart';
 import 'package:media_source/src/utils/platform_utils.dart';
 import 'package:web/web.dart' as web;
 
+/// Web implementation of [PlatformUtilsFacade].
+///
+/// On web, file system semantics differ from native platforms. This class
+/// provides web-friendly implementations that operate on blob URLs and
+/// in-memory data. Certain operations like creating directories are
+/// no-ops in the browser environment.
 class PlatformUtilsFacadeImpl implements PlatformUtilsFacade {
+  /// Deletes a blob URL created for an [XFile] by revoking it when possible.
+  ///
+  /// Returns `true` if the blob URL was revoked; otherwise `false`.
   @override
   Future<bool> deleteFile(XFile file) async {
     try {
@@ -18,21 +27,29 @@ class PlatformUtilsFacadeImpl implements PlatformUtilsFacade {
     }
   }
 
+  /// Directory creation is a no-op on the web; returns immediately.
   @override
   Future<void> createDirectoryIfNotExists(String directoryPath) {
     return Future.value();
   }
 
+  /// Directory existence checks are always `true` on the web facade because
+  /// the browser does not expose a traditional file system.
   @override
   Future<bool> directoryExists(String directoryPath) {
     return Future.value(true);
   }
 
+  /// Deleting directories is not supported on the web facade.
   @override
   Future<bool> deleteDirectory(String directoryPath) {
     throw UnimplementedError();
   }
 
+  /// Attempts to verify a file exists on the web by trying to read it.
+  ///
+  /// This method is conservative: it will attempt to read the bytes from
+  /// the [XFile] and return true if that succeeds, false otherwise.
   @override
   Future<bool> fileExists(XFile xFile) async {
     // On web, files are either:

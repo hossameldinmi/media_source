@@ -4,8 +4,17 @@ import 'package:flutter/foundation.dart';
 import 'package:media_source/src/utils/platform_utils.dart';
 import 'package:uuid/uuid.dart';
 
+/// IO implementation of the [PlatformUtilsFacade].
+///
+/// Provides concrete file system operations for native platforms (mobile,
+/// desktop). All methods are written to be resilient: they catch exceptions
+/// and return boolean success indicators where appropriate.
 class PlatformUtilsFacadeImpl implements PlatformUtilsFacade {
   static const uuid = Uuid();
+
+  /// Deletes the provided [XFile] from disk.
+  ///
+  /// Returns `true` when deletion is successful, `false` otherwise.
   @override
   Future<bool> deleteFile(XFile file) async {
     try {
@@ -19,6 +28,7 @@ class PlatformUtilsFacadeImpl implements PlatformUtilsFacade {
     }
   }
 
+  /// Ensures the parent directory of [directoryPath] exists; creates it if missing.
   @override
   Future<void> createDirectoryIfNotExists(String directoryPath) async {
     final directory = Directory(directoryPath).parent;
@@ -27,6 +37,9 @@ class PlatformUtilsFacadeImpl implements PlatformUtilsFacade {
     }
   }
 
+  /// Returns `true` when the directory exists on disk.
+  ///
+  /// Visible for testing to allow unit tests to verify environment state.
   @override
   @visibleForTesting
   Future<bool> directoryExists(String directoryPath) async {
@@ -34,6 +47,9 @@ class PlatformUtilsFacadeImpl implements PlatformUtilsFacade {
     return directory.exists();
   }
 
+  /// Deletes the directory recursively; returns `true` on success.
+  ///
+  /// Visible for testing to allow test teardown of created resources.
   @override
   @visibleForTesting
   Future<bool> deleteDirectory(String directoryPath) async {
@@ -48,6 +64,7 @@ class PlatformUtilsFacadeImpl implements PlatformUtilsFacade {
     }
   }
 
+  /// Returns `true` if the file exists on disk.
   @override
   Future<bool> fileExists(XFile file) async {
     try {

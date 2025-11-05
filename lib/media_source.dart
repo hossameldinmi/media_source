@@ -47,3 +47,4 @@ export 'src/sources/network_media_source.dart';
 export 'src/media_type.dart';
 export 'src/utils/platform_utils.dart';
 export 'src/sources/media_source.dart';
+export 'package:sized_file/sized_file.dart';

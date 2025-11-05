@@ -23,7 +23,10 @@ jobs:
           flutter-version: 3.19.0
 
       - name: Install dependencies
-        run: flutter pub get
+        run: |
+          pwd
+          ls -la
+          flutter pub get
 
       # Uncomment this step to verify the use of 'dart format' on each commit.
       # - name: Verify formatting

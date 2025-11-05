@@ -4,6 +4,13 @@ version: 0.2.0-alpha.3
 
 repository: https://github.com/hossameldinmi/media_source
 
+topics:
+  - media
+  - media-type
+  - files
+  - storage
+  - file-type
+
 environment:
   sdk: ">=2.17.0 <4.0.0"
 

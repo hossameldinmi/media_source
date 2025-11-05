@@ -1,10 +1,10 @@
 import 'package:file_type_plus/file_type_plus.dart';
 
-/// Extension on [FileType] providing pattern matching functionality.
+/// Extension on [FileTypeImpl] providing pattern matching functionality.
 ///
 /// This extension enables type-safe pattern matching over different media types
 /// using a fold-like pattern, allowing you to handle each media type specifically.
-extension MediaTypeExtension on FileType {
+extension MediaTypeExtension on FileTypeImpl {
   /// Performs pattern matching on media types using a fold-like pattern.
   ///
   /// This method allows you to handle different media types with type-specific
@@ -43,11 +43,15 @@ extension MediaTypeExtension on FileType {
   }
 }
 
+abstract class FileTypeImpl extends FileType {
+  FileTypeImpl.copy(super.value) : super.copy();
+}
+
 /// Media type for video files.
 ///
-/// Extends [FileType] to provide video-specific classification.
+/// Extends [FileTypeImpl] to provide video-specific classification.
 /// Optionally stores duration information if available.
-class VideoType extends FileType implements DurationMedia {
+class VideoType extends FileTypeImpl implements DurationMedia {
   /// The duration of the video, if available.
   @override
   final Duration? duration;
@@ -62,9 +66,9 @@ class VideoType extends FileType implements DurationMedia {
 
 /// Media type for audio files.
 ///
-/// Extends [FileType] to provide audio-specific classification.
+/// Extends [FileTypeImpl] to provide audio-specific classification.
 /// Optionally stores duration information if available.
-class AudioType extends FileType implements DurationMedia {
+class AudioType extends FileTypeImpl implements DurationMedia {
   /// The duration of the audio, if available.
   @override
   final Duration? duration;
@@ -77,8 +81,8 @@ class AudioType extends FileType implements DurationMedia {
 
 /// Media type for image files.
 ///
-/// Extends [FileType] to provide image-specific classification.
-class ImageType extends FileType {
+/// Extends [FileTypeImpl] to provide image-specific classification.
+class ImageType extends FileTypeImpl {
   /// Creates an [ImageType].
   ImageType() : super.copy(FileType.image);
 
@@ -88,8 +92,8 @@ class ImageType extends FileType {
 
 /// Media type for document files (primarily PDF).
 ///
-/// Extends [FileType] to provide document-specific classification.
-class DocumentType extends FileType {
+/// Extends [FileTypeImpl] to provide document-specific classification.
+class DocumentType extends FileTypeImpl {
   /// Creates a [DocumentType].
   DocumentType() : super.copy(FileType.document);
   @override
@@ -98,8 +102,8 @@ class DocumentType extends FileType {
 
 /// Media type for URL references.
 ///
-/// Extends [FileType] to provide URL reference classification.
-class UrlType extends FileType {
+/// Extends [FileTypeImpl] to provide URL reference classification.
+class UrlType extends FileTypeImpl {
   /// Creates a [UrlType].
   UrlType() : super.copy(FileType.html);
   @override
@@ -108,9 +112,9 @@ class UrlType extends FileType {
 
 /// Media type for other/unclassified file types.
 ///
-/// Extends [FileType] to provide a fallback classification for files
+/// Extends [FileTypeImpl] to provide a fallback classification for files
 /// that don't match any other specific media type.
-class OtherType extends FileType {
+class OtherType extends FileTypeImpl {
   /// Creates an [OtherType].
   OtherType() : super.copy(FileType.other);
 

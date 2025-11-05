@@ -29,6 +29,9 @@ void main() async {
 
   // Example 6: Custom Media Types
   customMediaTypeExample();
+
+  // Example 7: Custom Media Factory
+  await customMediaFactoryExample();
 }
 
 /// Example 1: Working with File Media Sources
@@ -235,6 +238,70 @@ void customMediaTypeExample() {
   print('   and implement ToFileConvertableMedia/ToMemoryConvertableMedia as needed.');
 }
 
+/// Example 7: Custom Media Factory
+///
+/// This example demonstrates how to create a custom factory that instantiates
+/// different media source types based on custom conditions or business logic.
+Future<void> customMediaFactoryExample() async {
+  print('--- Example 7: Custom Media Factory ---');
+
+  // Create a factory instance
+  final factory = MediaFactory();
+
+  // Create media from different sources based on conditions
+  final fileMedia = await factory.createMedia(
+    source: MediaSourceType.file,
+    path: '/path/to/document.pdf',
+    name: 'report.pdf',
+  );
+
+  final memoryMedia = factory.createMedia(
+    source: MediaSourceType.memory,
+    bytes: Uint8List.fromList([0xFF, 0xD8, 0xFF]), // JPEG header
+    name: 'photo.jpg',
+    mimeType: 'image/jpeg',
+  );
+
+  final networkMedia = factory.createMedia(
+    source: MediaSourceType.network,
+    url: 'https://example.com/video.mp4',
+    name: 'video.mp4',
+    size: 100.mb,
+  );
+
+  print('File media: ${fileMedia?.name} (${fileMedia?.runtimeType})');
+  print('Memory media: ${memoryMedia?.name} (${memoryMedia?.runtimeType})');
+  print('Network media: ${networkMedia?.name} (${networkMedia?.runtimeType})');
+
+  // Use factory with auto-detection based on input
+  final autoDetected1 = await factory.createFromPath('/path/to/audio.mp3');
+  final autoDetected2 = factory.createFromUrl('https://example.com/image.png', size: 2.mb);
+
+  print('Auto-detected from path: ${autoDetected1?.runtimeType}');
+  print('Auto-detected from URL: ${autoDetected2?.runtimeType}');
+
+  // Factory with custom business logic
+  final smartFactory = SmartMediaFactory(
+    preferMemoryForSmallFiles: true,
+    smallFileSizeThresholdMB: 5,
+  );
+
+  // This will choose memory or file based on size
+  final optimizedMedia = await smartFactory.createOptimized(
+    path: '/path/to/small-image.jpg',
+    size: 2.mb, // Small file, might prefer memory
+  );
+
+  print('Optimized media type: ${optimizedMedia?.runtimeType}');
+
+  print('');
+  print('💡 Tip: Custom factories are useful for:');
+  print('   - Centralizing media creation logic');
+  print('   - Applying business rules (e.g., size limits, caching strategies)');
+  print('   - Testing with mock media sources');
+  print('   - Handling complex multi-source scenarios');
+}
+
 // ============================================================================
 // Custom Media Type Implementation Example
 // ============================================================================
@@ -249,4 +316,273 @@ class StickerType extends FileTypeImpl {
 
   @override
   List<Object?> get props => const [];
+}
+
+// ============================================================================
+// Custom Media Factory Implementation Example
+// ============================================================================
+
+/// Enum to specify media source type
+enum MediaSourceType { file, memory, network }
+
+/// Custom media factory that creates media instances based on conditions
+///
+/// This demonstrates how to centralize media creation logic and apply
+/// business rules or optimizations when creating media sources.
+class MediaFactory {
+  /// Creates media based on the specified source type
+  dynamic createMedia({
+    required MediaSourceType source,
+    String? path,
+    Uint8List? bytes,
+    String? url,
+    String? name,
+    String? mimeType,
+    SizedFile? size,
+    Duration? duration,
+  }) async {
+    switch (source) {
+      case MediaSourceType.file:
+        if (path == null) return null;
+        return await _createFileMedia(
+          path: path,
+          name: name,
+          duration: duration,
+          size: size,
+        );
+
+      case MediaSourceType.memory:
+        if (bytes == null) return null;
+        return _createMemoryMedia(
+          bytes: bytes,
+          name: name,
+          mimeType: mimeType,
+          duration: duration,
+        );
+
+      case MediaSourceType.network:
+        if (url == null) return null;
+        return _createNetworkMedia(
+          url: url,
+          name: name,
+          size: size,
+          duration: duration,
+        );
+    }
+  }
+
+  /// Auto-detect media type from file path
+  Future<MediaSource?> createFromPath(
+    String path, {
+    String? name,
+    Duration? duration,
+    SizedFile? size,
+  }) async {
+    return await _createFileMedia(
+      path: path,
+      name: name,
+      duration: duration,
+      size: size,
+    );
+  }
+
+  /// Auto-detect media type from URL
+  MediaSource? createFromUrl(
+    String url, {
+    String? name,
+    SizedFile? size,
+    Duration? duration,
+  }) {
+    return _createNetworkMedia(
+      url: url,
+      name: name,
+      size: size,
+      duration: duration,
+    );
+  }
+
+  Future<MediaSource?> _createFileMedia({
+    required String path,
+    String? name,
+    Duration? duration,
+    SizedFile? size,
+  }) async {
+    final fileType = await FileType.fromPath(path);
+
+    if (fileType is! FileTypeImpl) {
+      return OtherTypeFileMedia.fromPath(path, name: name, size: size);
+    }
+
+    return fileType.fold(
+      video: (_) => VideoFileMedia.fromPath(
+        path,
+        name: name,
+        duration: duration,
+        size: size,
+      ),
+      audio: (_) => AudioFileMedia.fromPath(
+        path,
+        name: name,
+        duration: duration,
+        size: size,
+      ),
+      image: (_) => ImageFileMedia.fromPath(path, name: name, size: size),
+      document: (_) => DocumentFileMedia.fromPath(path, name: name, size: size),
+      orElse: () => OtherTypeFileMedia.fromPath(path, name: name, size: size),
+    );
+  }
+
+  MediaSource? _createMemoryMedia({
+    required Uint8List bytes,
+    String? name,
+    String? mimeType,
+    Duration? duration,
+  }) {
+    final fileType = FileType.fromBytes(bytes, mimeType);
+
+    if (fileType is! FileTypeImpl) {
+      return OtherTypeMemoryMedia(
+        bytes,
+        name: name ?? 'file.bin',
+        mimeType: mimeType,
+      );
+    }
+
+    return fileType.fold(
+      video: (_) => VideoMemoryMedia(
+        bytes,
+        name: name ?? 'video.mp4',
+        mimeType: mimeType,
+        duration: duration,
+      ),
+      audio: (_) => AudioMemoryMedia(
+        bytes,
+        name: name ?? 'audio.mp3',
+        mimeType: mimeType,
+        duration: duration,
+      ),
+      image: (_) => ImageMemoryMedia(
+        bytes,
+        name: name ?? 'image.jpg',
+        mimeType: mimeType,
+      ),
+      document: (_) => DocumentMemoryMedia(
+        bytes,
+        name: name ?? 'document.pdf',
+        mimeType: mimeType,
+      ),
+      orElse: () => OtherTypeMemoryMedia(
+        bytes,
+        name: name ?? 'file.bin',
+        mimeType: mimeType,
+      ),
+    );
+  }
+
+  MediaSource? _createNetworkMedia({
+    required String url,
+    String? name,
+    SizedFile? size,
+    Duration? duration,
+  }) {
+    final uri = Uri.tryParse(url);
+    if (uri == null) return null;
+
+    final fileType = FileType.fromPath(url);
+
+    if (fileType is! FileTypeImpl) {
+      return null;
+    }
+
+    return fileType.fold(
+      video: (_) => VideoNetworkMedia.url(
+        url,
+        name: name,
+        size: size,
+        duration: duration,
+      ),
+      audio: (_) => AudioNetworkMedia.url(
+        url,
+        name: name,
+        size: size,
+        duration: duration,
+      ),
+      image: (_) => ImageNetworkMedia.url(url, name: name, size: size),
+      document: (_) => DocumentNetworkMedia.url(url, name: name, size: size),
+      orElse: () => null,
+    );
+  }
+}
+
+/// Smart factory with business logic for optimal media handling
+///
+/// This factory applies custom rules to decide the best media source type
+/// based on file size, availability, and other criteria.
+class SmartMediaFactory {
+  final bool preferMemoryForSmallFiles;
+  final double smallFileSizeThresholdMB;
+
+  SmartMediaFactory({
+    this.preferMemoryForSmallFiles = true,
+    this.smallFileSizeThresholdMB = 5.0,
+  });
+
+  /// Creates media with optimization based on file size
+  Future<MediaSource?> createOptimized({
+    required String path,
+    SizedFile? size,
+    Duration? duration,
+  }) async {
+    // If file is small and we prefer memory, load it into memory
+    if (preferMemoryForSmallFiles && size != null && size.inBytes / (1024 * 1024) < smallFileSizeThresholdMB) {
+      try {
+        // In a real app, you would read the file and create memory media
+        print(
+          'Optimizing: Small file detected (${(size.inBytes / (1024 * 1024)).toStringAsFixed(2)}MB < ${smallFileSizeThresholdMB}MB), '
+          'considering memory source for better performance',
+        );
+
+        // For demo purposes, return file media
+        // In production, you'd load the file and return MemoryMediaSource
+        return await _createFileMedia(path: path, size: size);
+      } catch (e) {
+        // Fallback to file media if reading fails
+        return await _createFileMedia(path: path, size: size);
+      }
+    }
+
+    // For large files, use file media
+    return await _createFileMedia(path: path, size: size, duration: duration);
+  }
+
+  Future<MediaSource?> _createFileMedia({
+    required String path,
+    String? name,
+    Duration? duration,
+    SizedFile? size,
+  }) async {
+    final fileType = await FileType.fromPath(path);
+
+    if (fileType is! FileTypeImpl) {
+      return OtherTypeFileMedia.fromPath(path, name: name, size: size);
+    }
+
+    return fileType.fold(
+      video: (_) => VideoFileMedia.fromPath(
+        path,
+        name: name,
+        duration: duration,
+        size: size,
+      ),
+      audio: (_) => AudioFileMedia.fromPath(
+        path,
+        name: name,
+        duration: duration,
+        size: size,
+      ),
+      image: (_) => ImageFileMedia.fromPath(path, name: name, size: size),
+      document: (_) => DocumentFileMedia.fromPath(path, name: name, size: size),
+      orElse: () => OtherTypeFileMedia.fromPath(path, name: name, size: size),
+    );
+  }
 }

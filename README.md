@@ -1,4 +1,5 @@
-<img src="assets/wallpaper.png" alt="wallpaper" />
+<img src="https://github.com/hossameldinmi/media_source/raw/main/assets/wallpaper.png" alt="wallpaper" />
+
 
 <h2 align="center">
   Media Source
@@ -25,20 +26,20 @@
 
 ---
 
-A Flutter package for handling different media sources with automatic type detection.
+A Flutter package for handling different **media sources** with **automatic type detection**.
 
 ## Motivation
 
-When building media-rich applications, you often need to handle media from multiple sources: files stored locally, data in memory (like camera captures or downloaded content), and URLs from remote servers. Managing these different states becomes complex when you need to:
+When building **media-rich applications**, you often need to handle media from **multiple sources**: **files** stored locally, data in **memory** (like camera captures or downloaded content), and **URLs** from remote servers. Managing these different states becomes complex when you need to:
 
-Inspired by Flutter’s ImageProvider, which unifies images from assets, files, memory, and network under a single API, this library applies the same idea to general media. The goal is to let you swap sources freely without changing your business logic.
+Inspired by Flutter's ```ImageProvider```, which unifies images from **assets**, **files**, **memory**, and **network** under a single API, this library applies the same idea to general media. The goal is to let you **swap sources freely** without changing your business logic.
 
-- Load a file from disk, process it in memory, then upload it
-- Download media from a URL, cache it locally, and convert it between formats
-- Handle user-selected files, camera captures, and network resources uniformly
-- Switch between sources without rewriting your business logic
+- Load a **file** from disk, process it in **memory**, then **upload** it
+- **Download** media from a URL, **cache** it locally, and **convert** it between formats
+- Handle **user-selected files**, **camera captures**, and **network resources** uniformly
+- Switch between sources **without rewriting** your business logic
 
-This package provides a unified, type-safe API to handle all these scenarios. Whether your media starts as a file, exists in memory, or comes from a network URL, you can work with it consistently and convert between states seamlessly.
+This package provides a **unified**, **type-safe API** to handle all these scenarios. Whether your media starts as a file, exists in memory, or comes from a network URL, you can work with it **consistently** and **convert between states** seamlessly.
 
 ## Features
 
@@ -50,7 +51,7 @@ This package provides a unified, type-safe API to handle all these scenarios. Wh
 - 🧩 **Extension-based lookups** - Quick checks with pre-built extension sets
 - 🔄 **Flexible conversions** - Convert between different source types (e.g., file to memory)
 - 💾 **File operations** - Move, copy, save, and delete operations for file-based media
-- � **Built on `cross_file`** - Seamless cross-platform file handling
+- 💪 **Built on `cross_file`** - Seamless cross-platform file handling
 - ✅ **100% test coverage** - Thoroughly tested and reliable
 
 ## Getting started
@@ -59,7 +60,7 @@ Add `media_source` to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  media_source: ^0.2.0-alpha.4
+  media_source: ^0.2.0-alpha.5
 ```
 
 Then run:
@@ -87,7 +88,7 @@ final videoType = MediaType.fromBytes(bytes, 'video/mp4');
 print(videoType); // VideoType
 ```
 
-### Working with File Media Source
+### Working with **File Media Source**
 
 ```dart
 import 'package:media_source/media_source.dart';
@@ -118,7 +119,7 @@ final audio = await AudioFileMedia.fromFile(
 );
 ```
 
-### Working with Memory Media Source
+### Working with **Memory Media Source**
 
 ```dart
 import 'package:media_source/media_source.dart';
@@ -149,7 +150,7 @@ final videoMemory = VideoMemoryMedia(
 );
 ```
 
-### Working with Network Media Source
+### Working with **Network Media Source**
 
 ```dart
 import 'package:media_source/media_source.dart';
@@ -191,7 +192,7 @@ print(video.size); // 150 MB
 print(video.metadata.duration); // Duration
 ```
 
-### Complete Example
+### **Complete Example**
 
 ```dart
 import 'package:media_source/media_source.dart';
@@ -231,7 +232,7 @@ Future<void> processMedia() async {
 }
 ```
 
-### Type-Specific Operations with Pattern Matching
+### **Type-Specific Operations** with **Pattern Matching**
 
 ```dart
 import 'package:media_source/media_source.dart';
@@ -263,7 +264,7 @@ final info = media.fold(
 print(info); // File: /path/to/video.mp4
 ```
 
-### Extension Methods on XFile
+### **Extension Methods** on **XFile**
 
 ```dart
 import 'package:media_source/media_source.dart';
@@ -289,9 +290,9 @@ if (await file.exists()) {
 
 ## API Reference
 
-### MediaType
+### **MediaType**
 
-Base class for media type classification:
+Base class for **media type classification**:
 
 - `MediaType.image` - Image files
 - `MediaType.audio` - Audio files
@@ -302,20 +303,20 @@ Base class for media type classification:
 
 **Subtypes:**
 - `ImageType` - Image media
-- `AudioType` - Audio media with optional duration
-- `VideoType` - Video media with optional duration
+- `AudioType` - Audio media with **optional duration**
+- `VideoType` - Video media with **optional duration**
 - `DocumentType` - Document media (PDF)
 - `UrlType` - URL references
 - `OtherType` - Unclassified media
 
 **Methods:**
-- `MediaType.fromPath(String path, String? mimeType)` - Create from file path
-- `MediaType.fromBytes(Uint8List bytes, String? mimeType)` - Create from byte data
-- `when<T>({...})` - Pattern matching for type-specific operations
+- `MediaType.fromPath(String path, String? mimeType)` - Create from **file path**
+- `MediaType.fromBytes(Uint8List bytes, String? mimeType)` - Create from **byte data**
+- `when<T>({...})` - **Pattern matching** for type-specific operations
 - `isAny(List<MediaType> list)` - Check if type is in list
 - `isAnyType(List<Type> list)` - Check if runtime type is in list
 
-### MediaSource Implementations
+### **MediaSource Implementations**
 
 **FileMediaSource**
 ```dart
@@ -336,18 +337,18 @@ MemoryMediaSource(
 NetworkMediaSource(String url)
 ```
 
-### MIME Groups Utilities
+### **MIME Groups Utilities**
 
 **Maps:**
 - `extensionToMediaType` - Map<String, MediaType>
 - `mediaTypeExtensions` - Map<MediaType, Set<String>>
 
 **Sets:**
-- `imageExtensions` - All image file extensions
-- `audioExtensions` - All audio file extensions
-- `videoExtensions` - All video file extensions
-- `documentExtensions` - All document file extensions
-- `otherExtensions` - All other file extensions
+- `imageExtensions` - All **image** file extensions
+- `audioExtensions` - All **audio** file extensions
+- `videoExtensions` - All **video** file extensions
+- `documentExtensions` - All **document** file extensions
+- `otherExtensions` - All **other** file extensions
 
 **Functions:**
 - `MediaType mediaTypeForExtension(String extension)` - Get MediaType for an extension
@@ -355,7 +356,7 @@ NetworkMediaSource(String url)
 
 ## Supported Media Types
 
-The package automatically detects and categorizes hundreds of file extensions including:
+The package **automatically detects** and categorizes **hundreds of file extensions** including:
 
 **Images**: jpg, jpeg, png, gif, bmp, webp, svg, ico, tiff, avif, heic, heif, and more
 
@@ -369,13 +370,16 @@ The package automatically detects and categorizes hundreds of file extensions in
 
 ## Extensibility
 
-You can extend the package to fit custom domain needs:
+You can **extend** the package to fit **custom domain needs**:
 
-- Create a new media type by extending `FileTypeImpl` (see `lib/src/media_type.dart`).
-- Create a new media source by extending `MediaSource<M extends FileType>` or by
-  implementing the conversion mixins (`ToFileConvertableMedia`, `ToMemoryConvertableMedia`).
+- Create a **new media type** by extending `FileTypeImpl` (see `lib/src/media_type.dart`).
+- Create a **new media source** by extending `MediaSource<M extends FileType>` or by
+  implementing the **conversion mixins** (`ToFileConvertableMedia`, `ToMemoryConvertableMedia`).
+- Create a **custom media factory** to centralize media creation logic and apply business rules.
 
-Example — custom type and source:
+### Custom Type and Source Example
+
+Example — **custom type** and **source**:
 
 ```dart
 import 'dart:typed_data';
@@ -402,6 +406,98 @@ class StickerMemoryMedia extends MemoryMediaSource<StickerType> {
   }
 }
 ```
+
+### Custom Media Factory Example
+
+You can create **custom factories** to centralize media instantiation logic and apply business rules:
+
+```dart
+import 'dart:typed_data';
+import 'package:media_source/media_source.dart';
+import 'package:sized_file/sized_file.dart';
+
+/// Enum to specify media source type
+enum MediaSourceType { file, memory, network }
+
+/// Custom factory that creates media based on conditions
+class MediaFactory {
+  /// Creates media based on the specified source type
+  dynamic createMedia({
+    required MediaSourceType source,
+    String? path,
+    Uint8List? bytes,
+    String? url,
+    String? name,
+    String? mimeType,
+    SizedFile? size,
+    Duration? duration,
+  }) async {
+    switch (source) {
+      case MediaSourceType.file:
+        if (path != null) {
+          final fileType = await FileType.fromPath(path);
+          if (fileType is VideoType) {
+            return VideoFileMedia.fromPath(path, name: name, duration: duration);
+          }
+          // Handle other types...
+        }
+        break;
+      case MediaSourceType.memory:
+        if (bytes != null) {
+          final fileType = FileType.fromBytes(bytes, mimeType);
+          if (fileType is ImageType) {
+            return ImageMemoryMedia(bytes, name: name ?? 'image.jpg');
+          }
+          // Handle other types...
+        }
+        break;
+      case MediaSourceType.network:
+        if (url != null) {
+          return VideoNetworkMedia.url(url, name: name, size: size);
+        }
+        break;
+    }
+    return null;
+  }
+}
+
+/// Smart factory with optimization logic
+class SmartMediaFactory {
+  final bool preferMemoryForSmallFiles;
+  final double smallFileSizeThresholdMB;
+
+  SmartMediaFactory({
+    this.preferMemoryForSmallFiles = true,
+    this.smallFileSizeThresholdMB = 5.0,
+  });
+
+  /// Creates media with optimization based on file size
+  Future<MediaSource?> createOptimized({
+    required String path,
+    SizedFile? size,
+  }) async {
+    // For small files, prefer memory for better performance
+    if (preferMemoryForSmallFiles && 
+        size != null && 
+        size.inBytes / (1024 * 1024) < smallFileSizeThresholdMB) {
+      // Load into memory for fast access
+      // In production: read file and return MemoryMediaSource
+    }
+    
+    // For large files, use file media
+    return await VideoFileMedia.fromPath(path, size: size);
+  }
+}
+```
+
+**Benefits of custom factories:**
+- **Centralize** media creation logic
+- Apply **business rules** (size limits, caching strategies)
+- Enable **testing** with mock media sources
+- Handle **complex multi-source** scenarios
+- Implement **optimization strategies** (memory vs. file based on size)
+
+> 💡 See the complete factory example in [example/main.dart](example/main.dart)
 
 ## Platform Support
 

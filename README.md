@@ -60,7 +60,7 @@ Add `media_source` to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  media_source: ^0.2.0-alpha.5
+  media_source: ^0.2.0-alpha.6
 ```
 
 Then run:

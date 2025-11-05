@@ -5,6 +5,33 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.0-alpha.6]
+
+### Added
+- Custom media factory pattern documentation and examples
+  - Added `MediaFactory` class example for centralized media creation
+  - Added `SmartMediaFactory` class with size-based optimization logic
+  - New Example 7 in `example/main.dart` demonstrating factory patterns
+  - Factory implementations showing auto-detection from paths and URLs
+  - Business logic examples (memory vs. file based on size thresholds)
+- Enhanced extensibility documentation
+  - Added custom media factory section in README.md with code examples
+  - Updated library documentation to mention three extensibility approaches
+  - Highlighted benefits: centralization, business rules, testing, optimization
+
+### Changed
+- Updated README.md with custom media factory examples
+  - Added `MediaSourceType` enum example
+  - Added basic and smart factory implementation examples
+  - Included practical benefits list for factory pattern
+- Enhanced library-level documentation in `media_source.dart`
+  - Added factory pattern as third extensibility option
+  - Included factory code example in main library docs
+- Improved README formatting with more **bold highlights** for important terms
+
+### Fixed
+- Added `homepage` field to `pubspec.yaml` for better pub.dev compatibility
+
 ## [0.2.0-alpha.5]
 
 ### Fixed

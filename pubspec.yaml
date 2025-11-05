@@ -1,5 +1,5 @@
 name: media_source
-version: 0.2.0-alpha.4
+version: 0.2.0-alpha.5
 
 description: Handle media from files, memory, or network with automatic type detection and cross-platform file operations.
 

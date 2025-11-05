@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.0-alpha.5]
+
+### Fixed
+- GitHub Actions CI workflow now properly checks out repository code
+  - CI pipeline now successfully runs analysis, tests, and coverage reporting
+  - Set Flutter version to 3.24.0 for better compatibility
+  - Simplified CI dependencies installation step by removing debug commands
+
 ## [0.2.0-alpha.4]
 
 ### Fixed

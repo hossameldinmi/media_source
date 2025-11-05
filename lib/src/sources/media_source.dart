@@ -14,6 +14,12 @@ import 'package:sized_file/sized_file.dart';
 /// - Pattern matching via [fold] for type-safe handling
 /// - Type checking with [isAnyType]
 ///
+/// Extensibility: You can create your own source types by extending
+/// `MediaSource<M>` and, when appropriate, implementing the conversion
+/// mixins [`ToMemoryConvertableMedia`], [`ToFileConvertableMedia`]. This
+/// allows you to model custom storage backends while still participating
+/// in the shared fold pattern.
+///
 /// Generic parameter [M] represents the specific media type metadata
 /// (e.g., [VideoType], [AudioType], etc.)
 abstract class MediaSource<M extends FileType> extends Equatable {

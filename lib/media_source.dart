@@ -13,6 +13,39 @@
 /// - **Flexible Conversions**: Convert between different source types (e.g., file to memory)
 /// - **File Operations**: Move, copy, save, and delete operations for file-based media
 ///
+/// ## Extensibility
+///
+/// You can extend this library in two ways:
+///
+/// - Define your own media type by extending `FileTypeImpl` (see `src/media_type.dart`).
+///   This is useful when your domain has custom classifications (e.g., StickerType, SubtitleType).
+/// - Create new media sources by extending `MediaSource<M>` or implementing the conversion
+///   mixins (`ToFileConvertableMedia`, `ToMemoryConvertableMedia`) to fit your storage/transport
+///   needs.
+///
+/// Example – custom media type and memory source:
+/// ```dart
+/// class StickerType extends FileTypeImpl {
+///   StickerType() : super.copy(FileType.other);
+///   @override
+///   List<Object?> get props => const [];
+/// }
+///
+/// class StickerMemoryMedia extends MemoryMediaSource<StickerType> {
+///   StickerMemoryMedia(Uint8List bytes, {required String name})
+///       : super._(bytes, name: name, metadata: StickerType());
+///
+///   @override
+///   Future<FileMediaSource<StickerType>> saveToFile(String path) async {
+///     final file = XFile.fromData(bytes, name: name, path: path);
+///     await PlatformUtils.instance.createDirectoryIfNotExists(path);
+///     await file.saveTo(path);
+///     // Provide your own FileMediaSource implementation for StickerType
+///     throw UnimplementedError('Provide a FileMediaSource<StickerType>');
+///   }
+/// }
+/// ```
+///
 /// ## Usage
 ///
 /// ```dart

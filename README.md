@@ -29,6 +29,8 @@ A Flutter package for handling different media sources with automatic type detec
 
 When building media-rich applications, you often need to handle media from multiple sources: files stored locally, data in memory (like camera captures or downloaded content), and URLs from remote servers. Managing these different states becomes complex when you need to:
 
+Inspired by Flutter’s ImageProvider, which unifies images from assets, files, memory, and network under a single API, this library applies the same idea to general media. The goal is to let you swap sources freely without changing your business logic.
+
 - Load a file from disk, process it in memory, then upload it
 - Download media from a URL, cache it locally, and convert it between formats
 - Handle user-selected files, camera captures, and network resources uniformly
@@ -360,6 +362,42 @@ The package automatically detects and categorizes hundreds of file extensions in
 **Documents**: pdf
 
 **Other**: All other MIME types and extensions
+
+## Extensibility
+
+You can extend the package to fit custom domain needs:
+
+- Create a new media type by extending `FileTypeImpl` (see `lib/src/media_type.dart`).
+- Create a new media source by extending `MediaSource<M extends FileType>` or by
+  implementing the conversion mixins (`ToFileConvertableMedia`, `ToMemoryConvertableMedia`).
+
+Example — custom type and source:
+
+```dart
+import 'dart:typed_data';
+import 'package:cross_file/cross_file.dart';
+import 'package:media_source/media_source.dart';
+
+class StickerType extends FileTypeImpl {
+  StickerType() : super.copy(FileType.other);
+  @override
+  List<Object?> get props => const [];
+}
+
+class StickerMemoryMedia extends MemoryMediaSource<StickerType> {
+  StickerMemoryMedia(Uint8List bytes, {required String name})
+      : super._(bytes, name: name, metadata: StickerType());
+
+  @override
+  Future<FileMediaSource<StickerType>> saveToFile(String path) async {
+    final file = XFile.fromData(bytes, name: name, path: path);
+    await PlatformUtils.instance.createDirectoryIfNotExists(path);
+    await file.saveTo(path);
+    // Return your own FileMediaSource<StickerType> implementation here
+    throw UnimplementedError();
+  }
+}
+```
 
 ## Platform Support
 

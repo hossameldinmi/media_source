@@ -43,6 +43,21 @@ extension MediaTypeExtension on FileTypeImpl {
   }
 }
 
+/// Base class for defining custom media type variants.
+///
+/// The built-in types ([ImageType], [AudioType], [VideoType], [DocumentType],
+/// [UrlType], [OtherType]) are implemented by extending this class. You can
+/// introduce your own application-specific types by subclassing [FileTypeImpl]
+/// and forwarding an appropriate base [FileType] value to [super.copy].
+///
+/// Example:
+/// ```dart
+/// class SubtitleType extends FileTypeImpl {
+///   SubtitleType() : super.copy(FileType.other);
+///   @override
+///   List<Object?> get props => const [];
+/// }
+/// ```
 abstract class FileTypeImpl extends FileType {
   FileTypeImpl.copy(super.value) : super.copy();
 }

@@ -2,7 +2,6 @@ import 'dart:io';
 import 'package:cross_file/cross_file.dart';
 import 'package:flutter/foundation.dart';
 import 'package:media_source/src/utils/platform_utils.dart';
-import 'package:uuid/uuid.dart';
 
 /// IO implementation of the [PlatformUtilsFacade].
 ///
@@ -10,8 +9,6 @@ import 'package:uuid/uuid.dart';
 /// desktop). All methods are written to be resilient: they catch exceptions
 /// and return boolean success indicators where appropriate.
 class PlatformUtilsFacadeImpl implements PlatformUtilsFacade {
-  static const uuid = Uuid();
-
   /// Deletes the provided [XFile] from disk.
   ///
   /// Returns `true` when deletion is successful, `false` otherwise.

@@ -1,3 +1,5 @@
+<img src="assets/wallpaper.png" alt="wallpaper" />
+
 <h2 align="center">
   Media Source
 </h2>

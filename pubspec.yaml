@@ -11,6 +11,10 @@ topics:
   - storage
   - file-type
 
+screenshots:
+  - description: The media_source package logo.
+    path: assets/icon.png
+
 environment:
   sdk: ">=2.17.0 <4.0.0"
 

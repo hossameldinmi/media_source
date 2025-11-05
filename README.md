@@ -66,6 +66,8 @@ Then run:
 flutter pub get
 ```
 
+> 💡 **Quick Start**: Check out the complete [example/main.dart](example/main.dart) file for a comprehensive demonstration of all features.
+
 ## Usage
 
 ### Basic Media Type Detection

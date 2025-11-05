@@ -5,6 +5,55 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.0-alpha.3]
+
+### Added
+- Comprehensive inline documentation for all public APIs
+  - Class-level documentation for all media types and sources
+  - Method and constructor documentation with parameter descriptions
+  - Property documentation explaining purpose and usage
+  - Usage examples in doc comments
+- Extensibility documentation
+  - Guide for creating custom media types by extending `FileTypeImpl`
+  - Guide for creating custom media sources by extending `MediaSource<M>`
+  - Example implementations in library docs and README
+- Complete example file (`example/main.dart`) demonstrating:
+  - Working with file, memory, and network media sources
+  - Type-safe pattern matching with fold
+  - Converting between different source types
+  - Creating custom media types and sources
+- Platform utilities documentation
+  - Documented `PlatformUtils` facade pattern
+  - IO and web implementation documentation
+  - Cross-platform file operation guides
+- Extension methods documentation
+  - `FileExtensions` on `XFile` with usage examples
+  - `UriExtensions` for file name extraction
+  - `ObjectExtension` for safe type casting
+
+### Changed
+- Enhanced library-level documentation in `media_source.dart`
+  - Added comprehensive feature list
+  - Added usage examples for all source types
+  - Added pattern matching examples
+  - Included extensibility section with custom type example
+- Improved README.md
+  - Added motivation section inspired by Flutter's `ImageProvider`
+  - Added extensibility section with practical examples
+  - Added quick start link to example file
+  - Better organization of features and usage patterns
+
+### Documentation
+- All public classes now have comprehensive doc comments
+- All public methods include parameter and return value documentation
+- IDE tooltips and generated docs are now complete
+- Code comments explain design patterns (fold, facade, etc.)
+
+### Fixed
+- WASM compatibility issue by updating conditional import from `dart.library.html` to `dart.library.js_interop`
+  - Package is now compatible with WASM runtime
+  - Maintains backward compatibility with web and native platforms
+
 ## [0.2.0-alpha.2]
 
 ### Added

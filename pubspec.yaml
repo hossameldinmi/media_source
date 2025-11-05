@@ -5,8 +5,6 @@ description: Handle media from files, memory, or network with automatic type det
 
 repository: https://github.com/hossameldinmi/media_source
 
-homepage: https://hossameldinmi.github.io/media_source/
-
 topics:
   - media
   - media-type
@@ -27,7 +25,7 @@ dependencies:
   file_type_plus: ^1.0.0
   flutter:
     sdk: flutter
-  path: ^1.9.1
+  path: ^1.9.0
   sized_file: ^1.3.3
   web: ^1.1.1
 

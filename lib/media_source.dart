@@ -15,13 +15,17 @@
 ///
 /// ## Extensibility
 ///
-/// You can extend this library in two ways:
+/// You can extend this library in three ways:
 ///
-/// - Define your own media type by extending `FileTypeImpl` (see `src/media_type.dart`).
-///   This is useful when your domain has custom classifications (e.g., StickerType, SubtitleType).
-/// - Create new media sources by extending `MediaSource<M>` or implementing the conversion
-///   mixins (`ToFileConvertableMedia`, `ToMemoryConvertableMedia`) to fit your storage/transport
-///   needs.
+/// 1. **Define your own media type** by extending `FileTypeImpl` (see `src/media_type.dart`).
+///    This is useful when your domain has custom classifications (e.g., StickerType, SubtitleType).
+///
+/// 2. **Create new media sources** by extending `MediaSource<M>` or implementing the conversion
+///    mixins (`ToFileConvertableMedia`, `ToMemoryConvertableMedia`) to fit your storage/transport
+///    needs.
+///
+/// 3. **Create custom media factories** to centralize media instantiation logic and apply
+///    business rules, optimizations, or testing strategies.
 ///
 /// Example – custom media type and memory source:
 /// ```dart
@@ -42,6 +46,32 @@
 ///     await file.saveTo(path);
 ///     // Provide your own FileMediaSource implementation for StickerType
 ///     throw UnimplementedError('Provide a FileMediaSource<StickerType>');
+///   }
+/// }
+/// ```
+///
+/// Example – custom media factory:
+/// ```dart
+/// class MediaFactory {
+///   dynamic createMedia({
+///     required MediaSourceType source,
+///     String? path,
+///     Uint8List? bytes,
+///     String? url,
+///   }) async {
+///     switch (source) {
+///       case MediaSourceType.file:
+///         if (path != null) {
+///           final fileType = await FileType.fromPath(path);
+///           // Create appropriate media based on type
+///           if (fileType is VideoType) {
+///             return VideoFileMedia.fromPath(path);
+///           }
+///           // Handle other types...
+///         }
+///         break;
+///       // Handle memory and network cases...
+///     }
 ///   }
 /// }
 /// ```

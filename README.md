@@ -26,7 +26,7 @@
 
 ---
 
-A Flutter package for handling different **media sources** with **automatic type detection**.
+A **type-safe**, **cross-platform** Flutter package that unifies media handling from **files**, **memory**, and **network** sources with **automatic type detection** and **seamless conversions**.
 
 ## Motivation
 

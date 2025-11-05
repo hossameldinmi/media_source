@@ -1,7 +1,7 @@
 name: media_source
 version: 0.2.0-alpha.6
 
-description: Handle media from files, memory, or network with automatic type detection and cross-platform file operations.
+description: Type-safe, cross-platform media handling for files, memory, and network sources with automatic type detection, seamless conversions, and Flutter integration.
 
 repository: https://github.com/hossameldinmi/media_source
 homepage: https://github.com/hossameldinmi/media_source

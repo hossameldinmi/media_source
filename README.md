@@ -5,8 +5,8 @@
 </h2>
 
 <p align="center">
-   <a href="https://github.com/hossameldinmi/media_source/actions/workflows/dart.yml">
-    <img src="https://github.com/hossameldinmi/media_source/actions/workflows/dart.yml/badge.svg?branch=main" alt="Github action">
+   <a href="https://github.com/hossameldinmi/media_source/actions/workflows/build.yml">
+    <img src="https://github.com/hossameldinmi/media_source/actions/workflows/build.yml/badge.svg?branch=main" alt="Github action">
   </a>
   <a href="https://codecov.io/github/hossameldinmi/media_source">
     <img src="https://codecov.io/github/hossameldinmi/media_source/graph/badge.svg?token=JzTIIzoQOq" alt="Code Coverage">

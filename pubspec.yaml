@@ -1,8 +1,11 @@
 name: media_source
-description: Handle media from files, memory, or network with automatic type detection and cross-platform file operations.
 version: 0.2.0-alpha.4
 
+description: Handle media from files, memory, or network with automatic type detection and cross-platform file operations.
+
 repository: https://github.com/hossameldinmi/media_source
+
+homepage: https://hossameldinmi.github.io/media_source/
 
 topics:
   - media

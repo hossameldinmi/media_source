@@ -47,14 +47,19 @@ This package provides a **unified**, **type-safe API** to handle all these scena
 - 🎯 **Type-safe media source abstraction** - Handle files, memory, network, and assets uniformly
 - 📁 **Multiple source types** - `FileMediaSource`, `MemoryMediaSource`, `NetworkMediaSource`, `AssetMediaSource`
 - 🔍 **Automatic media type detection** - From file paths, MIME types, and byte data
-- 🌐 **Cross-platform support** - Works on Flutter mobile, web, and desktop
-- 📦 **Flutter asset integration** - Load and convert media from app asset bundles
+- � **Pattern matching API** - Type-safe `fold()` for elegant source handling
+- 🔄 **Seamless conversions** - Convert between source types (file ↔ memory ↔ asset)
+- 💾 **Rich file operations** - Move, copy, save, and delete with atomic operations
+- �🌐 **Cross-platform support** - Works on Flutter mobile, web, and desktop
+- 📦 **Flutter asset integration** - Load and convert media from app asset bundles with custom bundle support
+- ⚡ **Lazy loading support** - Optimize performance with size hints to avoid unnecessary data loading
 - 📊 **MIME type utilities** - Comprehensive mapping of extensions to media types
-- 🧩 **Extension-based lookups** - Quick checks with pre-built extension sets
-- 🔄 **Flexible conversions** - Convert between different source types (e.g., file to memory, asset to file)
-- 💾 **File operations** - Move, copy, save, and delete operations for file-based media
+- 🧩 **Extension-based lookups** - Quick type checks with pre-built extension sets
+- � **Human-readable sizes** - Built-in integration with `sized_file` (1.5.mb, 2.gb, etc.)
 - 💪 **Built on `cross_file`** - Seamless cross-platform file handling
-- ✅ **100% test coverage** - Thoroughly tested and reliable
+- ✅ **100% test coverage** - Production-ready and thoroughly tested
+- 🛡️ **Fully type-safe** - Compile-time safety with generic type parameters
+- 🔗 **Unified API** - Consistent interface across all media sources
 
 ## Getting started
 

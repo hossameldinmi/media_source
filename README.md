@@ -62,7 +62,7 @@ Add `media_source` to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  media_source: ^0.2.0-alpha.6
+  media_source: ^1.0.0
 ```
 
 Then run:
@@ -599,7 +599,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ### Author
 
-Hossam Eldin - [GitHub](https://github.com/hossameldinmi)
+Hossam Eldin Mahmoud - [GitHub](https://github.com/hossameldinmi), [LinkedIn](https://linkedin.com/in/hossameldinmi)
 
 ### Acknowledgments
 

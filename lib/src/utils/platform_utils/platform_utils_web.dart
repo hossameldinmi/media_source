@@ -28,25 +28,33 @@ class PlatformUtilsFacadeImpl implements PlatformUtilsFacade {
   }
 
   /// Directory creation is a no-op on the web; returns immediately.
+  ///
+  /// Web browsers do not have a traditional file system with directories.
+  /// This method does nothing and returns successfully.
   @override
-  Future<void> createDirectoryIfNotExists(String directoryPath) {
-    // TODO: implement createDirectoryIfNotExists
-    throw UnimplementedError();
+  Future<void> createDirectoryIfNotExists(String directoryPath) async {
+    // No-op on web: browsers don't have directory structures
+    return;
   }
 
-  /// Directory existence checks are always `true` on the web facade because
-  /// the browser does not expose a traditional file system.
+  /// Directory existence checks always return `true` on web.
+  ///
+  /// Since web browsers don't have traditional directories, we return `true`
+  /// to maintain API compatibility and avoid breaking calling code.
   @override
-  Future<bool> directoryExists(String directoryPath) {
-    // TODO: implement directoryExists
-    throw UnimplementedError();
+  Future<bool> directoryExists(String directoryPath) async {
+    // Always true on web since there are no real directories to check
+    return true;
   }
 
-  /// Deleting directories is not supported on the web facade.
+  /// Deleting directories is a no-op on web; always returns `true`.
+  ///
+  /// Since web browsers don't have traditional directories, this is a no-op
+  /// that returns `true` for API compatibility.
   @override
-  Future<bool> deleteDirectory(String directoryPath) {
-    // TODO: implement deleteDirectory
-    throw UnimplementedError();
+  Future<bool> deleteDirectory(String directoryPath) async {
+    // No-op on web: browsers don't have directory structures
+    return true;
   }
 
   /// Attempts to verify a file exists on the web by trying to read it.

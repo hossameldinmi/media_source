@@ -30,26 +30,28 @@ A **type-safe**, **cross-platform** Flutter package that unifies media handling 
 
 ## Motivation
 
-When building **media-rich applications**, you often need to handle media from **multiple sources**: **files** stored locally, data in **memory** (like camera captures or downloaded content), and **URLs** from remote servers. Managing these different states becomes complex when you need to:
+When building **media-rich applications**, you often need to handle media from **multiple sources**: **files** stored locally, data in **memory** (like camera captures or downloaded content), **URLs** from remote servers, and **assets** bundled with your app. Managing these different states becomes complex when you need to:
 
 Inspired by Flutter's ```ImageProvider```, which unifies images from **assets**, **files**, **memory**, and **network** under a single API, this library applies the same idea to general media. The goal is to let you **swap sources freely** without changing your business logic.
 
 - Load a **file** from disk, process it in **memory**, then **upload** it
 - **Download** media from a URL, **cache** it locally, and **convert** it between formats
-- Handle **user-selected files**, **camera captures**, and **network resources** uniformly
+- Use bundled **assets** during development, then switch to **network** sources in production
+- Handle **user-selected files**, **camera captures**, **network resources**, and **app assets** uniformly
 - Switch between sources **without rewriting** your business logic
 
 This package provides a **unified**, **type-safe API** to handle all these scenarios. Whether your media starts as a file, exists in memory, or comes from a network URL, you can work with it **consistently** and **convert between states** seamlessly.
 
 ## Features
 
-- 🎯 **Type-safe media source abstraction** - Handle files, memory, and network sources uniformly
-- 📁 **Multiple source types** - `FileMediaSource`, `MemoryMediaSource`, `NetworkMediaSource`
+- 🎯 **Type-safe media source abstraction** - Handle files, memory, network, and assets uniformly
+- 📁 **Multiple source types** - `FileMediaSource`, `MemoryMediaSource`, `NetworkMediaSource`, `AssetMediaSource`
 - 🔍 **Automatic media type detection** - From file paths, MIME types, and byte data
 - 🌐 **Cross-platform support** - Works on Flutter mobile, web, and desktop
+- 📦 **Flutter asset integration** - Load and convert media from app asset bundles
 - 📊 **MIME type utilities** - Comprehensive mapping of extensions to media types
 - 🧩 **Extension-based lookups** - Quick checks with pre-built extension sets
-- 🔄 **Flexible conversions** - Convert between different source types (e.g., file to memory)
+- 🔄 **Flexible conversions** - Convert between different source types (e.g., file to memory, asset to file)
 - 💾 **File operations** - Move, copy, save, and delete operations for file-based media
 - 💪 **Built on `cross_file`** - Seamless cross-platform file handling
 - ✅ **100% test coverage** - Thoroughly tested and reliable
@@ -191,6 +193,79 @@ print(video.name); // movie.mp4
 print(video.size); // 150 MB
 print(video.metadata.duration); // Duration
 ```
+
+### Working with **Asset Media Source**
+
+```dart
+import 'package:media_source/media_source.dart';
+import 'package:flutter/services.dart' show rootBundle;
+
+// First, declare assets in your pubspec.yaml:
+// flutter:
+//   assets:
+//     - assets/videos/
+//     - assets/audio/
+//     - assets/images/
+
+// Load video asset
+final video = await VideoAssetMedia.load(
+  'assets/videos/intro.mp4',
+  duration: Duration(seconds: 30),
+  bundle: rootBundle, // optional, defaults to rootBundle
+);
+
+// Load audio asset
+final audio = await AudioAssetMedia.load(
+  'assets/audio/song.mp3',
+  duration: Duration(minutes: 3, seconds: 45),
+);
+
+// Load image asset
+final image = await ImageAssetMedia.load(
+  'assets/images/logo.png',
+);
+
+// Access properties
+print(video.assetPath); // assets/videos/intro.mp4
+print(video.name); // intro.mp4
+print(video.size); // Size in bytes
+print(video.metadata.duration); // Duration(seconds: 30)
+
+// Optimized loading with size hint (avoids loading entire asset)
+final largeVideo = await VideoAssetMedia.load(
+  'assets/videos/movie.mp4',
+  duration: Duration(minutes: 90),
+  size: 150.mb, // Provide size to avoid loading asset just to get size
+);
+
+// Convert to memory for processing
+final memoryMedia = await video.convertToMemory();
+print(memoryMedia.bytes.length); // Full asset loaded in memory
+
+// Save asset to file system
+final fileMedia = await video.saveTo('/path/to/save/intro.mp4');
+print(fileMedia.file.path); // /path/to/save/intro.mp4
+
+// Pattern matching works with asset media
+final result = video.fold(
+  file: (f) => 'File: ${f.file.path}',
+  memory: (m) => 'Memory: ${m.size}',
+  network: (n) => 'Network: ${n.uri}',
+  asset: (a) => 'Asset: ${a.assetPath}',
+  orElse: () => 'Unknown source',
+);
+print(result); // Asset: assets/videos/intro.mp4
+```
+
+**Asset Media Features:**
+- 📦 **Flutter asset bundle integration** - Load media from app assets
+- 🎯 **Type-safe asset loading** - Video, Audio, Image, Document asset types
+- 🔄 **Seamless conversions** - Convert assets to memory or file sources
+- 💾 **Lazy loading** - Provide size hint to avoid loading entire asset
+- 🧩 **Pattern matching support** - Works with fold() for consistent API
+- ✅ **Cross-platform** - Works on all Flutter platforms
+
+> 💡 **Interactive Example**: Check out [example/asset_media_example.dart](example/asset_media_example.dart) for a complete Flutter app demonstrating all asset media features with an interactive UI.
 
 ### **Complete Example**
 

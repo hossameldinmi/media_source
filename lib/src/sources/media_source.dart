@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:file_type_plus/file_type_plus.dart';
+import 'package:media_source/src/sources/asset_media_source.dart';
 import 'package:media_source/src/sources/file_media_source.dart';
 import 'package:media_source/src/sources/memory_media_source.dart';
 import 'package:media_source/src/sources/network_media_source.dart';
@@ -63,6 +64,7 @@ abstract class MediaSource<M extends FileType> extends Equatable {
   /// - [file]: Called if this is a [FileMediaSource]
   /// - [memory]: Called if this is a [MemoryMediaSource]
   /// - [network]: Called if this is a [NetworkMediaSource]
+  /// - [asset]: Called if this is an [AssetMediaSource]
   /// - [orElse]: Called if no matching callback is provided
   ///
   /// Returns: The result of the matching callback or [orElse]
@@ -70,6 +72,7 @@ abstract class MediaSource<M extends FileType> extends Equatable {
       {T Function(FileMediaSource<M> fileMedia)? file,
       T Function(MemoryMediaSource<M> memoryMedia)? memory,
       T Function(NetworkMediaSource<M> networkMedia)? network,
+      T Function(AssetMediaSource<M> assetMedia)? asset,
       required T Function() orElse}) {
     if (this is FileMediaSource<M> && file != null) {
       return file(this as FileMediaSource<M>);
@@ -77,6 +80,8 @@ abstract class MediaSource<M extends FileType> extends Equatable {
       return memory(this as MemoryMediaSource<M>);
     } else if (this is NetworkMediaSource<M> && network != null) {
       return network(this as NetworkMediaSource<M>);
+    } else if (this is AssetMediaSource<M> && asset != null) {
+      return asset(this as AssetMediaSource<M>);
     }
     return orElse();
   }

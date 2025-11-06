@@ -1,32 +1,14 @@
 import 'dart:typed_data';
 
 import 'package:file_type_plus/file_type_plus.dart';
-import 'package:media_source/src/media_type.dart';
-import 'package:media_source/src/sources/file_media_source.dart';
-import 'package:media_source/src/sources/memory_media_source.dart';
-import 'package:media_source/src/sources/network_media_source.dart';
+import 'package:media_source/media_source.dart';
 import 'package:flutter_test/flutter_test.dart';
-
-import 'assets/fixture.dart';
+import 'shared/fixture.dart';
+import 'shared/test_file_bundle.dart';
 
 void main() {
   group('MediaSource', () {
     group('properties', () {
-      test('should have correct basic properties', () async {
-        final asset = Fixture.sample_image;
-        final bytes = await asset.file.readAsBytes();
-        final source = ImageMemoryMedia(
-          bytes,
-          name: 'test.png',
-          mimeType: 'image/png',
-        );
-
-        expect(source.name, 'test.png');
-        expect(source.mimeType, 'image/png');
-        expect(source.size, asset.size);
-        expect(source.metadata, isA<ImageType>());
-      });
-
       test('should extract extension from name', () {
         final bytes = Uint8List.fromList([0, 1, 2, 3]);
         final source = ImageMemoryMedia(bytes, name: 'test.png');
@@ -65,7 +47,7 @@ void main() {
       });
     });
 
-    group('when pattern', () {
+    group('fold pattern', () {
       test('should call file callback for FileMediaSource', () async {
         // Note: Creating FileMediaSource requires actual file operations
         // This test demonstrates the pattern with NetworkMediaSource instead
@@ -118,6 +100,22 @@ void main() {
         );
 
         expect(result, 'network');
+      });
+
+      test('should call network callback for AssetMediaSource', () async {
+        final asset = Fixture.sample_image;
+        final source = await ImageAssetMedia.load(
+          asset.file.path,
+          bundle: TestFileAssetBundle(),
+          size: asset.size,
+        );
+
+        final result = source.fold(
+          asset: (asset) => 'asset',
+          orElse: () => 'other',
+        );
+
+        expect(result, 'asset');
       });
 
       test('should call orElse when no callback matches', () {

@@ -5,9 +5,8 @@ import 'package:media_source/src/extensions/file_extensions.dart';
 import 'package:media_source/src/utils/platform_utils.dart';
 import 'package:sized_file/sized_file.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'assets/fixture.dart';
+import 'shared/fixture.dart';
 
-const channel = MethodChannel('flutter_media_metadata');
 final tempDir = 'test/assets/saved_to';
 
 void main() {

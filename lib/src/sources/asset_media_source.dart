@@ -342,7 +342,7 @@ class ImageAssetMedia extends AssetMediaSource<ImageType> {
   /// - [name]: Display name
   /// - [size]: Asset size in bytes
   /// - [mimeType]: MIME type of the image
-  ImageAssetMedia._({
+  ImageAssetMedia({
     required super.assetPath,
     super.bundle,
     required super.name,
@@ -370,7 +370,7 @@ class ImageAssetMedia extends AssetMediaSource<ImageType> {
     String? mimeType,
     SizedFile? size,
   }) async {
-    return ImageAssetMedia._(
+    return ImageAssetMedia(
       assetPath: assetPath,
       bundle: bundle,
       name: name,

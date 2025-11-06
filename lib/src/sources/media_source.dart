@@ -102,5 +102,5 @@ abstract class ToFileConvertableMedia<M extends FileType> {
   /// Saves this media to a file at the specified path.
   ///
   /// Returns a new [FileMediaSource] pointing to the saved file.
-  Future<FileMediaSource<M>> saveToFile(String path);
+  Future<FileMediaSource<M>> saveTo(String path);
 }

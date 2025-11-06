@@ -239,7 +239,7 @@ void main() {
 
       final filePath = '$tempDir/saved_video.mp4';
 
-      final savedFile = await video.saveToFile(filePath);
+      final savedFile = await video.saveTo(filePath);
 
       expect(savedFile, isA<VideoFileMedia>());
       expect(savedFile.name, asset.file.name);
@@ -264,7 +264,7 @@ void main() {
 
       final filePath = '$tempDir/saved_audio.mp3';
 
-      final savedFile = await audio.saveToFile(filePath);
+      final savedFile = await audio.saveTo(filePath);
 
       expect(savedFile, isA<AudioFileMedia>());
       expect(savedFile.name, asset.file.name);
@@ -287,7 +287,7 @@ void main() {
 
       final filePath = '$tempDir/saved_image.jpg';
 
-      final savedFile = await image.saveToFile(filePath);
+      final savedFile = await image.saveTo(filePath);
 
       expect(savedFile, isA<ImageFileMedia>());
       expect(savedFile.name, asset.file.name);
@@ -309,7 +309,7 @@ void main() {
 
       final filePath = '$tempDir/saved_document.pdf';
 
-      final savedFile = await doc.saveToFile(filePath);
+      final savedFile = await doc.saveTo(filePath);
 
       expect(savedFile, isA<DocumentFileMedia>());
       expect(savedFile.name, asset.file.name);
@@ -331,7 +331,7 @@ void main() {
 
       final filePath = '$tempDir/saved_file.sh';
 
-      final savedFile = await other.saveToFile(filePath);
+      final savedFile = await other.saveTo(filePath);
 
       expect(savedFile, isA<OtherTypeFileMedia>());
       expect(savedFile.name, asset.file.name);
@@ -353,7 +353,7 @@ void main() {
 
       final filePath = '$tempDir/nested/folder/saved_image.jpg';
 
-      final savedFile = await image.saveToFile(filePath);
+      final savedFile = await image.saveTo(filePath);
 
       expect(savedFile, isA<ImageFileMedia>());
       expect(await savedFile.file.exists(), isTrue);

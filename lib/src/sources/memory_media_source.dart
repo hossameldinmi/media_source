@@ -63,7 +63,7 @@ abstract class MemoryMediaSource<M extends FileType> extends MediaSource<M> impl
   /// Returns a new [FileMediaSource] pointing to the saved file.
   Future<FileMediaSource<M>> saveToFolder(String folderPath) {
     final path = p.join(folderPath, name);
-    return saveToFile(path);
+    return saveTo(path);
   }
 }
 
@@ -91,7 +91,7 @@ class VideoMemoryMedia extends MemoryMediaSource<VideoType> {
   /// Creates the directory if it doesn't exist, then saves the bytes
   /// and returns a new [VideoFileMedia] instance.
   @override
-  Future<VideoFileMedia> saveToFile(String path) async {
+  Future<VideoFileMedia> saveTo(String path) async {
     final file = XFile.fromData(
       bytes,
       name: name,
@@ -135,7 +135,7 @@ class AudioMemoryMedia extends MemoryMediaSource<AudioType> {
   /// Creates the directory if it doesn't exist, then saves the bytes
   /// and returns a new [AudioFileMedia] instance.
   @override
-  Future<AudioFileMedia> saveToFile(String path) async {
+  Future<AudioFileMedia> saveTo(String path) async {
     final file = XFile.fromData(
       bytes,
       name: name,
@@ -176,7 +176,7 @@ class ImageMemoryMedia extends MemoryMediaSource<ImageType> {
   /// Creates the directory if it doesn't exist, then saves the bytes
   /// and returns a new [ImageFileMedia] instance.
   @override
-  Future<ImageFileMedia> saveToFile(String path) async {
+  Future<ImageFileMedia> saveTo(String path) async {
     final file = XFile.fromData(
       bytes,
       name: name,
@@ -218,7 +218,7 @@ class DocumentMemoryMedia extends MemoryMediaSource<DocumentType> {
   /// Creates the directory if it doesn't exist, then saves the bytes
   /// and returns a new [DocumentFileMedia] instance.
   @override
-  Future<DocumentFileMedia> saveToFile(String path) async {
+  Future<DocumentFileMedia> saveTo(String path) async {
     final file = XFile.fromData(
       bytes,
       name: name,
@@ -260,7 +260,7 @@ class OtherTypeMemoryMedia extends MemoryMediaSource<OtherType> {
   /// Creates the directory if it doesn't exist, then saves the bytes
   /// and returns a new [OtherTypeFileMedia] instance.
   @override
-  Future<OtherTypeFileMedia> saveToFile(String path) async {
+  Future<OtherTypeFileMedia> saveTo(String path) async {
     final file = XFile.fromData(
       bytes,
       name: name,

@@ -30,19 +30,22 @@ class PlatformUtilsFacadeImpl implements PlatformUtilsFacade {
   /// Directory creation is a no-op on the web; returns immediately.
   @override
   Future<void> createDirectoryIfNotExists(String directoryPath) {
-    return Future.value();
+    // TODO: implement createDirectoryIfNotExists
+    throw UnimplementedError();
   }
 
   /// Directory existence checks are always `true` on the web facade because
   /// the browser does not expose a traditional file system.
   @override
   Future<bool> directoryExists(String directoryPath) {
-    return Future.value(true);
+    // TODO: implement directoryExists
+    throw UnimplementedError();
   }
 
   /// Deleting directories is not supported on the web facade.
   @override
   Future<bool> deleteDirectory(String directoryPath) {
+    // TODO: implement deleteDirectory
     throw UnimplementedError();
   }
 

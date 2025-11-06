@@ -104,6 +104,7 @@
 /// ```
 library media_source;
 
+export 'src/sources/asset_media_source.dart';
 export 'src/sources/file_media_source.dart';
 export 'src/sources/memory_media_source.dart';
 export 'src/sources/network_media_source.dart';

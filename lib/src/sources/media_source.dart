@@ -4,6 +4,7 @@ import 'package:media_source/src/sources/file_media_source.dart';
 import 'package:media_source/src/sources/memory_media_source.dart';
 import 'package:media_source/src/sources/network_media_source.dart';
 import 'package:sized_file/sized_file.dart';
+import 'package:path/path.dart' as p;
 
 /// Abstract base class for all media sources.
 ///
@@ -38,7 +39,7 @@ abstract class MediaSource<M extends FileType> extends Equatable {
   /// Extracts the file extension from the name.
   ///
   /// Returns the substring after the last dot, or the entire name if no dot exists.
-  String get extension => name.split('.').last;
+  String get extension => p.extension(name);
 
   /// Creates a [MediaSource] with the specified properties.
   const MediaSource({

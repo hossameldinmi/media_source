@@ -413,7 +413,7 @@ void main() {
           'https://example.com/video.mp4',
         );
 
-        expect(source.extension, 'mp4');
+        expect(source.extension, '.mp4');
       });
     });
   });

@@ -31,14 +31,14 @@ void main() {
         final bytes = Uint8List.fromList([0, 1, 2, 3]);
         final source = ImageMemoryMedia(bytes, name: 'test.png');
 
-        expect(source.extension, 'png');
+        expect(source.extension, '.png');
       });
 
       test('should handle name without extension', () {
         final bytes = Uint8List.fromList([0, 1, 2, 3]);
         final source = ImageMemoryMedia(bytes, name: 'test');
 
-        expect(source.extension, 'test');
+        expect(source.extension, '');
       });
 
       test('should handle empty name', () {

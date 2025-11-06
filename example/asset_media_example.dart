@@ -87,6 +87,11 @@ class _AssetMediaExampleScreenState extends State<AssetMediaExampleScreen> {
                     onPressed: () => _runExample('Metadata Preservation', metadataPreservationExample),
                     child: const Text('Metadata Preservation Example'),
                   ),
+                  const SizedBox(height: 8),
+                  ElevatedButton(
+                    onPressed: () => _runExample('Pattern Matching', patternMatchingExample),
+                    child: const Text('Pattern Matching Example'),
+                  ),
                   const SizedBox(height: 16),
                   Container(
                     padding: const EdgeInsets.all(16),
@@ -317,6 +322,52 @@ Future<String> metadataPreservationExample() async {
   output.writeln('All metadata is preserved throughout');
   output.writeln('the entire conversion chain:');
   output.writeln('  Asset → Memory → File');
+
+  return output.toString();
+}
+
+/// Example 7: Pattern matching with fold
+Future<String> patternMatchingExample() async {
+  final output = StringBuffer();
+
+  // Load different media sources
+  final assetVideo = await VideoAssetMedia.load(
+    'assets/videos/intro.mp4',
+    duration: const Duration(seconds: 30),
+  );
+
+  output.writeln('Pattern matching with fold:');
+  output.writeln();
+
+  // Pattern match on the media source
+  final description = assetVideo.fold<String>(
+    file: (f) => 'File source: ${f.file.path}',
+    memory: (m) => 'Memory source: ${m.size}',
+    network: (n) => 'Network source: ${n.uri}',
+    asset: (a) => 'Asset source: ${a.assetPath}',
+    orElse: () => 'Unknown source',
+  );
+
+  output.writeln('Source type: $description');
+  output.writeln();
+
+  // After conversion, the fold pattern works with new type
+  final memoryVideo = await assetVideo.convertToMemory();
+
+  final memoryDescription = memoryVideo.fold<String>(
+    file: (f) => 'File source: ${f.file.path}',
+    memory: (m) => 'Memory source: ${m.size} bytes',
+    network: (n) => 'Network source: ${n.uri}',
+    asset: (a) => 'Asset source: ${a.assetPath}',
+    orElse: () => 'Unknown source',
+  );
+
+  output.writeln('After conversion:');
+  output.writeln('Source type: $memoryDescription');
+  output.writeln();
+
+  output.writeln('Pattern matching allows type-safe handling');
+  output.writeln('of different media source types with a unified API.');
 
   return output.toString();
 }

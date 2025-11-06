@@ -217,6 +217,7 @@ Future<void> patternMatchingExample() async {
       file: (f) => 'File: ${f.file.path}',
       memory: (m) => 'Memory: ${m.size} (${m.bytes.length} bytes)',
       network: (n) => 'Network: ${n.uri}',
+      asset: (a) => 'Asset: ${a.assetPath}',
       orElse: () => 'Unknown source',
     );
     print(description);
@@ -261,7 +262,7 @@ Future<void> conversionExample() async {
   );
 
   print('Memory media: ${memoryMedia.size}');
-  // final savedFile = await memoryMedia.saveToFile('/output/video.mp4');
+  // final savedFile = await memoryMedia.saveTo('/output/video.mp4');
   // print('Saved to file: ${savedFile.file.path}');
 
   print('');

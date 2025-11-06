@@ -40,7 +40,7 @@
 ///       : super._(bytes, name: name, metadata: StickerType());
 ///
 ///   @override
-///   Future<FileMediaSource<StickerType>> saveToFile(String path) async {
+///   Future<FileMediaSource<StickerType>> saveTo(String path) async {
 ///     final file = XFile.fromData(bytes, name: name, path: path);
 ///     await PlatformUtils.instance.createDirectoryIfNotExists(path);
 ///     await file.saveTo(path);
@@ -99,6 +99,7 @@
 ///   file: (f) => 'File: ${f.file.path}',
 ///   memory: (m) => 'Memory: ${m.size}',
 ///   network: (n) => 'URL: ${n.uri}',
+///   asset: (a) => 'Asset: ${a.assetPath}',
 ///   orElse: () => 'Unknown',
 /// );
 /// ```

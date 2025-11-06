@@ -220,7 +220,7 @@ void main() {
     });
   });
 
-  group('saveToFile', () {
+  group('saveTo', () {
     tearDownAll(() async {
       await PlatformUtils.instance.deleteDirectory(tempDir);
     });

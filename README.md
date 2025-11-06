@@ -300,6 +300,9 @@ Future<void> processMedia() async {
     network: (networkMedia) {
       return 'Network media: ${networkMedia.uri}';
     },
+    asset: (assetMedia) {
+      return 'Asset media: ${assetMedia.assetPath}';
+    },
     orElse: () => 'Unknown media type',
   );
 
@@ -333,6 +336,7 @@ final info = media.fold(
   file: (f) => 'File: ${f.file.path}',
   memory: (m) => 'Memory: ${m.size}',
   network: (n) => 'URL: ${n.uri}',
+  asset: (a) => 'Asset: ${a.assetPath}',
   orElse: () => 'Unknown source',
 );
 
@@ -412,6 +416,15 @@ MemoryMediaSource(
 NetworkMediaSource(String url)
 ```
 
+**AssetMediaSource**
+```dart
+AssetMediaSource.load(
+  String assetPath, {
+  AssetBundle? bundle,
+  SizedFile? size,
+})
+```
+
 ### **MIME Groups Utilities**
 
 **Maps:**
@@ -472,7 +485,7 @@ class StickerMemoryMedia extends MemoryMediaSource<StickerType> {
       : super._(bytes, name: name, metadata: StickerType());
 
   @override
-  Future<FileMediaSource<StickerType>> saveToFile(String path) async {
+  Future<FileMediaSource<StickerType>> saveTo(String path) async {
     final file = XFile.fromData(bytes, name: name, path: path);
     await PlatformUtils.instance.createDirectoryIfNotExists(path);
     await file.saveTo(path);
@@ -554,7 +567,7 @@ class SmartMediaFactory {
     // For small files, prefer memory for better performance
     if (preferMemoryForSmallFiles && 
         size != null && 
-        size.inBytes / (1024 * 1024) < smallFileSizeThresholdMB) {
+        size.inMB < smallFileSizeThresholdMB) {
       // Load into memory for fast access
       // In production: read file and return MemoryMediaSource
     }

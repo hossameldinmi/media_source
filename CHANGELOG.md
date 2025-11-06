@@ -24,7 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - Lazy loading with optional size parameter to optimize performance
 - Interactive Flutter example app (`example/asset_media_example.dart`)
   - Complete MaterialApp demonstrating all asset media features
-  - 6 interactive examples: video, audio, image, document, conversions, and metadata preservation
+  - 7 interactive examples: video, audio, image, document, conversions, metadata preservation, and pattern matching
   - UI with buttons to run each example scenario
   - Detailed usage comments and pubspec.yaml asset configuration guide
 - Console examples for asset media in `example/main.dart`
@@ -46,9 +46,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Updated features list to include asset media support
   - Updated motivation section to mention bundled assets
   - Added asset media feature highlights (6 key features)
+  - Updated all `fold()` examples to include `asset` parameter
+  - Added AssetMediaSource to API Reference section
   - Included link to interactive Flutter example
 - Updated package description to include "asset" sources
 - Improved extensibility documentation for custom media sources
+- Updated all code examples and documentation to include `asset` parameter in `fold()` calls
+  - Main library documentation (`lib/media_source.dart`)
+  - README examples (Complete Example, Pattern Matching sections)
+  - Console examples (`example/main.dart`)
+  - Asset media example with pattern matching demonstration
 
 ### Documentation
 - Comprehensive dartdoc comments for all AssetMediaSource classes

@@ -671,44 +671,6 @@ void main() {
       final fileMedia = await assetMedia.saveTo('$tempDir/audio_duration.mp3');
       expect(fileMedia.metadata.duration, asset.duration);
     });
-  });
-
-  group('Metadata preservation', () {
-    tearDownAll(() async {
-      await PlatformUtils.instance.deleteDirectory(tempDir);
-    });
-
-    test('should preserve video duration through conversions', () async {
-      final asset = Fixture.sample_video;
-
-      final assetMedia = await VideoAssetMedia.load(
-        asset.file.path,
-        bundle: bundle,
-        duration: asset.duration,
-      );
-
-      final memoryMedia = await assetMedia.convertToMemory();
-      expect(memoryMedia.metadata.duration, asset.duration);
-
-      final fileMedia = await assetMedia.saveTo('$tempDir/duration_test.mp4');
-      expect(fileMedia.metadata.duration, asset.duration);
-    });
-
-    test('should preserve audio duration through conversions', () async {
-      final asset = Fixture.sample_audio;
-
-      final assetMedia = await AudioAssetMedia.load(
-        asset.file.path,
-        bundle: bundle,
-        duration: asset.duration,
-      );
-
-      final memoryMedia = await assetMedia.convertToMemory();
-      expect(memoryMedia.metadata.duration, asset.duration);
-
-      final fileMedia = await assetMedia.saveTo('$tempDir/audio_duration.mp3');
-      expect(fileMedia.metadata.duration, asset.duration);
-    });
 
     test('should preserve custom MIME types through conversions', () async {
       final asset = Fixture.sample_image;

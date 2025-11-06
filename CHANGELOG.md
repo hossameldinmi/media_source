@@ -5,6 +5,65 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.0] - 2025-11-06
+
+### Added
+- **AssetMediaSource** - New media source for Flutter asset bundles
+  - `AssetMediaSource<M>` base class for asset-based media
+  - `VideoAssetMedia` - Load video assets with duration metadata
+  - `AudioAssetMedia` - Load audio assets with duration metadata
+  - `ImageAssetMedia` - Load image assets
+  - `DocumentAssetMedia` - Load PDF document assets
+  - `OtherTypeAssetMedia` - Load other file type assets
+  - All asset media types support:
+    - `.load()` factory method with optional `AssetBundle` parameter
+    - `assetPath` property for asset location
+    - `convertToMemory()` for converting to memory-based media
+    - `saveTo()` for saving assets to file system
+    - Pattern matching with `fold()` including new `asset` callback
+    - Lazy loading with optional size parameter to optimize performance
+- Interactive Flutter example app (`example/asset_media_example.dart`)
+  - Complete MaterialApp demonstrating all asset media features
+  - 7 interactive examples: video, audio, image, document, conversions, metadata preservation, and pattern matching
+  - UI with buttons to run each example scenario
+  - Detailed usage comments and pubspec.yaml asset configuration guide
+- Console examples for asset media in `example/main.dart`
+  - Example 4: Asset Media Sources with load, convert, and save demonstrations
+  - Shows optimized loading with size hints
+  - Demonstrates conversion chains (asset → memory → file)
+- Comprehensive test coverage for AssetMediaSource
+  - 52 tests with 100% coverage for asset media functionality
+  - `TestFileAssetBundle` for testing asset loading
+  - Tests for all asset media types and operations
+  - Fixture-based test data with real asset files
+
+### Changed
+- Updated `MediaSource.fold()` to include `asset` callback parameter
+  - Added `asset` parameter to support asset media pattern matching
+  - Maintains backward compatibility with `orElse` fallback
+- Enhanced README.md with comprehensive asset media documentation
+  - Added "Working with Asset Media Source" section with code examples
+  - Updated features list to include asset media support
+  - Updated motivation section to mention bundled assets
+  - Added asset media feature highlights (6 key features)
+  - Updated all `fold()` examples to include `asset` parameter
+  - Added AssetMediaSource to API Reference section
+  - Included link to interactive Flutter example
+- Updated package description to include "asset" sources
+- Improved extensibility documentation for custom media sources
+- Updated all code examples and documentation to include `asset` parameter in `fold()` calls
+  - Main library documentation (`lib/media_source.dart`)
+  - README examples (Complete Example, Pattern Matching sections)
+  - Console examples (`example/main.dart`)
+  - Asset media example with pattern matching demonstration
+
+### Documentation
+- Comprehensive dartdoc comments for all AssetMediaSource classes
+- Usage examples in class-level documentation
+- Parameter descriptions for all factory methods
+- Examples showing load(), saveTo(), and convertToMemory() patterns
+- Cross-references between related asset media types
+
 ## [0.2.0-alpha.6]
 
 ### Added
@@ -191,5 +250,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - 🔗 Built on `cross_file` for cross-platform file handling
 - ⚡ Lightweight with minimal dependencies
 
-[0.1.0-alpha.1]: https://github.com/hossameldinmi/media_source/releases/tag/v0.1.0
+[1.0.0]: https://github.com/hossameldinmi/media_source/releases/tag/v1.0.0
 

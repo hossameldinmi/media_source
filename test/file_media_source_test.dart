@@ -1,12 +1,10 @@
-import 'package:flutter/services.dart';
 import 'package:media_source/src/sources/file_media_source.dart';
 import 'package:media_source/src/sources/memory_media_source.dart';
 import 'package:media_source/src/extensions/file_extensions.dart';
 import 'package:media_source/src/utils/platform_utils.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'assets/fixture.dart';
+import 'shared/fixture.dart';
 
-const channel = MethodChannel('flutter_media_metadata');
 final tempDir = 'test/assets/file_media_test';
 
 void main() {

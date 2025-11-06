@@ -5,7 +5,7 @@ import 'package:media_source/media_source.dart';
 /// Example demonstrating the media_source package capabilities.
 ///
 /// This example shows:
-/// - Working with file, memory, and network media sources
+/// - Working with file, memory, network, and asset media sources
 /// - Type-safe pattern matching with fold
 /// - Converting between different source types
 /// - Custom media type and source implementation
@@ -21,16 +21,19 @@ void main() async {
   // Example 3: Working with Network Media
   networkMediaExample();
 
-  // Example 4: Pattern Matching with fold
+  // Example 4: Working with Asset Media (Flutter only)
+  // await assetMediaExample();
+
+  // Example 5: Pattern Matching with fold
   await patternMatchingExample();
 
-  // Example 5: Converting Between Sources
+  // Example 6: Converting Between Sources
   await conversionExample();
 
-  // Example 6: Custom Media Types
+  // Example 7: Custom Media Types
   customMediaTypeExample();
 
-  // Example 7: Custom Media Factory
+  // Example 8: Custom Media Factory
   await customMediaFactoryExample();
 }
 
@@ -128,9 +131,76 @@ void networkMediaExample() {
   print('');
 }
 
-/// Example 4: Pattern Matching with fold
+/// Example 4: Working with Asset Media Sources (Flutter only)
+///
+/// Note: This example requires:
+/// 1. Adding assets to pubspec.yaml:
+///    ```yaml
+///    flutter:
+///      assets:
+///        - assets/videos/
+///        - assets/audio/
+///        - assets/images/
+///    ```
+/// 2. Placing actual media files in those directories
+Future<void> assetMediaExample() async {
+  print('--- Example 4: Asset Media (Flutter only) ---');
+
+  // Load a video asset from the bundle
+  final video = await VideoAssetMedia.load(
+    'assets/videos/intro.mp4',
+    name: 'Intro Video',
+    duration: const Duration(seconds: 30),
+  );
+
+  print('Video Asset:');
+  print('  Asset path: ${video.assetPath}');
+  print('  Name: ${video.name}');
+  print('  Size: ${video.size}');
+  print('  Duration: ${video.metadata.duration}');
+  print('');
+
+  // Load an audio asset
+  final audio = await AudioAssetMedia.load(
+    'assets/audio/background.mp3',
+    duration: const Duration(minutes: 3, seconds: 45),
+  );
+
+  print('Audio Asset:');
+  print('  Asset path: ${audio.assetPath}');
+  print('  Name: ${audio.name}');
+  print('  Duration: ${audio.metadata.duration}');
+  print('');
+
+  // Load an image asset with optimized loading (size provided)
+  final image = await ImageAssetMedia.load(
+    'assets/images/logo.png',
+    size: 150.kb, // Avoids loading asset just to get size
+  );
+
+  print('Image Asset:');
+  print('  Asset path: ${image.assetPath}');
+  print('  Size: ${image.size}');
+  print('');
+
+  // Convert asset to memory
+  final memoryVideo = await video.convertToMemory();
+  print('Converted to memory: ${memoryVideo.bytes.length} bytes');
+  print('');
+
+  // Save asset to file (commented out to avoid file I/O)
+  // final savedVideo = await video.saveTo('/storage/intro.mp4');
+  // print('Saved to: ${savedVideo.file.path}');
+
+  print('Assets can be saved to file system:');
+  print('  await video.saveTo(\'/storage/intro.mp4\');');
+  print('  await audio.saveToFolder(\'/music\');');
+  print('');
+}
+
+/// Example 5: Pattern Matching with fold
 Future<void> patternMatchingExample() async {
-  print('--- Example 4: Pattern Matching ---');
+  print('--- Example 5: Pattern Matching ---');
 
   // Create different media sources
   final fileMedia = await VideoFileMedia.fromPath('/path/to/video.mp4');
@@ -147,6 +217,7 @@ Future<void> patternMatchingExample() async {
       file: (f) => 'File: ${f.file.path}',
       memory: (m) => 'Memory: ${m.size} (${m.bytes.length} bytes)',
       network: (n) => 'Network: ${n.uri}',
+      asset: (a) => 'Asset: ${a.assetPath}',
       orElse: () => 'Unknown source',
     );
     print(description);
@@ -167,9 +238,9 @@ Future<void> patternMatchingExample() async {
   print('');
 }
 
-/// Example 5: Converting Between Sources
+/// Example 6: Converting Between Sources
 Future<void> conversionExample() async {
-  print('--- Example 5: Converting Between Sources ---');
+  print('--- Example 6: Converting Between Sources ---');
 
   // Start with file media
   final fileMedia = await VideoFileMedia.fromPath(
@@ -191,15 +262,15 @@ Future<void> conversionExample() async {
   );
 
   print('Memory media: ${memoryMedia.size}');
-  // final savedFile = await memoryMedia.saveToFile('/output/video.mp4');
+  // final savedFile = await memoryMedia.saveTo('/output/video.mp4');
   // print('Saved to file: ${savedFile.file.path}');
 
   print('');
 }
 
-/// Example 6: Custom Media Types and Sources
+/// Example 7: Custom Media Types and Sources
 void customMediaTypeExample() {
-  print('--- Example 6: Custom Media Types ---');
+  print('--- Example 7: Custom Media Types ---');
 
   // Create custom sticker type
   final stickerType = StickerType();
@@ -238,7 +309,7 @@ void customMediaTypeExample() {
   print('   and implement ToFileConvertableMedia/ToMemoryConvertableMedia as needed.');
 }
 
-/// Example 7: Custom Media Factory
+/// Example 8: Custom Media Factory
 ///
 /// This example demonstrates how to create a custom factory that instantiates
 /// different media source types based on custom conditions or business logic.

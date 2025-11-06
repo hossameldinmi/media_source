@@ -119,6 +119,7 @@ abstract class FileMediaSource<M extends FileType> extends MediaSource<M> implem
           path,
           mimeType: mimeType,
           length: size?.inBytes,
+          name: name,
         ),
         name: name,
         mimeType: mimeType,
@@ -286,7 +287,12 @@ class VideoFileMedia extends FileMediaSource<VideoType> {
     await PlatformUtils.instance.createDirectoryIfNotExists(path);
     await file.saveTo(path);
     return VideoFileMedia._(
-      file: XFile(path, name: name, mimeType: mimeType),
+      file: XFile(
+        path,
+        name: name,
+        mimeType: mimeType,
+        length: size?.inBytes,
+      ),
       size: size ?? await file.size(),
       name: name,
       duration: metadata.duration,

@@ -3,12 +3,12 @@ import 'package:cross_file/cross_file.dart';
 import 'package:file_type_plus/file_type_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:media_source/src/utils/platform_utils.dart';
-import 'package:sized_file/sized_file.dart';
+import 'package:file_sized/file_sized.dart';
 
 /// Convenience extensions for [XFile] used by this package.
 ///
 /// Provides platform-agnostic helpers such as deletion via the package's
-/// [PlatformUtils] facade, size extraction as a [SizedFile], and media type
+/// [PlatformUtils] facade, size extraction as a [FileSize], and media type
 /// detection.
 extension FileExtensions on XFile {
   /// Deletes the underlying file/resource using the platform facade.
@@ -20,11 +20,11 @@ extension FileExtensions on XFile {
     return false;
   }
 
-  /// Returns the file size wrapped in a [SizedFile].
+  /// Returns the file size wrapped in a [FileSize].
   ///
-  /// Uses the cross-file `length()` and converts to a [SizedFile] for
+  /// Uses the cross-file `length()` and converts to a [FileSize] for
   /// convenient human-readable formatting elsewhere in the package.
-  Future<SizedFile> size() => length().then((v) => v.b);
+  Future<FileSize> size() => length().then((v) => v.b);
 
   /// Returns `true` when the underlying file/resource exists on the
   /// platform (disk, blob URL, etc.).

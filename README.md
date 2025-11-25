@@ -426,7 +426,7 @@ NetworkMediaSource(String url)
 AssetMediaSource.load(
   String assetPath, {
   AssetBundle? bundle,
-  SizedFile? size,
+  FileSize? size,
 })
 ```
 
@@ -522,7 +522,7 @@ class MediaFactory {
     String? url,
     String? name,
     String? mimeType,
-    SizedFile? size,
+    FileSize? size,
     Duration? duration,
   }) async {
     switch (source) {
@@ -567,7 +567,7 @@ class SmartMediaFactory {
   /// Creates media with optimization based on file size
   Future<MediaSource?> createOptimized({
     required String path,
-    SizedFile? size,
+    FileSize? size,
   }) async {
     // For small files, prefer memory for better performance
     if (preferMemoryForSmallFiles && 

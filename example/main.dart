@@ -409,7 +409,7 @@ class MediaFactory {
     String? url,
     String? name,
     String? mimeType,
-    SizedFile? size,
+    FileSize? size,
     Duration? duration,
   }) async {
     switch (source) {
@@ -447,7 +447,7 @@ class MediaFactory {
     String path, {
     String? name,
     Duration? duration,
-    SizedFile? size,
+    FileSize? size,
   }) async {
     return await _createFileMedia(
       path: path,
@@ -461,7 +461,7 @@ class MediaFactory {
   MediaSource? createFromUrl(
     String url, {
     String? name,
-    SizedFile? size,
+    FileSize? size,
     Duration? duration,
   }) {
     return _createNetworkMedia(
@@ -476,7 +476,7 @@ class MediaFactory {
     required String path,
     String? name,
     Duration? duration,
-    SizedFile? size,
+    FileSize? size,
   }) async {
     final fileType = await FileType.fromPath(path);
 
@@ -553,7 +553,7 @@ class MediaFactory {
   MediaSource? _createNetworkMedia({
     required String url,
     String? name,
-    SizedFile? size,
+    FileSize? size,
     Duration? duration,
   }) {
     final uri = Uri.tryParse(url);
@@ -601,7 +601,7 @@ class SmartMediaFactory {
   /// Creates media with optimization based on file size
   Future<MediaSource?> createOptimized({
     required String path,
-    SizedFile? size,
+    FileSize? size,
     Duration? duration,
   }) async {
     // If file is small and we prefer memory, load it into memory
@@ -630,7 +630,7 @@ class SmartMediaFactory {
     required String path,
     String? name,
     Duration? duration,
-    SizedFile? size,
+    FileSize? size,
   }) async {
     final fileType = await FileType.fromPath(path);
 

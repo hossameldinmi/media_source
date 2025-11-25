@@ -4,7 +4,7 @@ import 'package:media_source/src/media_type.dart';
 import 'package:media_source/src/sources/file_media_source.dart';
 import 'package:media_source/src/sources/media_source.dart';
 import 'package:media_source/src/utils/platform_utils.dart';
-import 'package:sized_file/sized_file.dart';
+import 'package:file_sized/file_sized.dart';
 import 'package:path/path.dart' as p;
 import 'package:file_type_plus/file_type_plus.dart';
 

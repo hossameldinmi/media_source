@@ -3,7 +3,7 @@ import 'package:media_source/src/sources/file_media_source.dart';
 import 'package:media_source/src/sources/memory_media_source.dart';
 import 'package:media_source/src/extensions/file_extensions.dart';
 import 'package:media_source/src/utils/platform_utils.dart';
-import 'package:sized_file/sized_file.dart';
+import 'package:file_sized/file_sized.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'shared/fixture.dart';
 

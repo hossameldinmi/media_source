@@ -5,7 +5,7 @@ import 'package:media_source/src/sources/file_media_source.dart';
 import 'package:media_source/src/sources/media_source.dart';
 import 'package:media_source/src/sources/memory_media_source.dart';
 import 'package:path/path.dart' as p;
-import 'package:sized_file/sized_file.dart';
+import 'package:file_sized/file_sized.dart';
 import 'package:file_type_plus/file_type_plus.dart';
 
 /// Abstract base class for Flutter asset-based media sources.
@@ -156,7 +156,7 @@ class VideoAssetMedia extends AssetMediaSource<VideoType> {
     String? name,
     Duration? duration,
     String? mimeType,
-    SizedFile? size,
+    FileSize? size,
   }) async {
     return VideoAssetMedia._(
       assetPath: assetPath,
@@ -264,7 +264,7 @@ class AudioAssetMedia extends AssetMediaSource<AudioType> {
     String? name,
     Duration? duration,
     String? mimeType,
-    SizedFile? size,
+    FileSize? size,
   }) async {
     return AudioAssetMedia._(
       assetPath: assetPath,
@@ -368,7 +368,7 @@ class ImageAssetMedia extends AssetMediaSource<ImageType> {
     AssetBundle? bundle,
     String? name,
     String? mimeType,
-    SizedFile? size,
+    FileSize? size,
   }) async {
     return ImageAssetMedia(
       assetPath: assetPath,
@@ -467,7 +467,7 @@ class DocumentAssetMedia extends AssetMediaSource<DocumentType> {
     AssetBundle? bundle,
     String? name,
     String? mimeType,
-    SizedFile? size,
+    FileSize? size,
   }) async {
     return DocumentAssetMedia._(
       assetPath: assetPath,
@@ -567,7 +567,7 @@ class OtherTypeAssetMedia extends AssetMediaSource<OtherType> {
     AssetBundle? bundle,
     String? name,
     String? mimeType,
-    SizedFile? size,
+    FileSize? size,
   }) async {
     return OtherTypeAssetMedia._(
       assetPath: assetPath,

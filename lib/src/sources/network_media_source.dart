@@ -1,7 +1,7 @@
 import 'package:media_source/src/extensions/uri_extensions.dart';
 import 'package:media_source/src/media_type.dart';
 import 'package:media_source/src/sources/media_source.dart';
-import 'package:sized_file/sized_file.dart';
+import 'package:file_sized/file_sized.dart';
 import 'package:file_type_plus/file_type_plus.dart';
 
 /// Abstract base class for network-based media sources.
@@ -63,7 +63,7 @@ abstract class NetworkMediaSource<M extends FileType> extends MediaSource<M> {
   static NetworkMediaSource fromUrl(
     String url, {
     String? name,
-    SizedFile? size,
+    FileSize? size,
     String? mimeType,
     Duration? duration,
     FileType? mediaType,

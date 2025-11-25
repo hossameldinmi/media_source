@@ -1,7 +1,7 @@
 // ignore_for_file: non_constant_identifier_names
 
 import 'package:cross_file/cross_file.dart';
-import 'package:sized_file/sized_file.dart';
+import 'package:file_sized/file_sized.dart';
 
 class Fixture {
   static const pathes = Pathes();
@@ -46,7 +46,7 @@ class Fixture {
 
 class AssetData {
   final XFile file;
-  final SizedFile size;
+  final FileSize size;
   final String mimeType;
   final Duration? duration;
 

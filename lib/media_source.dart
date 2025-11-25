@@ -9,7 +9,7 @@
 /// - **Multiple Source Types**: Work with files, memory buffers, or network URLs
 /// - **Type-Safe Media Classification**: Strongly-typed media types (Video, Audio, Image, Document)
 /// - **Cross-Platform Support**: Works on mobile, web, and desktop platforms
-/// - **Size-Aware**: Built-in file size handling with [SizedFile] support
+/// - **Size-Aware**: Built-in file size handling with [FileSize] support
 /// - **Flexible Conversions**: Convert between different source types (e.g., file to memory)
 /// - **File Operations**: Move, copy, save, and delete operations for file-based media
 ///
@@ -112,4 +112,4 @@ export 'src/sources/network_media_source.dart';
 export 'src/media_type.dart';
 export 'src/utils/platform_utils.dart';
 export 'src/sources/media_source.dart';
-export 'package:sized_file/sized_file.dart';
+export 'package:file_sized/file_sized.dart';

@@ -5,7 +5,7 @@ import 'package:media_source/src/sources/memory_media_source.dart';
 import 'package:media_source/src/extensions/file_extensions.dart';
 import 'package:media_source/src/utils/platform_utils.dart';
 import 'package:path/path.dart' as p;
-import 'package:sized_file/sized_file.dart';
+import 'package:file_sized/file_sized.dart';
 import 'package:file_type_plus/file_type_plus.dart';
 
 /// Abstract base class for file-based media sources.
@@ -109,7 +109,7 @@ abstract class FileMediaSource<M extends FileType> extends MediaSource<M> implem
   static Future<FileMediaSource> fromPath(
     String path, {
     String? name,
-    SizedFile? size,
+    FileSize? size,
     String? mimeType,
     Duration? duration,
     FileType? mediaType,
@@ -153,7 +153,7 @@ abstract class FileMediaSource<M extends FileType> extends MediaSource<M> implem
     String? mimeType,
     Duration? duration,
     FileType? mediaType,
-    SizedFile? size,
+    FileSize? size,
   }) async {
     mediaType ??= await file.getMediaType(mimeType);
     if (mediaType.isAny([FileType.audio])) {
@@ -237,7 +237,7 @@ class VideoFileMedia extends FileMediaSource<VideoType> {
     String? name,
     Duration? duration,
     String? mimeType,
-    SizedFile? size,
+    FileSize? size,
   }) async {
     final file = XFile(
       path,
@@ -267,7 +267,7 @@ class VideoFileMedia extends FileMediaSource<VideoType> {
     String? name,
     Duration? duration,
     String? mimeType,
-    SizedFile? size,
+    FileSize? size,
   }) async {
     return VideoFileMedia._(
       file: file,
@@ -349,7 +349,7 @@ class AudioFileMedia extends FileMediaSource<AudioType> {
     String? name,
     Duration? duration,
     String? mimeType,
-    SizedFile? size,
+    FileSize? size,
   }) async {
     final file = XFile(
       path,
@@ -379,7 +379,7 @@ class AudioFileMedia extends FileMediaSource<AudioType> {
     String? name,
     Duration? duration,
     String? mimeType,
-    SizedFile? size,
+    FileSize? size,
   }) async {
     return AudioFileMedia._(
       file: file,
@@ -457,7 +457,7 @@ class ImageFileMedia extends FileMediaSource<ImageType> {
     String path, {
     String? name,
     String? mimeType,
-    SizedFile? size,
+    FileSize? size,
   }) async {
     final file = XFile(
       path,
@@ -484,7 +484,7 @@ class ImageFileMedia extends FileMediaSource<ImageType> {
     XFile file, {
     String? name,
     String? mimeType,
-    SizedFile? size,
+    FileSize? size,
   }) async {
     return ImageFileMedia._(
       file: file,
@@ -559,7 +559,7 @@ class DocumentFileMedia extends FileMediaSource<DocumentType> {
     String path, {
     String? name,
     String? mimeType,
-    SizedFile? size,
+    FileSize? size,
   }) async {
     final file = XFile(
       path,
@@ -586,7 +586,7 @@ class DocumentFileMedia extends FileMediaSource<DocumentType> {
     XFile file, {
     String? name,
     String? mimeType,
-    SizedFile? size,
+    FileSize? size,
   }) async {
     return DocumentFileMedia._(
       file: file,
@@ -663,7 +663,7 @@ class OtherTypeFileMedia extends FileMediaSource<OtherType> {
     String path, {
     String? name,
     String? mimeType,
-    SizedFile? size,
+    FileSize? size,
   }) {
     final file = XFile(
       path,
@@ -690,7 +690,7 @@ class OtherTypeFileMedia extends FileMediaSource<OtherType> {
     XFile file, {
     String? name,
     String? mimeType,
-    SizedFile? size,
+    FileSize? size,
   }) async {
     return OtherTypeFileMedia._(
       file: file,

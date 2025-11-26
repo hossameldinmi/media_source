@@ -1,5 +1,5 @@
 name: media_source
-version: 1.0.0
+version: 1.1.0
 
 description: Type-safe, cross-platform media handling for files, memory, asset, and network sources with automatic type detection, seamless conversions, and Flutter integration.
 

@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2025-11-26
+
+### Changed
+- **Breaking Change**: Renamed dependency `sized_file` to `file_sized`
+- **Breaking Change**: Renamed `SizedFile` class to `FileSize`
+
 ## [1.0.0] - 2025-11-06
 
 ### Added
@@ -250,5 +256,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - 🔗 Built on `cross_file` for cross-platform file handling
 - ⚡ Lightweight with minimal dependencies
 
+[1.1.0]: https://github.com/hossameldinmi/media_source/releases/tag/v1.1.0
 [1.0.0]: https://github.com/hossameldinmi/media_source/releases/tag/v1.0.0
 

@@ -67,7 +67,7 @@ Add `media_source` to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  media_source: ^1.0.0
+  media_source: ^1.1.0
 ```
 
 Then run:
@@ -161,7 +161,7 @@ final videoMemory = VideoMemoryMedia(
 
 ```dart
 import 'package:media_source/media_source.dart';
-import 'package:sized_file/sized_file.dart';
+import 'package:file_sized/file_sized.dart';
 
 // Create from URL with automatic type detection
 final media = NetworkMediaSource.fromUrl(
@@ -276,7 +276,7 @@ print(result); // Asset: assets/videos/intro.mp4
 
 ```dart
 import 'package:media_source/media_source.dart';
-import 'package:sized_file/sized_file.dart';
+import 'package:file_sized/file_sized.dart';
 
 Future<void> processMedia() async {
   // Create a video file media
@@ -507,7 +507,7 @@ You can create **custom factories** to centralize media instantiation logic and 
 ```dart
 import 'dart:typed_data';
 import 'package:media_source/media_source.dart';
-import 'package:sized_file/sized_file.dart';
+import 'package:file_sized/file_sized.dart';
 
 /// Enum to specify media source type
 enum MediaSourceType { file, memory, network }

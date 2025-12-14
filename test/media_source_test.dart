@@ -1,5 +1,4 @@
 import 'dart:typed_data';
-
 import 'package:file_type_plus/file_type_plus.dart';
 import 'package:media_source/media_source.dart';
 import 'package:flutter_test/flutter_test.dart';

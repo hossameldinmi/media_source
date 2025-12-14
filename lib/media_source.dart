@@ -109,6 +109,7 @@ export 'src/sources/asset_media_source.dart';
 export 'src/sources/file_media_source.dart';
 export 'src/sources/memory_media_source.dart';
 export 'src/sources/network_media_source.dart';
+export 'src/sources/thumbnail_media_source.dart';
 export 'src/media_type.dart';
 export 'src/utils/platform_utils.dart';
 export 'src/sources/media_source.dart';

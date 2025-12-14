@@ -56,7 +56,7 @@ This package provides a **unified**, **type-safe API** to handle all these scena
 - ⚡ **Lazy loading support** - Optimize performance with size hints to avoid unnecessary data loading
 - 📊 **MIME type utilities** - Comprehensive mapping of extensions to media types
 - 🧩 **Extension-based lookups** - Quick type checks with pre-built extension sets
-- � **Human-readable sizes** - Built-in integration with `sized_file` (1.5.mb, 2.gb, etc.)
+- � **Human-readable sizes** - Built-in integration with `file_sized` (1.5.mb, 2.gb, etc.)
 - 💪 **Built on `cross_file`** - Seamless cross-platform file handling
 - ✅ **100% test coverage** - Production-ready and thoroughly tested
 - 🛡️ **Fully type-safe** - Compile-time safety with generic type parameters
@@ -672,4 +672,4 @@ Hossam Eldin Mahmoud - [GitHub](https://github.com/hossameldinmi), [LinkedIn](ht
 
 - Uses [cross_file](https://pub.dev/packages/cross_file) for cross-platform file handling
 - Built with [file_type_plus](https://pub.dev/packages/file_type_plus) for file type detection
-- Size handling powered by [sized_file](https://pub.dev/packages/sized_file)
+- Size handling powered by [file_sized](https://pub.dev/packages/file_sized)

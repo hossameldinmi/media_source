@@ -92,5 +92,25 @@ void main() {
       expect(source1, isNot(source3));
       expect(source1, isNot(source4));
     });
+
+    test('should support pattern matching via fold', () {
+      final source = ThumbnailMediaSource(
+        original: original,
+        thumbnail: thumbnail,
+      );
+
+      final result = source.fold(
+        thumbnail: (s) => 'thumbnail',
+        orElse: () => 'else',
+      );
+
+      expect(result, 'thumbnail');
+
+      final resultElse = source.fold(
+        orElse: () => 'else',
+      );
+
+      expect(resultElse, 'else');
+    });
   });
 }

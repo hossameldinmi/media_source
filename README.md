@@ -47,6 +47,7 @@ This package provides a **unified**, **type-safe API** to handle all these scena
 
 - 🎯 **Type-safe media source abstraction** - Handle files, memory, network, and assets uniformly
 - 📁 **Multiple source types** - `FileMediaSource`, `MemoryMediaSource`, `NetworkMediaSource`, `AssetMediaSource`, `ThumbnailMediaSource`
+- 🖼️ **Thumbnail support** - Pair high-quality media with lightweight previews for optimized loading
 - 🔍 **Automatic media type detection** - From file paths, MIME types, and byte data
 - 💥 **Pattern matching API** - Type-safe `fold()` for elegant source handling
 - 🔄 **Seamless conversions** - Convert between source types (file ↔ memory ↔ asset)
@@ -68,7 +69,7 @@ Add `media_source` to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  media_source: ^1.2.0
+  media_source: ^1.3.0
 ```
 
 Then run:
@@ -286,9 +287,16 @@ Future<void> processMedia() async {
     '/path/to/video.mp4',
     duration: Duration(minutes: 2),
   );
+  
+  // Create a thumbnail for the video
+  final thumb = await ImageFileMedia.fromPath('/path/to/thumbnail.jpg');
+  final mediaWithThumb = ThumbnailMediaSource<VideoType, ImageType>(
+    original: video,
+    thumbnail: thumb,
+  );
 
   // Check media type and handle accordingly
-  final result = video.fold<String>(
+  final result = mediaWithThumb.fold<String>(
     file: (fileMedia) async {
       // Save a backup
       await fileMedia.saveTo('/backup/video.mp4');
@@ -311,7 +319,11 @@ Future<void> processMedia() async {
       return 'Asset media: ${assetMedia.assetPath}';
     },
     thumbnail: (thumbnailMedia) {
-      return 'Thumbnail media: ${thumbnailMedia.name}';
+      // Handle thumbnail media with preview optimization
+      final hasPreview = thumbnailMedia.hasThumbnail ? 'with preview' : 'no preview';
+      print('Thumbnail size: ${thumbnailMedia.thumbnail?.size ?? 0} bytes');
+      print('Original size: ${thumbnailMedia.original.size} bytes');
+      return 'Thumbnail media $hasPreview: ${thumbnailMedia.name}';
     },
     orElse: () => 'Unknown media type',
   );
@@ -446,7 +458,18 @@ ThumbnailMediaSource({
 
 ### Working with **Thumbnail Media Source**
 
-Use `ThumbnailMediaSource` when you have a high-quality media file (like a video) and a separate lightweight preview image (thumbnail).
+`ThumbnailMediaSource` is a powerful wrapper that pairs high-quality media with lightweight preview thumbnails, enabling optimized user experiences through progressive loading and bandwidth-efficient previews.
+
+#### **When to Use Thumbnails**
+
+✅ **Perfect for:**
+- Video galleries (show thumbnail, load video on demand)
+- Large image collections (display compressed previews)
+- Media-rich feeds (load thumbnails first, full media on interaction)
+- Bandwidth-constrained environments (mobile networks, slow connections)
+- Progressive enhancement UX patterns
+
+#### **Basic Usage**
 
 ```dart
 import 'package:media_source/media_source.dart';
@@ -467,11 +490,12 @@ print(mediaWithThumb.name);      // movie.mp4
 print(mediaWithThumb.size);      // Size of the video file
 print(mediaWithThumb.metadata);  // VideoType metadata
 
-// 4. Use the thumbnail
+// 4. Check if thumbnail exists
 if (mediaWithThumb.hasThumbnail) {
   // Show thumbnail in UI
   final preview = mediaWithThumb.thumbnail!; 
   print('Preview: ${preview.name}');
+  print('Preview size: ${preview.size}'); // Much smaller than original
 }
 
 // 5. Smart display logic
@@ -479,36 +503,213 @@ if (mediaWithThumb.hasThumbnail) {
 final sourceToDisplay = mediaWithThumb.thumbnail ?? mediaWithThumb.original;
 ```
 
-### **MIME Groups Utilities**
+#### **Advanced Usage Patterns**
 
-**Maps:**
-- `extensionToMediaType` - Map<String, MediaType>
-- `mediaTypeExtensions` - Map<MediaType, Set<String>>
+**Progressive Loading in UI:**
+```dart
+import 'package:media_source/media_source.dart';
+import 'package:flutter/material.dart';
 
-**Sets:**
-- `imageExtensions` - All **image** file extensions
-- `audioExtensions` - All **audio** file extensions
-- `videoExtensions` - All **video** file extensions
-- `documentExtensions` - All **document** file extensions
-- `otherExtensions` - All **other** file extensions
+class VideoGalleryItem extends StatefulWidget {
+  final ThumbnailMediaSource<VideoType, ImageType> media;
+  
+  const VideoGalleryItem({required this.media});
+  
+  @override
+  State<VideoGalleryItem> createState() => _VideoGalleryItemState();
+}
 
-**Functions:**
-- `MediaType mediaTypeForExtension(String extension)` - Get MediaType for an extension
-- `bool isExtensionOfType(String extension, MediaType type)` - Check if extension matches type
+class _VideoGalleryItemState extends State<VideoGalleryItem> {
+  bool _loadingFullVideo = false;
+  
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () => _loadFullVideo(),
+      child: Stack(
+        children: [
+          // Show thumbnail immediately
+          if (widget.media.hasThumbnail)
+            Image.memory(widget.media.thumbnail!.bytes),
+          
+          // Overlay with video info
+          Positioned(
+            bottom: 8,
+            right: 8,
+            child: Text('${widget.media.metadata.duration}'),
+          ),
+          
+          // Loading indicator
+          if (_loadingFullVideo)
+            Center(child: CircularProgressIndicator()),
+        ],
+      ),
+    );
+  }
+  
+  Future<void> _loadFullVideo() async {
+    setState(() => _loadingFullVideo = true);
+    // Load and play the full video
+    final videoFile = widget.media.original;
+    // ... play video ...
+    setState(() => _loadingFullVideo = false);
+  }
+}
+```
 
-## Supported Media Types
+**Network Media with Thumbnail:**
+```dart
+import 'package:media_source/media_source.dart';
+import 'package:file_sized/file_sized.dart';
 
-The package **automatically detects** and categorizes **hundreds of file extensions** including:
+// Create network video with thumbnail
+final videoUrl = 'https://example.com/videos/movie.mp4';
+final thumbUrl = 'https://example.com/thumbnails/movie_thumb.jpg';
 
-**Images**: jpg, jpeg, png, gif, bmp, webp, svg, ico, tiff, avif, heic, heif, and more
+final video = VideoNetworkMedia.url(
+  videoUrl,
+  name: 'movie.mp4',
+  size: 150.mb,
+  duration: Duration(minutes: 90),
+);
 
-**Audio**: mp3, aac, wav, flac, ogg, m4a, wma, opus, and more
+final thumbnail = ImageNetworkMedia.url(
+  thumbUrl,
+  name: 'movie_thumb.jpg',
+  size: 50.kb, // Much smaller!
+);
 
-**Video**: mp4, mov, avi, mkv, webm, flv, wmv, m4v, 3gp, and more
+// Combine them
+final mediaWithThumb = ThumbnailMediaSource<VideoType, ImageType>(
+  original: video,
+  thumbnail: thumbnail,
+);
 
-**Documents**: pdf
+// In your UI, load thumbnail first (50KB)
+// Then load full video only when user clicks (150MB)
+```
 
-**Other**: All other MIME types and extensions
+**Generate Thumbnails from Video:**
+```dart
+import 'package:media_source/media_source.dart';
+
+// Load original video
+final video = await VideoFileMedia.fromPath('/path/to/video.mp4');
+
+// Generate thumbnail (using your preferred video thumbnail package)
+// Example: video_thumbnail, flutter_video_thumbnail, etc.
+final thumbnailBytes = await generateVideoThumbnail(video.file.path);
+
+final thumbnail = ImageMemoryMedia(
+  thumbnailBytes,
+  name: 'video_thumb.jpg',
+  mimeType: 'image/jpeg',
+);
+
+// Create thumbnail media source
+final mediaWithThumb = ThumbnailMediaSource<VideoType, ImageType>(
+  original: video,
+  thumbnail: thumbnail,
+);
+
+// Optionally save thumbnail for future use
+await thumbnail.saveTo('/cache/thumbnails/video_thumb.jpg');
+```
+
+**Handling Missing Thumbnails:**
+```dart
+import 'package:media_source/media_source.dart';
+
+// Create media source without thumbnail initially
+final video = await VideoFileMedia.fromPath('/path/to/video.mp4');
+final mediaWithThumb = ThumbnailMediaSource<VideoType, ImageType>(
+  original: video,
+  // thumbnail: null, // Optional - can be null
+);
+
+// Check before using
+if (mediaWithThumb.hasThumbnail) {
+  // Show thumbnail
+  displayThumbnail(mediaWithThumb.thumbnail!);
+} else {
+  // Show placeholder or generate thumbnail on-demand
+  showPlaceholder();
+}
+
+// Later, add thumbnail when available
+final generatedThumb = await generateThumbnail(video);
+final updatedMedia = ThumbnailMediaSource<VideoType, ImageType>(
+  original: video,
+  thumbnail: generatedThumb,
+);
+```
+
+**Mixed Media Types:**
+```dart
+import 'package:media_source/media_source.dart';
+
+// Large image with compressed preview
+final highResImage = await ImageFileMedia.fromPath('/photos/4k_photo.jpg');
+final compressedPreview = await ImageFileMedia.fromPath('/cache/photo_preview.jpg');
+
+final photoWithPreview = ThumbnailMediaSource<ImageType, ImageType>(
+  original: highResImage,
+  thumbnail: compressedPreview,
+);
+
+// Audio with album art
+final audioTrack = await AudioFileMedia.fromPath('/music/song.mp3');
+final albumArt = await ImageFileMedia.fromPath('/music/covers/album.jpg');
+
+final musicWithArt = ThumbnailMediaSource<AudioType, ImageType>(
+  original: audioTrack,
+  thumbnail: albumArt,
+);
+```
+
+**Pattern Matching with Thumbnails:**
+```dart
+import 'package:media_source/media_source.dart';
+
+final media = ThumbnailMediaSource<VideoType, ImageType>(
+  original: video,
+  thumbnail: thumbnail,
+);
+
+// Pattern matching works seamlessly
+final result = media.fold(
+  file: (f) => 'File source: ${f.file.path}',
+  memory: (m) => 'Memory source: ${m.size} bytes',
+  network: (n) => 'Network source: ${n.uri}',
+  asset: (a) => 'Asset source: ${a.assetPath}',
+  thumbnail: (t) {
+    final hasThumb = t.hasThumbnail ? 'with' : 'without';
+    return 'Thumbnail source $hasThumb preview: ${t.name}';
+  },
+  orElse: () => 'Unknown source',
+);
+```
+
+#### **Key Features**
+
+- 🎯 **Type-safe dual generics** - Separate types for original and thumbnail
+- 📊 **Automatic delegation** - Properties delegate to original media
+- 🔄 **Optional thumbnails** - Thumbnails can be null, check with `hasThumbnail`
+- 🧩 **Pattern matching** - Full support in `fold()` operations
+- ⚡ **Performance optimization** - Load small thumbnails first, full media on demand
+- 🌐 **Works with all sources** - File, Memory, Network, and Asset media
+- 💾 **Bandwidth efficient** - Ideal for mobile and slow connections
+
+#### **Best Practices**
+
+1. **Always check `hasThumbnail`** before accessing the thumbnail
+2. **Use compressed images** for thumbnails (JPEG with lower quality)
+3. **Keep thumbnails small** - typically 50-200KB for videos, 10-50KB for images
+4. **Cache thumbnails** - Save generated thumbnails to avoid regeneration
+5. **Progressive loading** - Show thumbnail immediately, load full media on interaction
+6. **Consider aspect ratio** - Maintain original aspect ratio in thumbnails
+7. **Lazy generation** - Only generate thumbnails when needed
+
 
 ## Extensibility
 

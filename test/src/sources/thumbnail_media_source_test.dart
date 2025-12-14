@@ -60,11 +60,12 @@ void main() {
         thumbnail: thumbnail,
       );
 
+      expect(source.original, videoOriginal);
       expect(source.original, isA<MediaSource<VideoType>>());
       expect(source.metadata, isA<VideoType>());
 
+      expect(source.thumbnail, thumbnail);
       expect(source.thumbnail, isA<MediaSource<ImageType>>());
-      expect(source.thumbnail!.metadata, isA<ImageType>());
     });
   });
 }

@@ -31,4 +31,7 @@ class ThumbnailMediaSource<M extends FileType, T extends FileType> extends Media
 
   /// Returns `true` if a [thumbnail] source is available.
   bool get hasThumbnail => thumbnail != null;
+
+  @override
+  List<Object?> get props => [original, thumbnail, ...super.props];
 }

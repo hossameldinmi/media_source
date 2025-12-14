@@ -67,5 +67,30 @@ void main() {
       expect(source.thumbnail, thumbnail);
       expect(source.thumbnail, isA<MediaSource<ImageType>>());
     });
+
+    test('should support equality', () {
+      final source1 = ThumbnailMediaSource(
+        original: original,
+        thumbnail: thumbnail,
+      );
+      final source2 = ThumbnailMediaSource(
+        original: original,
+        thumbnail: thumbnail,
+      );
+      // Different thumbnail
+      final source3 = ThumbnailMediaSource(
+        original: original,
+      );
+      // Different original
+      final source4 = ThumbnailMediaSource(
+        original: thumbnail, // Using thumbnail as original for difference
+        thumbnail: thumbnail,
+      );
+
+      expect(source1, source2);
+      expect(source1.hashCode, source2.hashCode);
+      expect(source1, isNot(source3));
+      expect(source1, isNot(source4));
+    });
   });
 }

@@ -1,6 +1,6 @@
 import 'package:cross_file/cross_file.dart';
 import 'package:flutter/foundation.dart';
-import 'platform_utils/platform_utils_io.dart' if (dart.library.js_interop) 'platform_utils_web.dart';
+import 'platform_impl/platform_utils_io.dart' if (dart.library.js_interop) 'platform_impl/platform_utils_web.dart';
 
 /// Platform-specific utilities used throughout the package.
 ///

@@ -22,6 +22,7 @@
   <a href="https://opensource.org/licenses/MIT">
     <img alt="MIT License" src="https://img.shields.io/badge/License-MIT-blue.svg">
   </a>
+  <img src="https://img.shields.io/badge/platform-Android%20%7C%20iOS%20%7C%20macOS%20%7C%20Windows%20%7C%20Linux%20%7C%20Web-blue" alt="Platforms">
 </p>
 
 ---
@@ -45,17 +46,17 @@ This package provides a **unified**, **type-safe API** to handle all these scena
 ## Features
 
 - 🎯 **Type-safe media source abstraction** - Handle files, memory, network, and assets uniformly
-- 📁 **Multiple source types** - `FileMediaSource`, `MemoryMediaSource`, `NetworkMediaSource`, `AssetMediaSource`
+- 📁 **Multiple source types** - `FileMediaSource`, `MemoryMediaSource`, `NetworkMediaSource`, `AssetMediaSource`, `ThumbnailMediaSource`
 - 🔍 **Automatic media type detection** - From file paths, MIME types, and byte data
-- � **Pattern matching API** - Type-safe `fold()` for elegant source handling
+- 💥 **Pattern matching API** - Type-safe `fold()` for elegant source handling
 - 🔄 **Seamless conversions** - Convert between source types (file ↔ memory ↔ asset)
 - 💾 **Rich file operations** - Move, copy, save, and delete with atomic operations
-- �🌐 **Cross-platform support** - Works on Flutter mobile, web, and desktop
+- 🌐 **Cross-platform support** - Works on Flutter mobile, web, and desktop
 - 📦 **Flutter asset integration** - Load and convert media from app asset bundles with custom bundle support
 - ⚡ **Lazy loading support** - Optimize performance with size hints to avoid unnecessary data loading
 - 📊 **MIME type utilities** - Comprehensive mapping of extensions to media types
 - 🧩 **Extension-based lookups** - Quick type checks with pre-built extension sets
-- � **Human-readable sizes** - Built-in integration with `sized_file` (1.5.mb, 2.gb, etc.)
+- � **Human-readable sizes** - Built-in integration with `file_sized` (1.5.mb, 2.gb, etc.)
 - 💪 **Built on `cross_file`** - Seamless cross-platform file handling
 - ✅ **100% test coverage** - Production-ready and thoroughly tested
 - 🛡️ **Fully type-safe** - Compile-time safety with generic type parameters
@@ -67,7 +68,7 @@ Add `media_source` to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  media_source: ^1.1.0
+  media_source: ^1.2.0
 ```
 
 Then run:
@@ -257,6 +258,7 @@ final result = video.fold(
   memory: (m) => 'Memory: ${m.size}',
   network: (n) => 'Network: ${n.uri}',
   asset: (a) => 'Asset: ${a.assetPath}',
+  thumbnail: (t) => 'Thumbnail: ${t.name}',
   orElse: () => 'Unknown source',
 );
 print(result); // Asset: assets/videos/intro.mp4
@@ -308,6 +310,9 @@ Future<void> processMedia() async {
     asset: (assetMedia) {
       return 'Asset media: ${assetMedia.assetPath}';
     },
+    thumbnail: (thumbnailMedia) {
+      return 'Thumbnail media: ${thumbnailMedia.name}';
+    },
     orElse: () => 'Unknown media type',
   );
 
@@ -342,6 +347,7 @@ final info = media.fold(
   memory: (m) => 'Memory: ${m.size}',
   network: (n) => 'URL: ${n.uri}',
   asset: (a) => 'Asset: ${a.assetPath}',
+  thumbnail: (t) => 'Thumbnail: ${t.name}',
   orElse: () => 'Unknown source',
 );
 
@@ -428,6 +434,49 @@ AssetMediaSource.load(
   AssetBundle? bundle,
   FileSize? size,
 })
+```
+
+**ThumbnailMediaSource**
+```dart
+ThumbnailMediaSource({
+  required MediaSource<M> original,
+  MediaSource<T>? thumbnail,
+})
+```
+
+### Working with **Thumbnail Media Source**
+
+Use `ThumbnailMediaSource` when you have a high-quality media file (like a video) and a separate lightweight preview image (thumbnail).
+
+```dart
+import 'package:media_source/media_source.dart';
+
+// 1. Create your sources
+final video = await VideoFileMedia.fromPath('/storage/videos/movie.mp4');
+final thumbnail = await ImageFileMedia.fromPath('/storage/cache/thumb_movie.jpg');
+
+// 2. Wrap them in a ThumbnailMediaSource
+// Types: <OriginalType, ThumbnailType>
+final mediaWithThumb = ThumbnailMediaSource<VideoType, ImageType>(
+  original: video,
+  thumbnail: thumbnail,
+);
+
+// 3. Access properties (delegates to original)
+print(mediaWithThumb.name);      // movie.mp4
+print(mediaWithThumb.size);      // Size of the video file
+print(mediaWithThumb.metadata);  // VideoType metadata
+
+// 4. Use the thumbnail
+if (mediaWithThumb.hasThumbnail) {
+  // Show thumbnail in UI
+  final preview = mediaWithThumb.thumbnail!; 
+  print('Preview: ${preview.name}');
+}
+
+// 5. Smart display logic
+// Use thumbnail if present, otherwise use original
+final sourceToDisplay = mediaWithThumb.thumbnail ?? mediaWithThumb.original;
 ```
 
 ### **MIME Groups Utilities**
@@ -623,4 +672,4 @@ Hossam Eldin Mahmoud - [GitHub](https://github.com/hossameldinmi), [LinkedIn](ht
 
 - Uses [cross_file](https://pub.dev/packages/cross_file) for cross-platform file handling
 - Built with [file_type_plus](https://pub.dev/packages/file_type_plus) for file type detection
-- Size handling powered by [sized_file](https://pub.dev/packages/sized_file)
+- Size handling powered by [file_sized](https://pub.dev/packages/file_sized)

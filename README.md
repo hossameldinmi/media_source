@@ -48,10 +48,10 @@ This package provides a **unified**, **type-safe API** to handle all these scena
 - 🎯 **Type-safe media source abstraction** - Handle files, memory, network, and assets uniformly
 - 📁 **Multiple source types** - `FileMediaSource`, `MemoryMediaSource`, `NetworkMediaSource`, `AssetMediaSource`, `ThumbnailMediaSource`
 - 🔍 **Automatic media type detection** - From file paths, MIME types, and byte data
-- � **Pattern matching API** - Type-safe `fold()` for elegant source handling
+- 💥 **Pattern matching API** - Type-safe `fold()` for elegant source handling
 - 🔄 **Seamless conversions** - Convert between source types (file ↔ memory ↔ asset)
 - 💾 **Rich file operations** - Move, copy, save, and delete with atomic operations
-- �🌐 **Cross-platform support** - Works on Flutter mobile, web, and desktop
+- 🌐 **Cross-platform support** - Works on Flutter mobile, web, and desktop
 - 📦 **Flutter asset integration** - Load and convert media from app asset bundles with custom bundle support
 - ⚡ **Lazy loading support** - Optimize performance with size hints to avoid unnecessary data loading
 - 📊 **MIME type utilities** - Comprehensive mapping of extensions to media types
@@ -258,6 +258,7 @@ final result = video.fold(
   memory: (m) => 'Memory: ${m.size}',
   network: (n) => 'Network: ${n.uri}',
   asset: (a) => 'Asset: ${a.assetPath}',
+  thumbnail: (t) => 'Thumbnail: ${t.name}',
   orElse: () => 'Unknown source',
 );
 print(result); // Asset: assets/videos/intro.mp4
@@ -309,6 +310,9 @@ Future<void> processMedia() async {
     asset: (assetMedia) {
       return 'Asset media: ${assetMedia.assetPath}';
     },
+    thumbnail: (thumbnailMedia) {
+      return 'Thumbnail media: ${thumbnailMedia.name}';
+    },
     orElse: () => 'Unknown media type',
   );
 
@@ -343,6 +347,7 @@ final info = media.fold(
   memory: (m) => 'Memory: ${m.size}',
   network: (n) => 'URL: ${n.uri}',
   asset: (a) => 'Asset: ${a.assetPath}',
+  thumbnail: (t) => 'Thumbnail: ${t.name}',
   orElse: () => 'Unknown source',
 );
 

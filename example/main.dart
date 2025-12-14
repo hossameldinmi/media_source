@@ -264,6 +264,7 @@ Future<void> patternMatchingExample() async {
       memory: (m) => 'Memory: ${m.size} (${m.bytes.length} bytes)',
       network: (n) => 'Network: ${n.uri}',
       asset: (a) => 'Asset: ${a.assetPath}',
+      thumbnail: (t) => 'Thumbnail: ${t.name}',
       orElse: () => 'Unknown source',
     );
     print(description);

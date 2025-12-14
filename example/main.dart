@@ -35,6 +35,52 @@ void main() async {
 
   // Example 8: Custom Media Factory
   await customMediaFactoryExample();
+
+  // Example 9: Thumbnail Media Source
+  await thumbnailMediaExample();
+}
+
+/// Example 9: Working with Thumbnail Media Sources
+Future<void> thumbnailMediaExample() async {
+  print('--- Example 9: Thumbnail Media Source ---');
+
+  // 1. Prepare original media (e.g., a video)
+  final video = VideoMemoryMedia(
+    Uint8List(1024), // Mock video data
+    name: 'vacation.mp4',
+    duration: const Duration(minutes: 2),
+  );
+
+  // 2. Prepare thumbnail media (e.g., a small image)
+  final thumbnail = ImageMemoryMedia(
+    Uint8List(100), // Mock image data
+    name: 'preview.jpg',
+    mimeType: 'image/jpeg',
+  );
+
+  // 3. Create the wrapped source
+  // We specify specific types: <VideoType, ImageType>
+  final source = ThumbnailMediaSource<VideoType, ImageType>(
+    original: video,
+    thumbnail: thumbnail,
+  );
+
+  print('Source Created:');
+  print('  Name: ${source.name}'); // Delegates to original
+  print('  Original size: ${source.size}'); // Delegates to original
+  print('  Has thumbnail: ${source.hasThumbnail}');
+
+  // 4. Access individual components
+  print('Components:');
+  print('  Original type: ${source.original.runtimeType}');
+  print('  Thumbnail type: ${source.thumbnail?.runtimeType}');
+
+  // 5. Use appropriate source for display
+  // This is useful for UI widgets that just need *something* to show
+  final displaySource = source.thumbnail ?? source.original;
+  print('Display source name: ${displaySource.name}');
+
+  print('');
 }
 
 /// Example 1: Working with File Media Sources

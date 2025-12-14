@@ -22,6 +22,7 @@
   <a href="https://opensource.org/licenses/MIT">
     <img alt="MIT License" src="https://img.shields.io/badge/License-MIT-blue.svg">
   </a>
+  <img src="https://img.shields.io/badge/platform-Android%20%7C%20iOS%20%7C%20macOS%20%7C%20Windows%20%7C%20Linux%20%7C%20Web-blue" alt="Platforms">
 </p>
 
 ---
@@ -45,7 +46,7 @@ This package provides a **unified**, **type-safe API** to handle all these scena
 ## Features
 
 - 🎯 **Type-safe media source abstraction** - Handle files, memory, network, and assets uniformly
-- 📁 **Multiple source types** - `FileMediaSource`, `MemoryMediaSource`, `NetworkMediaSource`, `AssetMediaSource`
+- 📁 **Multiple source types** - `FileMediaSource`, `MemoryMediaSource`, `NetworkMediaSource`, `AssetMediaSource`, `ThumbnailMediaSource`
 - 🔍 **Automatic media type detection** - From file paths, MIME types, and byte data
 - � **Pattern matching API** - Type-safe `fold()` for elegant source handling
 - 🔄 **Seamless conversions** - Convert between source types (file ↔ memory ↔ asset)
@@ -67,7 +68,7 @@ Add `media_source` to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  media_source: ^1.1.0
+  media_source: ^1.2.0
 ```
 
 Then run:
@@ -428,6 +429,49 @@ AssetMediaSource.load(
   AssetBundle? bundle,
   FileSize? size,
 })
+```
+
+**ThumbnailMediaSource**
+```dart
+ThumbnailMediaSource({
+  required MediaSource<M> original,
+  MediaSource<T>? thumbnail,
+})
+```
+
+### Working with **Thumbnail Media Source**
+
+Use `ThumbnailMediaSource` when you have a high-quality media file (like a video) and a separate lightweight preview image (thumbnail).
+
+```dart
+import 'package:media_source/media_source.dart';
+
+// 1. Create your sources
+final video = await VideoFileMedia.fromPath('/storage/videos/movie.mp4');
+final thumbnail = await ImageFileMedia.fromPath('/storage/cache/thumb_movie.jpg');
+
+// 2. Wrap them in a ThumbnailMediaSource
+// Types: <OriginalType, ThumbnailType>
+final mediaWithThumb = ThumbnailMediaSource<VideoType, ImageType>(
+  original: video,
+  thumbnail: thumbnail,
+);
+
+// 3. Access properties (delegates to original)
+print(mediaWithThumb.name);      // movie.mp4
+print(mediaWithThumb.size);      // Size of the video file
+print(mediaWithThumb.metadata);  // VideoType metadata
+
+// 4. Use the thumbnail
+if (mediaWithThumb.hasThumbnail) {
+  // Show thumbnail in UI
+  final preview = mediaWithThumb.thumbnail!; 
+  print('Preview: ${preview.name}');
+}
+
+// 5. Smart display logic
+// Use thumbnail if present, otherwise use original
+final sourceToDisplay = mediaWithThumb.thumbnail ?? mediaWithThumb.original;
 ```
 
 ### **MIME Groups Utilities**

@@ -7,7 +7,7 @@
 
 <p align="center">
    <a href="https://github.com/balsm-io/media_source/actions/workflows/build.yml">
-    <img src="https://github.com/balsm-io/media_source/actions/workflows/build.yml/badge.svg?branch=main" alt="Github action">
+    <img src="https://github.com/balsm-io/media_source/actions/workflows/build.yml/badge.svg?branch=main" alt="GitHub action">
   </a>
   <a href="https://codecov.io/github/balsm-io/media_source">
     <img src="https://codecov.io/github/balsm-io/media_source/graph/badge.svg?token=JzTIIzoQOq" alt="Code Coverage">

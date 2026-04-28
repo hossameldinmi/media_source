@@ -8,22 +8,22 @@ void main() {
   group('FileType', () {
     group('fromPath', () {
       test('should detect image from path', () {
-        final mediaType = FileType.fromPath('test.jpg', null);
+        final mediaType = FileType.fromPath('test.jpg');
         expect(mediaType, FileType.image);
       });
 
       test('should detect video from path', () {
-        final mediaType = FileType.fromPath('test.mp4', null);
+        final mediaType = FileType.fromPath('test.mp4');
         expect(mediaType, FileType.video);
       });
 
       test('should detect audio from path', () {
-        final mediaType = FileType.fromPath('test.mp3', null);
+        final mediaType = FileType.fromPath('test.mp3');
         expect(mediaType, FileType.audio);
       });
 
       test('should detect document from path', () {
-        final mediaType = FileType.fromPath('test.pdf', null);
+        final mediaType = FileType.fromPath('test.pdf');
         expect(mediaType, FileType.document);
       });
 
@@ -33,12 +33,12 @@ void main() {
       });
 
       test('should detect video from ism path', () {
-        final mediaType = FileType.fromPath('test.ism/manifest', null);
+        final mediaType = FileType.fromPath('test.ism/manifest');
         expect(mediaType, FileType.video);
       }, skip: 'ISM detection not implemented'); // Skipped as ISM detection is not implemented
 
       test('should detect video from m3u8 (mpegurl)', () {
-        final mediaType = FileType.fromPath('test.m3u8', null);
+        final mediaType = FileType.fromPath('test.m3u8');
         expect(mediaType, FileType.video);
       });
     });

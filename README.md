@@ -1,4 +1,4 @@
-<img src="https://github.com/hossameldinmi/media_source/raw/main/assets/wallpaper.png" alt="wallpaper" />
+<img src="https://github.com/balsm-io/media_source/raw/main/assets/wallpaper.png" alt="wallpaper" />
 
 
 <h2 align="center">
@@ -6,11 +6,11 @@
 </h2>
 
 <p align="center">
-   <a href="https://github.com/hossameldinmi/media_source/actions/workflows/build.yml">
-    <img src="https://github.com/hossameldinmi/media_source/actions/workflows/build.yml/badge.svg?branch=main" alt="Github action">
+   <a href="https://github.com/balsm-io/media_source/actions/workflows/build.yml">
+    <img src="https://github.com/balsm-io/media_source/actions/workflows/build.yml/badge.svg?branch=main" alt="GitHub action">
   </a>
-  <a href="https://codecov.io/github/hossameldinmi/media_source">
-    <img src="https://codecov.io/github/hossameldinmi/media_source/graph/badge.svg?token=JzTIIzoQOq" alt="Code Coverage">
+  <a href="https://codecov.io/github/balsm-io/media_source">
+    <img src="https://codecov.io/github/balsm-io/media_source/graph/badge.svg?token=JzTIIzoQOq" alt="Code Coverage">
   </a>
   <a href="https://pub.dev/packages/media_source">
     <img alt="Pub Package" src="https://img.shields.io/pub/v/media_source">
@@ -69,7 +69,7 @@ Add `media_source` to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  media_source: ^1.3.0
+  media_source: ^1.3.1
 ```
 
 Then run:
@@ -859,7 +859,7 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ### Issues
 
-If you encounter any issues or have suggestions, please file them in the [issue tracker](https://github.com/hossameldinmi/media_source/issues).
+If you encounter any issues or have suggestions, please file them in the [issue tracker](https://github.com/balsm-io/media_source/issues).
 
 ### License
 

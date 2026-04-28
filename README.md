@@ -9,9 +9,10 @@
    <a href="https://github.com/balsm-io/media_source/actions/workflows/build.yml">
     <img src="https://github.com/balsm-io/media_source/actions/workflows/build.yml/badge.svg?branch=main" alt="GitHub action">
   </a>
-  <a href="https://codecov.io/github/balsm-io/media_source">
-    <img src="https://codecov.io/github/balsm-io/media_source/graph/badge.svg?token=JzTIIzoQOq" alt="Code Coverage">
-  </a>
+
+  <a href="https://codecov.io/gh/balsm-io/media_source" > 
+ <img src="https://codecov.io/gh/balsm-io/media_source/graph/badge.svg?token=sSK2ZySczS"/> 
+ </a>
   <a href="https://pub.dev/packages/media_source">
     <img alt="Pub Package" src="https://img.shields.io/pub/v/media_source">
   </a>
@@ -69,7 +70,7 @@ Add `media_source` to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  media_source: ^1.3.1
+  media_source: ^1.3.2
 ```
 
 Then run:

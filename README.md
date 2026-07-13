@@ -417,7 +417,7 @@ Base class for **media type classification**:
 - `MediaType.fromBytes(Uint8List bytes, String? mimeType)` - Create from **byte data**
 - `when<T>({...})` - **Pattern matching** for type-specific operations
 - `isAny(List<MediaType> list)` - Check if type is in list
-- `isAnyType(List<Type> list)` - Check if runtime type is in list
+- `isAnyType(List<Type> list)` - Deprecated: exact runtimeType match only; use `is` checks or `fold` instead
 
 ### **MediaSource Implementations**
 
@@ -743,7 +743,7 @@ class StickerMemoryMedia extends MemoryMediaSource<StickerType> {
   @override
   Future<FileMediaSource<StickerType>> saveTo(String path) async {
     final file = XFile.fromData(bytes, name: name, path: path);
-    await PlatformUtils.instance.createDirectoryIfNotExists(path);
+    await PlatformUtils.instance.ensureParentDirectoryExists(path);
     await file.saveTo(path);
     // Return your own FileMediaSource<StickerType> implementation here
     throw UnimplementedError();

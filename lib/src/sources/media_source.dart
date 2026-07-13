@@ -40,7 +40,8 @@ abstract class MediaSource<M extends FileType> extends Equatable {
 
   /// Extracts the file extension from the name.
   ///
-  /// Returns the substring after the last dot, or the entire name if no dot exists.
+  /// Returns the extension including the leading dot (e.g. '.mp4'), or an
+  /// empty string if the name has no extension.
   String get extension => p.extension(name);
 
   /// Creates a [MediaSource] with the specified properties.
@@ -56,7 +57,9 @@ abstract class MediaSource<M extends FileType> extends Equatable {
 
   /// Checks if this media source's runtime type is in the given list.
   ///
-  /// Useful for runtime type checking against multiple types.
+  /// Only exact runtime types match: `isAnyType([FileMediaSource])` is always
+  /// `false` for subclasses such as [VideoFileMedia].
+  @Deprecated('Exact runtimeType comparison silently fails for base types; use `is` checks or fold instead.')
   bool isAnyType(List<Type> list) => list.contains(runtimeType);
 
   /// Performs pattern matching on media sources using a fold-like pattern.

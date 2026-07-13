@@ -72,7 +72,6 @@ class VideoType extends FileTypeImpl implements DurationMedia {
   final Duration? duration;
 
   /// Creates a [VideoType] with an optional duration.
-  @override
   VideoType([this.duration]) : super.copy(FileType.video);
 
   @override

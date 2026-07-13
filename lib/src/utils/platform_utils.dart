@@ -24,8 +24,23 @@ abstract class PlatformUtilsFacade {
   /// Returns `true` when deletion succeeds, `false` otherwise.
   Future<bool> deleteFile(XFile file);
 
-  /// Ensures the directory at [directoryPath] exists, creating it if needed.
-  Future<void> createDirectoryIfNotExists(String directoryPath);
+  /// Ensures the parent directory of [filePath] exists, creating it if needed.
+  ///
+  /// [filePath] is the path of a file about to be written; the directory that
+  /// will contain it is created recursively when missing.
+  Future<void> ensureParentDirectoryExists(String filePath);
+
+  /// Ensures the parent directory of [directoryPath] exists.
+  @Deprecated('Despite its name, this creates the parent directory of the given path, '
+      'not the directory itself. Use ensureParentDirectoryExists instead.')
+  Future<void> createDirectoryIfNotExists(String directoryPath) => ensureParentDirectoryExists(directoryPath);
+
+  /// Moves the file at [sourcePath] to [destinationPath] using a fast
+  /// platform rename when available.
+  ///
+  /// Returns `false` when the platform cannot rename (e.g. web, cross-device
+  /// moves, missing source); callers should fall back to copy + delete.
+  Future<bool> moveFile(String sourcePath, String destinationPath);
 
   /// Returns `true` if the directory exists.
   ///

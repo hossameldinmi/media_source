@@ -8,7 +8,7 @@ import 'package:media_source/src/utils/platform_utils.dart';
 /// Provides concrete file system operations for native platforms (mobile,
 /// desktop). All methods are written to be resilient: they catch exceptions
 /// and return boolean success indicators where appropriate.
-class PlatformUtilsFacadeImpl implements PlatformUtilsFacade {
+class PlatformUtilsFacadeImpl extends PlatformUtilsFacade {
   /// Deletes the provided [XFile] from disk.
   ///
   /// Returns `true` when deletion is successful, `false` otherwise.
@@ -25,12 +25,26 @@ class PlatformUtilsFacadeImpl implements PlatformUtilsFacade {
     }
   }
 
-  /// Ensures the parent directory of [directoryPath] exists; creates it if missing.
+  /// Ensures the parent directory of [filePath] exists; creates it if missing.
   @override
-  Future<void> createDirectoryIfNotExists(String directoryPath) async {
-    final directory = Directory(directoryPath).parent;
+  Future<void> ensureParentDirectoryExists(String filePath) async {
+    final directory = Directory(filePath).parent;
     if (!await directory.exists()) {
       await directory.create(recursive: true);
+    }
+  }
+
+  /// Moves the file with [File.rename]; falls back to `false` when renaming
+  /// fails (e.g. cross-device moves) so callers can copy + delete instead.
+  @override
+  Future<bool> moveFile(String sourcePath, String destinationPath) async {
+    try {
+      final source = File(sourcePath);
+      if (sourcePath.isEmpty || !await source.exists()) return false;
+      await source.rename(destinationPath);
+      return true;
+    } catch (e) {
+      return false;
     }
   }
 

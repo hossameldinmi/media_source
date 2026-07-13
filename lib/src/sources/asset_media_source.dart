@@ -1,4 +1,3 @@
-import 'package:cross_file/cross_file.dart';
 import 'package:flutter/services.dart';
 import 'package:media_source/src/media_type.dart';
 import 'package:media_source/src/sources/file_media_source.dart';
@@ -56,12 +55,16 @@ abstract class AssetMediaSource<M extends FileType> extends MediaSource<M>
 
   /// Saves this asset to the file system at the specified path.
   ///
-  /// Loads the asset bytes and writes them to disk as a file.
-  /// Returns a new [FileMediaSource] instance pointing to the saved file.
+  /// Loads the asset bytes into memory (via [convertToMemory]) and writes
+  /// them to disk. Creates the directory structure if it doesn't exist.
+  /// Subclasses narrow the return type.
   ///
   /// Parameters:
   /// - [path]: The destination file path
-  Future<FileMediaSource<M>> saveTo(String path);
+  ///
+  /// Returns a new [FileMediaSource] instance pointing to the saved file.
+  @override
+  Future<FileMediaSource<M>> saveTo(String path) async => (await convertToMemory()).saveTo(path);
 
   /// Saves this asset to a folder, preserving the original filename.
   ///
@@ -92,10 +95,10 @@ abstract class AssetMediaSource<M extends FileType> extends MediaSource<M>
     final assetBundle = bundle ?? rootBundle;
     // coverage:ignore-end
 
-    // Load the asset bytes
+    // Load the asset bytes. The ByteData may be a view into a larger shared
+    // buffer, so slice it explicitly with its offset and length.
     final byteData = await assetBundle.load(assetPath);
-    final binary = byteData.buffer.asUint8List();
-    return binary;
+    return byteData.buffer.asUint8List(byteData.offsetInBytes, byteData.lengthInBytes);
   }
 }
 
@@ -168,33 +171,8 @@ class VideoAssetMedia extends AssetMediaSource<VideoType> {
     );
   }
 
-  /// Saves this video asset to the file system.
-  ///
-  /// Loads the asset bytes and writes them to the specified path.
-  /// Creates the directory structure if it doesn't exist.
-  ///
-  /// Parameters:
-  /// - [path]: The destination file path
-  ///
-  /// Returns a [VideoFileMedia] instance pointing to the saved file.
   @override
-  Future<VideoFileMedia> saveTo(String path) async {
-    final bytes = await AssetMediaSource.loadAsset(assetPath, bundle);
-    final file = XFile.fromData(
-      bytes,
-      name: name,
-      mimeType: mimeType,
-      length: bytes.lengthInBytes,
-    );
-    final fileMedia = await VideoFileMedia.fromFile(
-      file,
-      duration: metadata.duration,
-      mimeType: mimeType,
-      name: name,
-      size: size,
-    );
-    return fileMedia.saveTo(path);
-  }
+  Future<VideoFileMedia> saveTo(String path) async => await super.saveTo(path) as VideoFileMedia;
 
   /// Converts this video asset to an in-memory representation.
   ///
@@ -276,33 +254,8 @@ class AudioAssetMedia extends AssetMediaSource<AudioType> {
     );
   }
 
-  /// Saves this audio asset to the file system.
-  ///
-  /// Loads the asset bytes and writes them to the specified path.
-  /// Creates the directory structure if it doesn't exist.
-  ///
-  /// Parameters:
-  /// - [path]: The destination file path
-  ///
-  /// Returns an [AudioFileMedia] instance pointing to the saved file.
   @override
-  Future<AudioFileMedia> saveTo(String path) async {
-    final bytes = await AssetMediaSource.loadAsset(assetPath, bundle);
-    final file = XFile.fromData(
-      bytes,
-      name: name,
-      mimeType: mimeType,
-      length: bytes.lengthInBytes,
-    );
-    final fileMedia = await AudioFileMedia.fromFile(
-      file,
-      duration: metadata.duration,
-      mimeType: mimeType,
-      name: name,
-      size: size,
-    );
-    return fileMedia.saveTo(path);
-  }
+  Future<AudioFileMedia> saveTo(String path) async => await super.saveTo(path) as AudioFileMedia;
 
   /// Converts this audio asset to an in-memory representation.
   ///
@@ -342,7 +295,7 @@ class ImageAssetMedia extends AssetMediaSource<ImageType> {
   /// - [name]: Display name
   /// - [size]: Asset size in bytes
   /// - [mimeType]: MIME type of the image
-  ImageAssetMedia({
+  ImageAssetMedia._({
     required super.assetPath,
     super.bundle,
     required super.name,
@@ -370,7 +323,7 @@ class ImageAssetMedia extends AssetMediaSource<ImageType> {
     String? mimeType,
     FileSize? size,
   }) async {
-    return ImageAssetMedia(
+    return ImageAssetMedia._(
       assetPath: assetPath,
       bundle: bundle,
       name: name,
@@ -379,32 +332,8 @@ class ImageAssetMedia extends AssetMediaSource<ImageType> {
     );
   }
 
-  /// Saves this image asset to the file system.
-  ///
-  /// Loads the asset bytes and writes them to the specified path.
-  /// Creates the directory structure if it doesn't exist.
-  ///
-  /// Parameters:
-  /// - [path]: The destination file path
-  ///
-  /// Returns an [ImageFileMedia] instance pointing to the saved file.
   @override
-  Future<ImageFileMedia> saveTo(String path) async {
-    final bytes = await AssetMediaSource.loadAsset(assetPath, bundle);
-    final file = XFile.fromData(
-      bytes,
-      name: name,
-      mimeType: mimeType,
-      length: bytes.lengthInBytes,
-    );
-    final fileMedia = await ImageFileMedia.fromFile(
-      file,
-      mimeType: mimeType,
-      name: name,
-      size: size,
-    );
-    return fileMedia.saveTo(path);
-  }
+  Future<ImageFileMedia> saveTo(String path) async => await super.saveTo(path) as ImageFileMedia;
 
   /// Converts this image asset to an in-memory representation.
   ///
@@ -478,32 +407,8 @@ class DocumentAssetMedia extends AssetMediaSource<DocumentType> {
     );
   }
 
-  /// Saves this document asset to the file system.
-  ///
-  /// Loads the asset bytes and writes them to the specified path.
-  /// Creates the directory structure if it doesn't exist.
-  ///
-  /// Parameters:
-  /// - [path]: The destination file path
-  ///
-  /// Returns a [DocumentFileMedia] instance pointing to the saved file.
   @override
-  Future<DocumentFileMedia> saveTo(String path) async {
-    final bytes = await AssetMediaSource.loadAsset(assetPath, bundle);
-    final file = XFile.fromData(
-      bytes,
-      name: name,
-      mimeType: mimeType,
-      length: bytes.lengthInBytes,
-    );
-    final fileMedia = await DocumentFileMedia.fromFile(
-      file,
-      mimeType: mimeType,
-      name: name,
-      size: size,
-    );
-    return fileMedia.saveTo(path);
-  }
+  Future<DocumentFileMedia> saveTo(String path) async => await super.saveTo(path) as DocumentFileMedia;
 
   /// Converts this document asset to an in-memory representation.
   ///
@@ -540,7 +445,6 @@ class OtherTypeAssetMedia extends AssetMediaSource<OtherType> {
   /// - [name]: Display name
   /// - [size]: Asset size in bytes
   /// - [mimeType]: MIME type of the asset
-  @override
   OtherTypeAssetMedia._({
     required super.assetPath,
     super.bundle,
@@ -578,32 +482,8 @@ class OtherTypeAssetMedia extends AssetMediaSource<OtherType> {
     );
   }
 
-  /// Saves this asset to the file system.
-  ///
-  /// Loads the asset bytes and writes them to the specified path.
-  /// Creates the directory structure if it doesn't exist.
-  ///
-  /// Parameters:
-  /// - [path]: The destination file path
-  ///
-  /// Returns an [OtherTypeFileMedia] instance pointing to the saved file.
   @override
-  Future<OtherTypeFileMedia> saveTo(String path) async {
-    final bytes = await AssetMediaSource.loadAsset(assetPath, bundle);
-    final file = XFile.fromData(
-      bytes,
-      name: name,
-      mimeType: mimeType,
-      length: bytes.lengthInBytes,
-    );
-    final fileMedia = await OtherTypeFileMedia.fromFile(
-      file,
-      mimeType: mimeType,
-      name: name,
-      size: size,
-    );
-    return fileMedia.saveTo(path);
-  }
+  Future<OtherTypeFileMedia> saveTo(String path) async => await super.saveTo(path) as OtherTypeFileMedia;
 
   /// Converts this asset to an in-memory representation.
   ///

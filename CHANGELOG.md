@@ -50,6 +50,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `PlatformUtilsFacade.moveFile` for fast native file renames
 - Lint enforcement via `flutter_lints` (previously no lint ruleset was included)
 
+### Dependencies
+- `file_type_plus` `^1.0.0` → `^1.1.0`: picks up detection fixes (extension
+  preferred over MIME type, `fromPath` returns `FileType.other` instead of
+  throwing on unparseable input, query/fragment-safe local names)
+
 ## [1.3.2] - 2026-04-28
 
 ### Changed

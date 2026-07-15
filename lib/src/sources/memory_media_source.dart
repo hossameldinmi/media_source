@@ -137,9 +137,6 @@ class VideoMemoryMedia extends MemoryMediaSource<VideoType> {
   }) : super._(metadata: VideoType(duration));
 
   @override
-  Future<VideoFileMedia> saveTo(String path) async => await super.saveTo(path) as VideoFileMedia;
-
-  @override
   Future<VideoFileMedia> createFileMedia(XFile file) => VideoFileMedia.fromFile(
         file,
         duration: metadata.duration,
@@ -169,9 +166,6 @@ class AudioMemoryMedia extends MemoryMediaSource<AudioType> {
   }) : super._(metadata: AudioType(duration));
 
   @override
-  Future<AudioFileMedia> saveTo(String path) async => await super.saveTo(path) as AudioFileMedia;
-
-  @override
   Future<AudioFileMedia> createFileMedia(XFile file) => AudioFileMedia.fromFile(
         file,
         duration: metadata.duration,
@@ -196,9 +190,6 @@ class ImageMemoryMedia extends MemoryMediaSource<ImageType> {
     required super.name,
     super.mimeType,
   }) : super._(metadata: ImageType());
-
-  @override
-  Future<ImageFileMedia> saveTo(String path) async => await super.saveTo(path) as ImageFileMedia;
 
   @override
   Future<ImageFileMedia> createFileMedia(XFile file) => ImageFileMedia.fromFile(
@@ -227,9 +218,6 @@ class DocumentMemoryMedia extends MemoryMediaSource<DocumentType> {
   }) : super._(metadata: DocumentType());
 
   @override
-  Future<DocumentFileMedia> saveTo(String path) async => await super.saveTo(path) as DocumentFileMedia;
-
-  @override
   Future<DocumentFileMedia> createFileMedia(XFile file) => DocumentFileMedia.fromFile(
         file,
         mimeType: mimeType,
@@ -255,9 +243,6 @@ class OtherTypeMemoryMedia extends MemoryMediaSource<OtherType> {
     required super.name,
     super.mimeType,
   }) : super._(metadata: OtherType());
-
-  @override
-  Future<OtherTypeFileMedia> saveTo(String path) async => await super.saveTo(path) as OtherTypeFileMedia;
 
   @override
   Future<OtherTypeFileMedia> createFileMedia(XFile file) => OtherTypeFileMedia.fromFile(

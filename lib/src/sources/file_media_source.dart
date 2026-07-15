@@ -326,9 +326,6 @@ class VideoFileMedia extends FileMediaSource<VideoType> {
   }
 
   @override
-  Future<VideoFileMedia> saveTo(String path) async => await super.saveTo(path) as VideoFileMedia;
-
-  @override
   VideoFileMedia copyWithFile(XFile file, FileSize? size) => VideoFileMedia._(
         file: file,
         size: size,
@@ -422,9 +419,6 @@ class AudioFileMedia extends FileMediaSource<AudioType> {
   }
 
   @override
-  Future<AudioFileMedia> saveTo(String path) async => await super.saveTo(path) as AudioFileMedia;
-
-  @override
   AudioFileMedia copyWithFile(XFile file, FileSize? size) => AudioFileMedia._(
         file: file,
         size: size,
@@ -510,9 +504,6 @@ class ImageFileMedia extends FileMediaSource<ImageType> {
   }
 
   @override
-  Future<ImageFileMedia> saveTo(String path) async => await super.saveTo(path) as ImageFileMedia;
-
-  @override
   ImageFileMedia copyWithFile(XFile file, FileSize? size) => ImageFileMedia._(
         file: file,
         size: size,
@@ -594,9 +585,6 @@ class DocumentFileMedia extends FileMediaSource<DocumentType> {
       mimeType: mimeType,
     );
   }
-
-  @override
-  Future<DocumentFileMedia> saveTo(String path) async => await super.saveTo(path) as DocumentFileMedia;
 
   @override
   DocumentFileMedia copyWithFile(XFile file, FileSize? size) => DocumentFileMedia._(
@@ -681,9 +669,6 @@ class OtherTypeFileMedia extends FileMediaSource<OtherType> {
       mimeType: mimeType,
     );
   }
-
-  @override
-  Future<OtherTypeFileMedia> saveTo(String path) async => await super.saveTo(path) as OtherTypeFileMedia;
 
   @override
   OtherTypeFileMedia copyWithFile(XFile file, FileSize? size) => OtherTypeFileMedia._(

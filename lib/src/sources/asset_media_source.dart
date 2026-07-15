@@ -171,9 +171,6 @@ class VideoAssetMedia extends AssetMediaSource<VideoType> {
     );
   }
 
-  @override
-  Future<VideoFileMedia> saveTo(String path) async => await super.saveTo(path) as VideoFileMedia;
-
   /// Converts this video asset to an in-memory representation.
   ///
   /// Loads the asset bytes into a [VideoMemoryMedia] instance.
@@ -254,9 +251,6 @@ class AudioAssetMedia extends AssetMediaSource<AudioType> {
     );
   }
 
-  @override
-  Future<AudioFileMedia> saveTo(String path) async => await super.saveTo(path) as AudioFileMedia;
-
   /// Converts this audio asset to an in-memory representation.
   ///
   /// Loads the asset bytes into an [AudioMemoryMedia] instance.
@@ -332,9 +326,6 @@ class ImageAssetMedia extends AssetMediaSource<ImageType> {
     );
   }
 
-  @override
-  Future<ImageFileMedia> saveTo(String path) async => await super.saveTo(path) as ImageFileMedia;
-
   /// Converts this image asset to an in-memory representation.
   ///
   /// Loads the asset bytes into an [ImageMemoryMedia] instance.
@@ -407,9 +398,6 @@ class DocumentAssetMedia extends AssetMediaSource<DocumentType> {
     );
   }
 
-  @override
-  Future<DocumentFileMedia> saveTo(String path) async => await super.saveTo(path) as DocumentFileMedia;
-
   /// Converts this document asset to an in-memory representation.
   ///
   /// Loads the asset bytes into a [DocumentMemoryMedia] instance.
@@ -481,9 +469,6 @@ class OtherTypeAssetMedia extends AssetMediaSource<OtherType> {
       mimeType: mimeType,
     );
   }
-
-  @override
-  Future<OtherTypeFileMedia> saveTo(String path) async => await super.saveTo(path) as OtherTypeFileMedia;
 
   /// Converts this asset to an in-memory representation.
   ///

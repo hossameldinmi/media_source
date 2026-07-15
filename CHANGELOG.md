@@ -33,6 +33,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   size is now null and the MIME type is detected from the URL path when possible
 - **BREAKING**: `FileMediaSource.moveTo` now throws a `StateError` on native platforms when the
   fallback copy succeeds but the original file cannot be deleted
+- **BREAKING**: `saveTo` on the concrete source classes now returns the base
+  `Future<FileMediaSource<M>>` instead of the concrete subtype (e.g. `Future<VideoFileMedia>`).
+  The runtime object is unchanged; only explicitly-typed assignments need updating. The typed
+  metadata survives via the generic (`FileMediaSource<VideoType>.metadata.duration` still works)
 - `FileMediaSource.moveTo` uses a fast platform rename when possible instead of copy + delete
 - `NetworkMediaSource.fromUrlOrNull` now forwards `name`, `size`, `mimeType`, `duration`, and
   `mediaType` to `fromUrl`, and only swallows `FormatException`

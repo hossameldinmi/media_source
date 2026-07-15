@@ -110,9 +110,12 @@ abstract class FileMediaSource<M extends FileType> extends MediaSource<M> implem
     }
     final saved = await saveTo(path);
     final deleted = await delete();
+    // coverage:ignore-start — defensive: requires the copy to succeed while
+    // deleting the original fails, which needs fault injection to reproduce.
     if (!deleted && !kIsWeb) {
       throw StateError('moveTo: copied "${file.path}" to "$path" but failed to delete the original file.');
     }
+    // coverage:ignore-end
     return saved;
   }
 

@@ -156,6 +156,11 @@ void main() {
         expect(() => NetworkMediaSource.fromUrlOrNull('not a valid url'), returnsNormally);
       });
 
+      test('should return null for unparseable URL', () {
+        // Unterminated IPv6 host makes Uri.parse throw FormatException.
+        expect(NetworkMediaSource.fromUrlOrNull('http://[invalid'), isNull);
+      });
+
       test('should forward optional parameters', () {
         final size = 1024.b;
         final source = NetworkMediaSource.fromUrlOrNull(

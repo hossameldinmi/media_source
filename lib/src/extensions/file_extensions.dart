@@ -36,6 +36,7 @@ extension FileExtensions on XFile {
   /// from the file path and/or mime type. [mimeTypeOverride] takes precedence
   /// over the file's own [mimeType] when provided.
   Future<FileType> getMediaType([String? mimeTypeOverride]) async => kIsWeb
+      // coverage:ignore-line — web-only branch, unreachable in VM tests
       ? FileType.fromBytes(await readAsBytes(), mimeTypeOverride ?? mimeType)
       : FileType.fromPath(path, mimeTypeOverride ?? mimeType);
 }

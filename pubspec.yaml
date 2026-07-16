@@ -1,5 +1,5 @@
 name: media_source
-version: 1.4.0
+version: 2.0.0
 
 description: Type-safe, cross-platform media handling for files, memory, asset,
   and network sources with automatic type detection, seamless conversions, and

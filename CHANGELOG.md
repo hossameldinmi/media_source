@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.4.0] - 2026-07-14
+## [2.0.0] - 2026-07-16
 
 ### Fixed
 - `XFile.getMediaType` now honors the provided MIME type override; previously the parameter was
@@ -24,6 +24,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Removed meaningless `@override` annotations from constructors
 
 ### Changed
+- **BREAKING**: `FileMediaSource` and `MemoryMediaSource` gained abstract template hooks
+  (`copyWithFile`, `createMemoryMedia`, `createFileMedia`). External subclasses must implement
+  them; existing `saveTo` overrides keep working unchanged
 - **BREAKING**: minimum SDK is now Dart 3.4 (the `web` dependency already required it)
 - **BREAKING**: `PlatformUtilsFacade.createDirectoryIfNotExists` is deprecated in favor of
   `ensureParentDirectoryExists`, which describes the actual behavior (the method always created

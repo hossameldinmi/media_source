@@ -228,14 +228,18 @@ void main() {
     });
   });
 
+  // isAnyType is deprecated in file_type_plus 1.1.0; these tests document the
+  // still-shipping behavior and go away when upstream removes the method.
   group('isAnyType', () {
     test('should return true when runtime type is in list', () {
       final imageType = ImageType();
+      // ignore: deprecated_member_use
       expect(imageType.isAnyType([ImageType, VideoType]), isTrue);
     });
 
     test('should return false when runtime type is not in list', () {
       final imageType = ImageType();
+      // ignore: deprecated_member_use
       expect(imageType.isAnyType([AudioType, VideoType]), isFalse);
     });
   });

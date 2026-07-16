@@ -5,6 +5,66 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.0] - 2026-07-16
+
+### Fixed
+- `XFile.getMediaType` now honors the provided MIME type override; previously the parameter was
+  silently ignored, so explicit `mimeType` arguments to `FileMediaSource.fromFile`/`fromPath` did
+  not affect media type detection
+- `AssetMediaSource.loadAsset` now slices the `ByteData` with its offset and length, preventing
+  corrupt data when the platform returns a view into a larger shared buffer
+- `NetworkMediaSource.fromUrl` detects the media type from the parsed URI path, so query strings
+  and fragments (e.g. `?token=a.b`) can no longer be mistaken for a file extension
+- `Uri.fileName` (and therefore default network media names) is now percent-decoded and handles
+  trailing slashes and extension-less URLs
+- `MemoryMediaSource` equality no longer hashes the full byte content on every `hashCode`/`==`
+  call; content is compared only after the cheap fields match
+- Fixed misleading documentation of `MediaSource.extension` (returns the extension with its
+  leading dot, or an empty string)
+- Removed meaningless `@override` annotations from constructors
+
+### Changed
+- **BREAKING**: `FileMediaSource` and `MemoryMediaSource` gained abstract template hooks
+  (`copyWithFile`, `createMemoryMedia`, `createFileMedia`). External subclasses must implement
+  them; existing `saveTo` overrides keep working unchanged
+- **BREAKING**: minimum SDK is now Dart 3.4 (the `web` dependency already required it)
+- **BREAKING**: `PlatformUtilsFacade.createDirectoryIfNotExists` is deprecated in favor of
+  `ensureParentDirectoryExists`, which describes the actual behavior (the method always created
+  the *parent* directory of the given path). Custom facade implementations must implement the
+  new methods (`ensureParentDirectoryExists`, `moveFile`)
+- **BREAKING**: `UrlMedia` no longer reports a fake `0 B` size or the invalid `'url'` MIME type;
+  size is now null and the MIME type is detected from the URL path when possible
+- **BREAKING**: `FileMediaSource.moveTo` now throws a `StateError` on native platforms when the
+  fallback copy succeeds but the original file cannot be deleted
+- **BREAKING**: `saveTo` on the concrete source classes now returns the base
+  `Future<FileMediaSource<M>>` instead of the concrete subtype (e.g. `Future<VideoFileMedia>`).
+  The runtime object is unchanged; only explicitly-typed assignments need updating. The typed
+  metadata survives via the generic (`FileMediaSource<VideoType>.metadata.duration` still works)
+- `FileMediaSource.moveTo` uses a fast platform rename when possible instead of copy + delete
+- `NetworkMediaSource.fromUrlOrNull` now forwards `name`, `size`, `mimeType`, `duration`, and
+  `mediaType` to `fromUrl`, and only swallows `FormatException`
+- Save/move/convert logic is now implemented once in the base classes
+  (`FileMediaSource`, `MemoryMediaSource`, `AssetMediaSource`) via template hooks, removing
+  drift between the per-type implementations
+
+### Deprecated
+- `MediaSource.isAnyType`: exact `runtimeType` comparison silently fails for base types; use
+  `is` checks or `fold` instead
+
+### Added
+- Public synchronous constructors for all asset media types (`VideoAssetMedia`,
+  `AudioAssetMedia`, `ImageAssetMedia`, `DocumentAssetMedia`, `OtherTypeAssetMedia`).
+  The constructor trusts the provided `size` (or leaves it null); use `load()` when the size
+  should be read from the asset bundle. Previously only `ImageAssetMedia` exposed a public
+  constructor, and it required all parameters
+- `PlatformUtilsFacade.moveFile` for fast native file renames
+- Lint enforcement via `flutter_lints` (previously no lint ruleset was included)
+
+### Dependencies
+- `file_type_plus` `^1.0.0` → `^1.1.0`: picks up detection fixes (extension
+  preferred over MIME type, `fromPath` returns `FileType.other` instead of
+  throwing on unparseable input, query/fragment-safe local names)
+
 ## [1.3.2] - 2026-04-28
 
 ### Changed

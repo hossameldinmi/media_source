@@ -1,3 +1,4 @@
+// ignore_for_file: avoid_print
 import 'dart:typed_data';
 import 'package:file_type_plus/file_type_plus.dart';
 import 'package:media_source/media_source.dart';
@@ -525,7 +526,7 @@ class MediaFactory {
     Duration? duration,
     FileSize? size,
   }) async {
-    final fileType = await FileType.fromPath(path);
+    final fileType = FileType.fromPath(path);
 
     if (fileType is! FileTypeImpl) {
       return OtherTypeFileMedia.fromPath(path, name: name, size: size);
@@ -679,7 +680,7 @@ class SmartMediaFactory {
     Duration? duration,
     FileSize? size,
   }) async {
-    final fileType = await FileType.fromPath(path);
+    final fileType = FileType.fromPath(path);
 
     if (fileType is! FileTypeImpl) {
       return OtherTypeFileMedia.fromPath(path, name: name, size: size);

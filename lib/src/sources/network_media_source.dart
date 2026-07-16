@@ -59,7 +59,7 @@ abstract class NetworkMediaSource<M extends FileType> extends MediaSource<M> {
   /// - [mediaType]: Optional explicit media type
   ///
   /// Returns the appropriate [NetworkMediaSource] subclass based on media type.
-  /// Throws an exception if the URL is invalid.
+  /// Throws a [FormatException] if the URL cannot be parsed.
   static NetworkMediaSource fromUrl(
     String url, {
     String? name,
@@ -68,8 +68,10 @@ abstract class NetworkMediaSource<M extends FileType> extends MediaSource<M> {
     Duration? duration,
     FileType? mediaType,
   }) {
-    mediaType ??= FileType.fromPath(url, mimeType);
     final uri = Uri.parse(url);
+    // Detect from the URI path only, so query strings and fragments
+    // (e.g. '?token=a.b') can't be mistaken for a file extension.
+    mediaType ??= FileType.fromPath(uri.path, mimeType);
     if (mediaType.isAny([FileType.audio])) {
       return AudioNetworkMedia(
         uri,
@@ -114,22 +116,39 @@ abstract class NetworkMediaSource<M extends FileType> extends MediaSource<M> {
 
   /// Safely creates a [NetworkMediaSource] from a URL string or returns null.
   ///
-  /// Similar to [fromUrl] but returns null instead of throwing an exception
-  /// if the URL is invalid or null.
+  /// Similar to [fromUrl] but returns null instead of throwing when the URL
+  /// is null, empty, or cannot be parsed.
   ///
   /// Parameters:
   /// - [url]: The URL string to the media, or null
+  /// - [name]: Optional custom display name
+  /// - [size]: Optional media size
+  /// - [mimeType]: Optional MIME type override
+  /// - [duration]: Optional duration for audio/video media
+  /// - [mediaType]: Optional explicit media type
   ///
   /// Returns a [NetworkMediaSource] or null if the URL is invalid or empty.
-  static NetworkMediaSource? fromUrlOrNull(String? url) {
-    if (url != null && url.isNotEmpty) {
-      try {
-        return NetworkMediaSource.fromUrl(url);
-      } catch (e) {
-        return null;
-      }
+  static NetworkMediaSource? fromUrlOrNull(
+    String? url, {
+    String? name,
+    FileSize? size,
+    String? mimeType,
+    Duration? duration,
+    FileType? mediaType,
+  }) {
+    if (url == null || url.isEmpty) return null;
+    try {
+      return NetworkMediaSource.fromUrl(
+        url,
+        name: name,
+        size: size,
+        mimeType: mimeType,
+        duration: duration,
+        mediaType: mediaType,
+      );
+    } on FormatException {
+      return null;
     }
-    return null;
   }
 
   /// Includes the URI in equality comparisons.
@@ -181,9 +200,6 @@ class VideoNetworkMedia extends NetworkMediaSource<VideoType> {
           uri: Uri.parse(url),
           metadata: VideoType(duration),
         );
-
-  @override
-  List<Object?> get props => [uri, mimeType, metadata, name, size];
 }
 
 /// Represents audio URLs (streaming media).
@@ -285,7 +301,6 @@ class DocumentNetworkMedia extends NetworkMediaSource<DocumentType> {
   /// - [mimeType]: Optional MIME type override
   /// - [name]: Optional custom display name
   /// - [size]: Optional document size
-  @override
   DocumentNetworkMedia(
     Uri uri, {
     super.mimeType,
@@ -327,7 +342,6 @@ class UnSupportedNetworkMedia extends NetworkMediaSource<OtherType> {
   /// - [mimeType]: Optional MIME type override
   /// - [name]: Optional custom display name
   /// - [size]: Optional media size
-  @override
   UnSupportedNetworkMedia(Uri uri, {super.mimeType, super.name, super.size})
       : super._(
           uri: uri,
@@ -343,12 +357,15 @@ class UnSupportedNetworkMedia extends NetworkMediaSource<OtherType> {
 class UrlMedia extends NetworkMediaSource<UrlType> {
   /// Creates a [UrlMedia] from a Uri object.
   ///
+  /// The size is null (a generic URL has no intrinsic size); the MIME type
+  /// is auto-detected from the URL path when possible, null otherwise.
+  ///
   /// Parameters:
   /// - [uri]: The URL as a Uri object
   UrlMedia(Uri uri)
       : super._(
-          size: 0.b,
-          mimeType: 'url',
+          size: null,
+          mimeType: null,
           metadata: UrlType(),
           uri: uri,
         );
@@ -361,7 +378,8 @@ class UrlMedia extends NetworkMediaSource<UrlType> {
   /// - [url]: The URL as a string
   UrlMedia.url(String url) : this(Uri.parse(url));
 
-  /// Includes only URI and metadata for equality comparisons.
+  /// Includes only URI and metadata for equality comparisons; all other
+  /// fields ([name], [mimeType], [size]) are derived from or fixed by the URI.
   @override
   List<Object?> get props => [uri, metadata];
 }

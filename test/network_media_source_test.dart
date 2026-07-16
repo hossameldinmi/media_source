@@ -113,6 +113,22 @@ void main() {
 
         expect(source.mimeType, 'video/mp4');
       });
+
+      test('should detect media type from path, ignoring query string', () {
+        final source = NetworkMediaSource.fromUrl(
+          'https://example.com/video.mp4?token=abc.xyz',
+        );
+
+        expect(source, isA<VideoNetworkMedia>());
+      });
+
+      test('should percent-decode file name from URL path', () {
+        final source = NetworkMediaSource.fromUrl(
+          'https://example.com/my%20video.mp4',
+        );
+
+        expect(source.name, 'my video.mp4');
+      });
     });
 
     group('fromUrlOrNull', () {
@@ -138,6 +154,26 @@ void main() {
       test('should handle invalid URL gracefully', () {
         // This depends on implementation - might throw or return null
         expect(() => NetworkMediaSource.fromUrlOrNull('not a valid url'), returnsNormally);
+      });
+
+      test('should return null for unparseable URL', () {
+        // Unterminated IPv6 host makes Uri.parse throw FormatException.
+        expect(NetworkMediaSource.fromUrlOrNull('http://[invalid'), isNull);
+      });
+
+      test('should forward optional parameters', () {
+        final size = 1024.b;
+        final source = NetworkMediaSource.fromUrlOrNull(
+          'https://example.com/video.mp4',
+          name: 'custom.mp4',
+          size: size,
+          duration: const Duration(seconds: 5),
+        );
+
+        expect(source, isA<VideoNetworkMedia>());
+        expect(source!.name, 'custom.mp4');
+        expect(source.size, size);
+        expect((source.metadata as VideoType).duration, const Duration(seconds: 5));
       });
     });
 
@@ -362,8 +398,8 @@ void main() {
         );
 
         expect(urlMedia.uri.toString(), 'https://example.com/file.dat');
-        expect(urlMedia.size, 0.b);
-        expect(urlMedia.mimeType, 'url');
+        expect(urlMedia.size, isNull);
+        expect(urlMedia.mimeType, isNull);
         expect(urlMedia.metadata, isA<UrlType>());
       });
 
@@ -373,8 +409,9 @@ void main() {
         );
 
         expect(urlMedia.uri.toString(), 'https://example.com/data.bin');
-        expect(urlMedia.size, 0.b);
-        expect(urlMedia.mimeType, 'url');
+        expect(urlMedia.size, isNull);
+        // MIME type auto-detected from the URL path ('.bin').
+        expect(urlMedia.mimeType, 'application/octet-stream');
         expect(urlMedia.metadata, isA<UrlType>());
       });
 

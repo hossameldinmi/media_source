@@ -7,7 +7,9 @@ import 'package:file_sized/file_sized.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'shared/fixture.dart';
 
-final tempDir = 'test/assets/saved_to';
+// Unique per test file: test files run in parallel, and tearDownAll deletes
+// this directory — sharing it with another file's tests causes flaky races.
+final tempDir = 'test/assets/memory_media_saved_to';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();

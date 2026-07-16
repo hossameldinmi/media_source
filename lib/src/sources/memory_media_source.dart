@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 import 'package:cross_file/cross_file.dart';
+import 'package:flutter/foundation.dart' show protected;
 import 'package:media_source/src/media_type.dart';
 import 'package:media_source/src/sources/file_media_source.dart';
 import 'package:media_source/src/sources/media_source.dart';
@@ -43,15 +44,55 @@ abstract class MemoryMediaSource<M extends FileType> extends MediaSource<M> impl
           size: bytes.lengthInBytes.b,
         );
 
-  /// Includes the byte array in equality comparisons.
+  /// Uses the byte length (not the content) in Equatable props.
+  ///
+  /// Hashing megabytes of media on every `hashCode`/`==` call is too
+  /// expensive, so props only carry the cheap fields; full byte content is
+  /// compared in [operator ==] after the cheap fields already matched.
   @override
-  List<Object?> get props => [bytes, ...super.props];
+  List<Object?> get props => [bytes.lengthInBytes, ...super.props];
+
+  @override
+  bool operator ==(Object other) =>
+      super == other && other is MemoryMediaSource<M> && _byteContentEquals(bytes, other.bytes);
+
+  // Kept despite being a pass-through: `hash_and_equals` requires a hashCode
+  // override next to the custom `==` above, and Equatable's hash over the
+  // cheap props stays consistent with it.
+  @override
+  // ignore: unnecessary_overrides
+  int get hashCode => super.hashCode;
 
   /// Disables automatic string representation of byte arrays.
   ///
   /// Returns false to prevent printing large byte arrays in debug output.
   @override
   bool? get stringify => false;
+
+  /// Creates the concrete [FileMediaSource] for the saved [file].
+  ///
+  /// Template hook used by [saveTo].
+  @protected
+  Future<FileMediaSource<M>> createFileMedia(XFile file);
+
+  /// Saves this media to a file at the specified path.
+  ///
+  /// Creates the directory if it doesn't exist, then saves the bytes and
+  /// returns a new [FileMediaSource] pointing to the saved file. Subclasses
+  /// narrow the return type via [createFileMedia].
+  @override
+  Future<FileMediaSource<M>> saveTo(String path) async {
+    final file = XFile.fromData(
+      bytes,
+      name: name,
+      mimeType: mimeType,
+      path: path,
+      length: size?.inBytes,
+    );
+    await PlatformUtils.instance.ensureParentDirectoryExists(path);
+    await file.saveTo(path);
+    return createFileMedia(file);
+  }
 
   /// Saves this media to a file in the specified folder.
   ///
@@ -65,6 +106,15 @@ abstract class MemoryMediaSource<M extends FileType> extends MediaSource<M> impl
     final path = p.join(folderPath, name);
     return saveTo(path);
   }
+}
+
+bool _byteContentEquals(Uint8List a, Uint8List b) {
+  if (identical(a, b)) return true;
+  if (a.lengthInBytes != b.lengthInBytes) return false;
+  for (var i = 0; i < a.lengthInBytes; i++) {
+    if (a[i] != b[i]) return false;
+  }
+  return true;
 }
 
 /// Represents video data stored in memory.
@@ -86,29 +136,14 @@ class VideoMemoryMedia extends MemoryMediaSource<VideoType> {
     super.mimeType,
   }) : super._(metadata: VideoType(duration));
 
-  /// Saves this video to a file at the specified path.
-  ///
-  /// Creates the directory if it doesn't exist, then saves the bytes
-  /// and returns a new [VideoFileMedia] instance.
   @override
-  Future<VideoFileMedia> saveTo(String path) async {
-    final file = XFile.fromData(
-      bytes,
-      name: name,
-      mimeType: mimeType,
-      path: path,
-      length: size?.inBytes,
-    );
-    await PlatformUtils.instance.createDirectoryIfNotExists(path);
-    await file.saveTo(path);
-    return VideoFileMedia.fromFile(
-      file,
-      duration: metadata.duration,
-      mimeType: mimeType,
-      name: name,
-      size: size,
-    );
-  }
+  Future<VideoFileMedia> createFileMedia(XFile file) => VideoFileMedia.fromFile(
+        file,
+        duration: metadata.duration,
+        mimeType: mimeType,
+        name: name,
+        size: size,
+      );
 }
 
 /// Represents audio data stored in memory.
@@ -130,29 +165,14 @@ class AudioMemoryMedia extends MemoryMediaSource<AudioType> {
     super.mimeType,
   }) : super._(metadata: AudioType(duration));
 
-  /// Saves this audio to a file at the specified path.
-  ///
-  /// Creates the directory if it doesn't exist, then saves the bytes
-  /// and returns a new [AudioFileMedia] instance.
   @override
-  Future<AudioFileMedia> saveTo(String path) async {
-    final file = XFile.fromData(
-      bytes,
-      name: name,
-      mimeType: mimeType,
-      path: path,
-      length: size?.inBytes,
-    );
-    await PlatformUtils.instance.createDirectoryIfNotExists(path);
-    await file.saveTo(path);
-    return AudioFileMedia.fromFile(
-      file,
-      duration: metadata.duration,
-      mimeType: mimeType,
-      name: name,
-      size: size,
-    );
-  }
+  Future<AudioFileMedia> createFileMedia(XFile file) => AudioFileMedia.fromFile(
+        file,
+        duration: metadata.duration,
+        mimeType: mimeType,
+        name: name,
+        size: size,
+      );
 }
 
 /// Represents image data stored in memory.
@@ -171,28 +191,13 @@ class ImageMemoryMedia extends MemoryMediaSource<ImageType> {
     super.mimeType,
   }) : super._(metadata: ImageType());
 
-  /// Saves this image to a file at the specified path.
-  ///
-  /// Creates the directory if it doesn't exist, then saves the bytes
-  /// and returns a new [ImageFileMedia] instance.
   @override
-  Future<ImageFileMedia> saveTo(String path) async {
-    final file = XFile.fromData(
-      bytes,
-      name: name,
-      mimeType: mimeType,
-      path: path,
-      length: size?.inBytes,
-    );
-    await PlatformUtils.instance.createDirectoryIfNotExists(path);
-    await file.saveTo(path);
-    return ImageFileMedia.fromFile(
-      file,
-      mimeType: mimeType,
-      name: name,
-      size: size,
-    );
-  }
+  Future<ImageFileMedia> createFileMedia(XFile file) => ImageFileMedia.fromFile(
+        file,
+        mimeType: mimeType,
+        name: name,
+        size: size,
+      );
 }
 
 /// Represents document data stored in memory.
@@ -206,34 +211,19 @@ class DocumentMemoryMedia extends MemoryMediaSource<DocumentType> {
   /// - [bytes]: The document data as a byte array
   /// - [name]: Display name of the document
   /// - [mimeType]: Optional MIME type override
-  @override
   DocumentMemoryMedia(
     super.bytes, {
     required super.name,
     super.mimeType,
   }) : super._(metadata: DocumentType());
 
-  /// Saves this document to a file at the specified path.
-  ///
-  /// Creates the directory if it doesn't exist, then saves the bytes
-  /// and returns a new [DocumentFileMedia] instance.
   @override
-  Future<DocumentFileMedia> saveTo(String path) async {
-    final file = XFile.fromData(
-      bytes,
-      name: name,
-      mimeType: mimeType,
-      path: path,
-    );
-    await PlatformUtils.instance.createDirectoryIfNotExists(path);
-    await file.saveTo(path);
-    return DocumentFileMedia.fromFile(
-      file,
-      mimeType: mimeType,
-      name: name,
-      size: size,
-    );
-  }
+  Future<DocumentFileMedia> createFileMedia(XFile file) => DocumentFileMedia.fromFile(
+        file,
+        mimeType: mimeType,
+        name: name,
+        size: size,
+      );
 }
 
 /// Represents unclassified or unknown data stored in memory.
@@ -248,33 +238,17 @@ class OtherTypeMemoryMedia extends MemoryMediaSource<OtherType> {
   /// - [bytes]: The media data as a byte array
   /// - [name]: Display name of the media
   /// - [mimeType]: Optional MIME type override
-  @override
   OtherTypeMemoryMedia(
     super.bytes, {
     required super.name,
     super.mimeType,
   }) : super._(metadata: OtherType());
 
-  /// Saves this media to a file at the specified path.
-  ///
-  /// Creates the directory if it doesn't exist, then saves the bytes
-  /// and returns a new [OtherTypeFileMedia] instance.
   @override
-  Future<OtherTypeFileMedia> saveTo(String path) async {
-    final file = XFile.fromData(
-      bytes,
-      name: name,
-      mimeType: mimeType,
-      path: path,
-      length: size?.inBytes,
-    );
-    await PlatformUtils.instance.createDirectoryIfNotExists(path);
-    await file.saveTo(path);
-    return OtherTypeFileMedia.fromFile(
-      file,
-      mimeType: mimeType,
-      name: name,
-      size: size,
-    );
-  }
+  Future<OtherTypeFileMedia> createFileMedia(XFile file) => OtherTypeFileMedia.fromFile(
+        file,
+        mimeType: mimeType,
+        name: name,
+        size: size,
+      );
 }

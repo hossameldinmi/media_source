@@ -1,4 +1,3 @@
-// ignore_for_file: avoid_web_libraries_in_flutter
 import 'package:cross_file/cross_file.dart';
 import 'package:media_source/src/utils/platform_utils.dart';
 import 'package:web/web.dart' as web;
@@ -9,7 +8,7 @@ import 'package:web/web.dart' as web;
 /// provides web-friendly implementations that operate on blob URLs and
 /// in-memory data. Certain operations like creating directories are
 /// no-ops in the browser environment.
-class PlatformUtilsFacadeImpl implements PlatformUtilsFacade {
+class PlatformUtilsFacadeImpl extends PlatformUtilsFacade {
   /// Deletes a blob URL created for an [XFile] by revoking it when possible.
   ///
   /// Returns `true` if the blob URL was revoked; otherwise `false`.
@@ -32,10 +31,15 @@ class PlatformUtilsFacadeImpl implements PlatformUtilsFacade {
   /// Web browsers do not have a traditional file system with directories.
   /// This method does nothing and returns successfully.
   @override
-  Future<void> createDirectoryIfNotExists(String directoryPath) async {
+  Future<void> ensureParentDirectoryExists(String filePath) async {
     // No-op on web: browsers don't have directory structures
     return;
   }
+
+  /// Renaming is not supported on the web; always returns `false` so callers
+  /// fall back to copy + delete.
+  @override
+  Future<bool> moveFile(String sourcePath, String destinationPath) async => false;
 
   /// Directory existence checks always return `true` on web.
   ///

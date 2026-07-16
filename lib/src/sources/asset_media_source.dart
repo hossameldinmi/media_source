@@ -1,4 +1,3 @@
-import 'package:cross_file/cross_file.dart';
 import 'package:flutter/services.dart';
 import 'package:media_source/src/media_type.dart';
 import 'package:media_source/src/sources/file_media_source.dart';
@@ -56,12 +55,16 @@ abstract class AssetMediaSource<M extends FileType> extends MediaSource<M>
 
   /// Saves this asset to the file system at the specified path.
   ///
-  /// Loads the asset bytes and writes them to disk as a file.
-  /// Returns a new [FileMediaSource] instance pointing to the saved file.
+  /// Loads the asset bytes into memory (via [convertToMemory]) and writes
+  /// them to disk. Creates the directory structure if it doesn't exist.
+  /// Subclasses narrow the return type.
   ///
   /// Parameters:
   /// - [path]: The destination file path
-  Future<FileMediaSource<M>> saveTo(String path);
+  ///
+  /// Returns a new [FileMediaSource] instance pointing to the saved file.
+  @override
+  Future<FileMediaSource<M>> saveTo(String path) async => (await convertToMemory()).saveTo(path);
 
   /// Saves this asset to a folder, preserving the original filename.
   ///
@@ -92,10 +95,10 @@ abstract class AssetMediaSource<M extends FileType> extends MediaSource<M>
     final assetBundle = bundle ?? rootBundle;
     // coverage:ignore-end
 
-    // Load the asset bytes
+    // Load the asset bytes. The ByteData may be a view into a larger shared
+    // buffer, so slice it explicitly with its offset and length.
     final byteData = await assetBundle.load(assetPath);
-    final binary = byteData.buffer.asUint8List();
-    return binary;
+    return byteData.buffer.asUint8List(byteData.offsetInBytes, byteData.lengthInBytes);
   }
 }
 
@@ -118,22 +121,25 @@ abstract class AssetMediaSource<M extends FileType> extends MediaSource<M>
 /// final memoryMedia = await video.convertToMemory();
 /// ```
 class VideoAssetMedia extends AssetMediaSource<VideoType> {
-  /// Internal constructor for creating video asset media.
+  /// Creates a video asset media synchronously.
+  ///
+  /// The provided [size] is trusted as-is; prefer [load] when the size
+  /// should be read from the asset bundle.
   ///
   /// Parameters:
   /// - [assetPath]: Path to the video asset
-  /// - [bundle]: Optional custom AssetBundle
-  /// - [name]: Display name
+  /// - [bundle]: Optional custom AssetBundle, defaults to rootBundle
+  /// - [name]: Optional display name, defaults to the asset filename
   /// - [duration]: Optional video duration
-  /// - [size]: Asset size in bytes
-  /// - [mimeType]: MIME type of the video
-  VideoAssetMedia._({
+  /// - [size]: Optional asset size in bytes
+  /// - [mimeType]: Optional MIME type, auto-detected from path if not provided
+  VideoAssetMedia({
     required super.assetPath,
     super.bundle,
-    required super.name,
-    required Duration? duration,
-    required super.size,
-    required super.mimeType,
+    super.name,
+    Duration? duration,
+    super.size,
+    super.mimeType,
   }) : super._(metadata: VideoType(duration));
 
   /// Loads a video asset from the Flutter asset bundle.
@@ -158,7 +164,7 @@ class VideoAssetMedia extends AssetMediaSource<VideoType> {
     String? mimeType,
     FileSize? size,
   }) async {
-    return VideoAssetMedia._(
+    return VideoAssetMedia(
       assetPath: assetPath,
       bundle: bundle,
       name: name,
@@ -166,34 +172,6 @@ class VideoAssetMedia extends AssetMediaSource<VideoType> {
       size: size ?? (await AssetMediaSource.loadAsset(assetPath, bundle)).lengthInBytes.b,
       mimeType: mimeType,
     );
-  }
-
-  /// Saves this video asset to the file system.
-  ///
-  /// Loads the asset bytes and writes them to the specified path.
-  /// Creates the directory structure if it doesn't exist.
-  ///
-  /// Parameters:
-  /// - [path]: The destination file path
-  ///
-  /// Returns a [VideoFileMedia] instance pointing to the saved file.
-  @override
-  Future<VideoFileMedia> saveTo(String path) async {
-    final bytes = await AssetMediaSource.loadAsset(assetPath, bundle);
-    final file = XFile.fromData(
-      bytes,
-      name: name,
-      mimeType: mimeType,
-      length: bytes.lengthInBytes,
-    );
-    final fileMedia = await VideoFileMedia.fromFile(
-      file,
-      duration: metadata.duration,
-      mimeType: mimeType,
-      name: name,
-      size: size,
-    );
-    return fileMedia.saveTo(path);
   }
 
   /// Converts this video asset to an in-memory representation.
@@ -226,22 +204,25 @@ class VideoAssetMedia extends AssetMediaSource<VideoType> {
 /// );
 /// ```
 class AudioAssetMedia extends AssetMediaSource<AudioType> {
-  /// Internal constructor for creating audio asset media.
+  /// Creates an audio asset media synchronously.
+  ///
+  /// The provided [size] is trusted as-is; prefer [load] when the size
+  /// should be read from the asset bundle.
   ///
   /// Parameters:
   /// - [assetPath]: Path to the audio asset
-  /// - [bundle]: Optional custom AssetBundle
-  /// - [name]: Display name
+  /// - [bundle]: Optional custom AssetBundle, defaults to rootBundle
+  /// - [name]: Optional display name, defaults to the asset filename
   /// - [duration]: Optional audio duration
-  /// - [size]: Asset size in bytes
-  /// - [mimeType]: MIME type of the audio
-  AudioAssetMedia._({
+  /// - [size]: Optional asset size in bytes
+  /// - [mimeType]: Optional MIME type, auto-detected from path if not provided
+  AudioAssetMedia({
     required super.assetPath,
     super.bundle,
-    required super.name,
-    required Duration? duration,
-    required super.size,
-    required super.mimeType,
+    super.name,
+    Duration? duration,
+    super.size,
+    super.mimeType,
   }) : super._(metadata: AudioType(duration));
 
   /// Loads an audio asset from the Flutter asset bundle.
@@ -266,7 +247,7 @@ class AudioAssetMedia extends AssetMediaSource<AudioType> {
     String? mimeType,
     FileSize? size,
   }) async {
-    return AudioAssetMedia._(
+    return AudioAssetMedia(
       assetPath: assetPath,
       bundle: bundle,
       name: name,
@@ -274,34 +255,6 @@ class AudioAssetMedia extends AssetMediaSource<AudioType> {
       size: size ?? (await AssetMediaSource.loadAsset(assetPath, bundle)).lengthInBytes.b,
       mimeType: mimeType,
     );
-  }
-
-  /// Saves this audio asset to the file system.
-  ///
-  /// Loads the asset bytes and writes them to the specified path.
-  /// Creates the directory structure if it doesn't exist.
-  ///
-  /// Parameters:
-  /// - [path]: The destination file path
-  ///
-  /// Returns an [AudioFileMedia] instance pointing to the saved file.
-  @override
-  Future<AudioFileMedia> saveTo(String path) async {
-    final bytes = await AssetMediaSource.loadAsset(assetPath, bundle);
-    final file = XFile.fromData(
-      bytes,
-      name: name,
-      mimeType: mimeType,
-      length: bytes.lengthInBytes,
-    );
-    final fileMedia = await AudioFileMedia.fromFile(
-      file,
-      duration: metadata.duration,
-      mimeType: mimeType,
-      name: name,
-      size: size,
-    );
-    return fileMedia.saveTo(path);
   }
 
   /// Converts this audio asset to an in-memory representation.
@@ -334,20 +287,23 @@ class AudioAssetMedia extends AssetMediaSource<AudioType> {
 /// final cachedFile = await image.saveTo('/cache/logo.png');
 /// ```
 class ImageAssetMedia extends AssetMediaSource<ImageType> {
-  /// Internal constructor for creating image asset media.
+  /// Creates an image asset media synchronously.
+  ///
+  /// The provided [size] is trusted as-is; prefer [load] when the size
+  /// should be read from the asset bundle.
   ///
   /// Parameters:
   /// - [assetPath]: Path to the image asset
-  /// - [bundle]: Optional custom AssetBundle
-  /// - [name]: Display name
-  /// - [size]: Asset size in bytes
-  /// - [mimeType]: MIME type of the image
+  /// - [bundle]: Optional custom AssetBundle, defaults to rootBundle
+  /// - [name]: Optional display name, defaults to the asset filename
+  /// - [size]: Optional asset size in bytes
+  /// - [mimeType]: Optional MIME type, auto-detected from path if not provided
   ImageAssetMedia({
     required super.assetPath,
     super.bundle,
-    required super.name,
-    required super.size,
-    required super.mimeType,
+    super.name,
+    super.size,
+    super.mimeType,
   }) : super._(metadata: ImageType());
 
   /// Loads an image asset from the Flutter asset bundle.
@@ -379,33 +335,6 @@ class ImageAssetMedia extends AssetMediaSource<ImageType> {
     );
   }
 
-  /// Saves this image asset to the file system.
-  ///
-  /// Loads the asset bytes and writes them to the specified path.
-  /// Creates the directory structure if it doesn't exist.
-  ///
-  /// Parameters:
-  /// - [path]: The destination file path
-  ///
-  /// Returns an [ImageFileMedia] instance pointing to the saved file.
-  @override
-  Future<ImageFileMedia> saveTo(String path) async {
-    final bytes = await AssetMediaSource.loadAsset(assetPath, bundle);
-    final file = XFile.fromData(
-      bytes,
-      name: name,
-      mimeType: mimeType,
-      length: bytes.lengthInBytes,
-    );
-    final fileMedia = await ImageFileMedia.fromFile(
-      file,
-      mimeType: mimeType,
-      name: name,
-      size: size,
-    );
-    return fileMedia.saveTo(path);
-  }
-
   /// Converts this image asset to an in-memory representation.
   ///
   /// Loads the asset bytes into an [ImageMemoryMedia] instance.
@@ -433,20 +362,23 @@ class ImageAssetMedia extends AssetMediaSource<ImageType> {
 /// final fileMedia = await pdf.saveTo('/downloads/manual.pdf');
 /// ```
 class DocumentAssetMedia extends AssetMediaSource<DocumentType> {
-  /// Internal constructor for creating document asset media.
+  /// Creates a document asset media synchronously.
+  ///
+  /// The provided [size] is trusted as-is; prefer [load] when the size
+  /// should be read from the asset bundle.
   ///
   /// Parameters:
   /// - [assetPath]: Path to the document asset
-  /// - [bundle]: Optional custom AssetBundle
-  /// - [name]: Display name
-  /// - [size]: Asset size in bytes
-  /// - [mimeType]: MIME type of the document
-  DocumentAssetMedia._({
+  /// - [bundle]: Optional custom AssetBundle, defaults to rootBundle
+  /// - [name]: Optional display name, defaults to the asset filename
+  /// - [size]: Optional asset size in bytes
+  /// - [mimeType]: Optional MIME type, auto-detected from path if not provided
+  DocumentAssetMedia({
     required super.assetPath,
     super.bundle,
-    required super.name,
-    required super.size,
-    required super.mimeType,
+    super.name,
+    super.size,
+    super.mimeType,
   }) : super._(metadata: DocumentType());
 
   /// Loads a document asset from the Flutter asset bundle.
@@ -469,40 +401,13 @@ class DocumentAssetMedia extends AssetMediaSource<DocumentType> {
     String? mimeType,
     FileSize? size,
   }) async {
-    return DocumentAssetMedia._(
+    return DocumentAssetMedia(
       assetPath: assetPath,
       bundle: bundle,
       name: name,
       size: size ?? (await AssetMediaSource.loadAsset(assetPath, bundle)).lengthInBytes.b,
       mimeType: mimeType,
     );
-  }
-
-  /// Saves this document asset to the file system.
-  ///
-  /// Loads the asset bytes and writes them to the specified path.
-  /// Creates the directory structure if it doesn't exist.
-  ///
-  /// Parameters:
-  /// - [path]: The destination file path
-  ///
-  /// Returns a [DocumentFileMedia] instance pointing to the saved file.
-  @override
-  Future<DocumentFileMedia> saveTo(String path) async {
-    final bytes = await AssetMediaSource.loadAsset(assetPath, bundle);
-    final file = XFile.fromData(
-      bytes,
-      name: name,
-      mimeType: mimeType,
-      length: bytes.lengthInBytes,
-    );
-    final fileMedia = await DocumentFileMedia.fromFile(
-      file,
-      mimeType: mimeType,
-      name: name,
-      size: size,
-    );
-    return fileMedia.saveTo(path);
   }
 
   /// Converts this document asset to an in-memory representation.
@@ -532,21 +437,23 @@ class DocumentAssetMedia extends AssetMediaSource<DocumentType> {
 /// final data = await OtherTypeAssetMedia.load('assets/data/config.json');
 /// ```
 class OtherTypeAssetMedia extends AssetMediaSource<OtherType> {
-  /// Internal constructor for creating other type asset media.
+  /// Creates an unclassified asset media synchronously.
+  ///
+  /// The provided [size] is trusted as-is; prefer [load] when the size
+  /// should be read from the asset bundle.
   ///
   /// Parameters:
   /// - [assetPath]: Path to the asset
-  /// - [bundle]: Optional custom AssetBundle
-  /// - [name]: Display name
-  /// - [size]: Asset size in bytes
-  /// - [mimeType]: MIME type of the asset
-  @override
-  OtherTypeAssetMedia._({
+  /// - [bundle]: Optional custom AssetBundle, defaults to rootBundle
+  /// - [name]: Optional display name, defaults to the asset filename
+  /// - [size]: Optional asset size in bytes
+  /// - [mimeType]: Optional MIME type, auto-detected from path if not provided
+  OtherTypeAssetMedia({
     required super.assetPath,
     super.bundle,
-    required super.name,
-    required super.size,
-    required super.mimeType,
+    super.name,
+    super.size,
+    super.mimeType,
   }) : super._(metadata: OtherType());
 
   /// Loads an asset of unknown type from the Flutter asset bundle.
@@ -569,40 +476,13 @@ class OtherTypeAssetMedia extends AssetMediaSource<OtherType> {
     String? mimeType,
     FileSize? size,
   }) async {
-    return OtherTypeAssetMedia._(
+    return OtherTypeAssetMedia(
       assetPath: assetPath,
       bundle: bundle,
       name: name,
       size: size ?? (await AssetMediaSource.loadAsset(assetPath, bundle)).lengthInBytes.b,
       mimeType: mimeType,
     );
-  }
-
-  /// Saves this asset to the file system.
-  ///
-  /// Loads the asset bytes and writes them to the specified path.
-  /// Creates the directory structure if it doesn't exist.
-  ///
-  /// Parameters:
-  /// - [path]: The destination file path
-  ///
-  /// Returns an [OtherTypeFileMedia] instance pointing to the saved file.
-  @override
-  Future<OtherTypeFileMedia> saveTo(String path) async {
-    final bytes = await AssetMediaSource.loadAsset(assetPath, bundle);
-    final file = XFile.fromData(
-      bytes,
-      name: name,
-      mimeType: mimeType,
-      length: bytes.lengthInBytes,
-    );
-    final fileMedia = await OtherTypeFileMedia.fromFile(
-      file,
-      mimeType: mimeType,
-      name: name,
-      size: size,
-    );
-    return fileMedia.saveTo(path);
   }
 
   /// Converts this asset to an in-memory representation.

@@ -40,8 +40,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `FileMediaSource.moveTo` uses a fast platform rename when possible instead of copy + delete
 - `NetworkMediaSource.fromUrlOrNull` now forwards `name`, `size`, `mimeType`, `duration`, and
   `mediaType` to `fromUrl`, and only swallows `FormatException`
-- `ImageAssetMedia`'s constructor is now private for consistency with the other asset media
-  types; use `ImageAssetMedia.load`
 - Save/move/convert logic is now implemented once in the base classes
   (`FileMediaSource`, `MemoryMediaSource`, `AssetMediaSource`) via template hooks, removing
   drift between the per-type implementations
@@ -51,6 +49,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `is` checks or `fold` instead
 
 ### Added
+- Public synchronous constructors for all asset media types (`VideoAssetMedia`,
+  `AudioAssetMedia`, `ImageAssetMedia`, `DocumentAssetMedia`, `OtherTypeAssetMedia`).
+  The constructor trusts the provided `size` (or leaves it null); use `load()` when the size
+  should be read from the asset bundle. Previously only `ImageAssetMedia` exposed a public
+  constructor, and it required all parameters
 - `PlatformUtilsFacade.moveFile` for fast native file renames
 - Lint enforcement via `flutter_lints` (previously no lint ruleset was included)
 

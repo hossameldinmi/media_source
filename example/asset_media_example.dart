@@ -118,12 +118,21 @@ class _AssetMediaExampleScreenState extends State<AssetMediaExampleScreen> {
 Future<String> videoAssetExample() async {
   final output = StringBuffer();
 
-  // Load a video asset from the bundle
+  // Load a video asset from the bundle (reads the asset to compute size)
   final video = await VideoAssetMedia.load(
     'assets/videos/intro.mp4',
     name: 'Intro Video',
     duration: const Duration(seconds: 30),
   );
+
+  // Alternatively, construct synchronously when the size is already known
+  // (or not needed) - no bundle read happens until save/convert:
+  //   final video = VideoAssetMedia(
+  //     assetPath: 'assets/videos/intro.mp4',
+  //     name: 'Intro Video',
+  //     duration: const Duration(seconds: 30),
+  //     size: 2.mb,
+  //   );
 
   output.writeln('Video loaded from asset bundle:');
   output.writeln('  Asset path: ${video.assetPath}');
@@ -214,6 +223,20 @@ Future<String> imageAssetExample() async {
   output.writeln('Optimized loading (size provided):');
   output.writeln('  Size: ${optimizedImage.size}');
   output.writeln('  (Asset not loaded until actually needed)');
+  output.writeln();
+
+  // Or construct synchronously - no await, no bundle read.
+  // The size is trusted as given (or left null if unknown); use load()
+  // when it should be read from the bundle.
+  final syncImage = ImageAssetMedia(
+    assetPath: 'assets/images/icon.png',
+    size: 50.kb,
+  );
+
+  output.writeln('Synchronous construction:');
+  output.writeln('  Name: ${syncImage.name}'); // defaults to 'icon.png'
+  output.writeln('  MIME type: ${syncImage.mimeType}'); // detected from path
+  output.writeln('  Size: ${syncImage.size}');
 
   return output.toString();
 }

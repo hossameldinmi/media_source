@@ -121,22 +121,25 @@ abstract class AssetMediaSource<M extends FileType> extends MediaSource<M>
 /// final memoryMedia = await video.convertToMemory();
 /// ```
 class VideoAssetMedia extends AssetMediaSource<VideoType> {
-  /// Internal constructor for creating video asset media.
+  /// Creates a video asset media synchronously.
+  ///
+  /// The provided [size] is trusted as-is; prefer [load] when the size
+  /// should be read from the asset bundle.
   ///
   /// Parameters:
   /// - [assetPath]: Path to the video asset
-  /// - [bundle]: Optional custom AssetBundle
-  /// - [name]: Display name
+  /// - [bundle]: Optional custom AssetBundle, defaults to rootBundle
+  /// - [name]: Optional display name, defaults to the asset filename
   /// - [duration]: Optional video duration
-  /// - [size]: Asset size in bytes
-  /// - [mimeType]: MIME type of the video
-  VideoAssetMedia._({
+  /// - [size]: Optional asset size in bytes
+  /// - [mimeType]: Optional MIME type, auto-detected from path if not provided
+  VideoAssetMedia({
     required super.assetPath,
     super.bundle,
-    required super.name,
-    required Duration? duration,
-    required super.size,
-    required super.mimeType,
+    super.name,
+    Duration? duration,
+    super.size,
+    super.mimeType,
   }) : super._(metadata: VideoType(duration));
 
   /// Loads a video asset from the Flutter asset bundle.
@@ -161,7 +164,7 @@ class VideoAssetMedia extends AssetMediaSource<VideoType> {
     String? mimeType,
     FileSize? size,
   }) async {
-    return VideoAssetMedia._(
+    return VideoAssetMedia(
       assetPath: assetPath,
       bundle: bundle,
       name: name,
@@ -201,22 +204,25 @@ class VideoAssetMedia extends AssetMediaSource<VideoType> {
 /// );
 /// ```
 class AudioAssetMedia extends AssetMediaSource<AudioType> {
-  /// Internal constructor for creating audio asset media.
+  /// Creates an audio asset media synchronously.
+  ///
+  /// The provided [size] is trusted as-is; prefer [load] when the size
+  /// should be read from the asset bundle.
   ///
   /// Parameters:
   /// - [assetPath]: Path to the audio asset
-  /// - [bundle]: Optional custom AssetBundle
-  /// - [name]: Display name
+  /// - [bundle]: Optional custom AssetBundle, defaults to rootBundle
+  /// - [name]: Optional display name, defaults to the asset filename
   /// - [duration]: Optional audio duration
-  /// - [size]: Asset size in bytes
-  /// - [mimeType]: MIME type of the audio
-  AudioAssetMedia._({
+  /// - [size]: Optional asset size in bytes
+  /// - [mimeType]: Optional MIME type, auto-detected from path if not provided
+  AudioAssetMedia({
     required super.assetPath,
     super.bundle,
-    required super.name,
-    required Duration? duration,
-    required super.size,
-    required super.mimeType,
+    super.name,
+    Duration? duration,
+    super.size,
+    super.mimeType,
   }) : super._(metadata: AudioType(duration));
 
   /// Loads an audio asset from the Flutter asset bundle.
@@ -241,7 +247,7 @@ class AudioAssetMedia extends AssetMediaSource<AudioType> {
     String? mimeType,
     FileSize? size,
   }) async {
-    return AudioAssetMedia._(
+    return AudioAssetMedia(
       assetPath: assetPath,
       bundle: bundle,
       name: name,
@@ -281,20 +287,23 @@ class AudioAssetMedia extends AssetMediaSource<AudioType> {
 /// final cachedFile = await image.saveTo('/cache/logo.png');
 /// ```
 class ImageAssetMedia extends AssetMediaSource<ImageType> {
-  /// Internal constructor for creating image asset media.
+  /// Creates an image asset media synchronously.
+  ///
+  /// The provided [size] is trusted as-is; prefer [load] when the size
+  /// should be read from the asset bundle.
   ///
   /// Parameters:
   /// - [assetPath]: Path to the image asset
-  /// - [bundle]: Optional custom AssetBundle
-  /// - [name]: Display name
-  /// - [size]: Asset size in bytes
-  /// - [mimeType]: MIME type of the image
-  ImageAssetMedia._({
+  /// - [bundle]: Optional custom AssetBundle, defaults to rootBundle
+  /// - [name]: Optional display name, defaults to the asset filename
+  /// - [size]: Optional asset size in bytes
+  /// - [mimeType]: Optional MIME type, auto-detected from path if not provided
+  ImageAssetMedia({
     required super.assetPath,
     super.bundle,
-    required super.name,
-    required super.size,
-    required super.mimeType,
+    super.name,
+    super.size,
+    super.mimeType,
   }) : super._(metadata: ImageType());
 
   /// Loads an image asset from the Flutter asset bundle.
@@ -317,7 +326,7 @@ class ImageAssetMedia extends AssetMediaSource<ImageType> {
     String? mimeType,
     FileSize? size,
   }) async {
-    return ImageAssetMedia._(
+    return ImageAssetMedia(
       assetPath: assetPath,
       bundle: bundle,
       name: name,
@@ -353,20 +362,23 @@ class ImageAssetMedia extends AssetMediaSource<ImageType> {
 /// final fileMedia = await pdf.saveTo('/downloads/manual.pdf');
 /// ```
 class DocumentAssetMedia extends AssetMediaSource<DocumentType> {
-  /// Internal constructor for creating document asset media.
+  /// Creates a document asset media synchronously.
+  ///
+  /// The provided [size] is trusted as-is; prefer [load] when the size
+  /// should be read from the asset bundle.
   ///
   /// Parameters:
   /// - [assetPath]: Path to the document asset
-  /// - [bundle]: Optional custom AssetBundle
-  /// - [name]: Display name
-  /// - [size]: Asset size in bytes
-  /// - [mimeType]: MIME type of the document
-  DocumentAssetMedia._({
+  /// - [bundle]: Optional custom AssetBundle, defaults to rootBundle
+  /// - [name]: Optional display name, defaults to the asset filename
+  /// - [size]: Optional asset size in bytes
+  /// - [mimeType]: Optional MIME type, auto-detected from path if not provided
+  DocumentAssetMedia({
     required super.assetPath,
     super.bundle,
-    required super.name,
-    required super.size,
-    required super.mimeType,
+    super.name,
+    super.size,
+    super.mimeType,
   }) : super._(metadata: DocumentType());
 
   /// Loads a document asset from the Flutter asset bundle.
@@ -389,7 +401,7 @@ class DocumentAssetMedia extends AssetMediaSource<DocumentType> {
     String? mimeType,
     FileSize? size,
   }) async {
-    return DocumentAssetMedia._(
+    return DocumentAssetMedia(
       assetPath: assetPath,
       bundle: bundle,
       name: name,
@@ -425,20 +437,23 @@ class DocumentAssetMedia extends AssetMediaSource<DocumentType> {
 /// final data = await OtherTypeAssetMedia.load('assets/data/config.json');
 /// ```
 class OtherTypeAssetMedia extends AssetMediaSource<OtherType> {
-  /// Internal constructor for creating other type asset media.
+  /// Creates an unclassified asset media synchronously.
+  ///
+  /// The provided [size] is trusted as-is; prefer [load] when the size
+  /// should be read from the asset bundle.
   ///
   /// Parameters:
   /// - [assetPath]: Path to the asset
-  /// - [bundle]: Optional custom AssetBundle
-  /// - [name]: Display name
-  /// - [size]: Asset size in bytes
-  /// - [mimeType]: MIME type of the asset
-  OtherTypeAssetMedia._({
+  /// - [bundle]: Optional custom AssetBundle, defaults to rootBundle
+  /// - [name]: Optional display name, defaults to the asset filename
+  /// - [size]: Optional asset size in bytes
+  /// - [mimeType]: Optional MIME type, auto-detected from path if not provided
+  OtherTypeAssetMedia({
     required super.assetPath,
     super.bundle,
-    required super.name,
-    required super.size,
-    required super.mimeType,
+    super.name,
+    super.size,
+    super.mimeType,
   }) : super._(metadata: OtherType());
 
   /// Loads an asset of unknown type from the Flutter asset bundle.
@@ -461,7 +476,7 @@ class OtherTypeAssetMedia extends AssetMediaSource<OtherType> {
     String? mimeType,
     FileSize? size,
   }) async {
-    return OtherTypeAssetMedia._(
+    return OtherTypeAssetMedia(
       assetPath: assetPath,
       bundle: bundle,
       name: name,
